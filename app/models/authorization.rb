@@ -14,4 +14,8 @@
 
 class Authorization < ActiveRecord::Base
   validates :user_id, :uber_auth_token, :presence => true
+
+  def generate_remember_token 
+    SecureRandom.base64(16)
+  end
 end
