@@ -49,9 +49,11 @@ class Api::AuthorizationsController < ApplicationController
   	unless auth
   		session[:session_token] = Authorization.session_token
   		auth = Authorization.new(slack_user_id: params[:user_id], oauth_session_token: session[:session_token])
-
   		# TODO: add model level validation
-  		auth.save
+
+  		unless params[:user_id]
+	  		auth.save
+  		end
 
   		# register our app with uber and a url before all these
   		# need a router for uber to make request
