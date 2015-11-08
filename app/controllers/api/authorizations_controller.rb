@@ -20,6 +20,7 @@ class Api::AuthorizationsController < ApplicationController
       client_id:     ENV['uber_client_id'],
       grant_type:    'authorization_code',
       # redirect_uri   ENV[''],
+      #May or may not need redirect_uri
       code:          params[:code]
     }
     # post request to uber
@@ -34,6 +35,6 @@ class Api::AuthorizationsController < ApplicationController
   end
 
   def notifications
-    
+    # Take the params and redirect data to slack
   end
 end

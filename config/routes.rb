@@ -9,8 +9,8 @@
 Rails.application.routes.draw do
   root to: 'static_pages#root'
   namespace :api, defaults: { format: 'json' } do
-    post '/authorize', to: 'users#authorize'
-    post '/create', to: 'users#create'
-    post '/notifications', to: 'users#notifications'
+    post '/authorize', to: 'authorizations#authorize'
+    post '/create', to: 'authorizations#create'
+    post '/notifications', to: 'authorizations#notifications'
   end
 end
