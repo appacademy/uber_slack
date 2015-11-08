@@ -23,7 +23,7 @@ class Api::AuthorizationsController < ApplicationController
       client_secret: ENV['uber_client_secret'],
       client_id:     ENV['uber_client_id'],
       grant_type:    'authorization_code',
-      # redirect_uri:   ENV['uber_callback_url'],
+      redirect_uri:  ENV['uber_callback_url'],
       code:          params[:code]
     }
     # post request to uber
