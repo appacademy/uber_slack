@@ -67,7 +67,8 @@ class Api::AuthorizationsController < ApplicationController
   	end
 
   	if !auth.uber_registered?
-  		render text: "#{api_activate_url}?user_id=#{auth.slack_user_id}"
+  		render text: params[:user_id]
+  		# render text: "#{api_activate_url}?user_id=#{auth.slack_user_id}"
   	end
   end
 end
