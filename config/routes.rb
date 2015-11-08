@@ -11,6 +11,6 @@ Rails.application.routes.draw do
   namespace :api, defaults: { format: 'json' } do
     post '/authorize', to: 'authorizations#authorize'
     post 'use_uber', to: 'authorizations#use_uber'
-    post '/connect_uber', to: 'authorizations#create'
+    post '/connect_uber', to: 'authorizations#connect_uber'
   end
 end
