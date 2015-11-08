@@ -19,22 +19,27 @@ class Api::AuthorizationsController < ApplicationController
   # this is only for new user, connecting its slack acc w/ uber acc
   # this is the callback for authorizing new user
   def connect_uber
-    params = {
+  	fail
+    post_params = {
       client_secret: ENV['uber_client_secret'],
       client_id:     ENV['uber_client_id'],
       grant_type:    'authorization_code',
-      # redirect_uri   ENV[''],
+      redirect_uri:   ENV['uber_callback_url'],
       code:          params[:code]
     }
     # post request to uber
-    resp = Net::HTTP.post_form(URI.parse('https://login.uber.com/oauth/v2/token'), params)
+    resp = Net::HTTP.post_form(URI.parse('https://login.uber.com/oauth/v2/token'), post_params)
 
     access_token = resp['access_token']
 
-    Authorization.find_by(session_token: session[:session_token])
+    if access_token.nil?
+    	render text: "something's wrong"
+    else
+	    Authorization.find_by(session_token: session[:session_token])
                  .update(uber_auth_token: access_token)
 
-    render text: "uber auth success, access_token: #{access_token}"
+	    render text: "uber auth success, access_token: #{access_token}"
+	  end
   end
 
   def use_uber
@@ -46,20 +51,18 @@ class Api::AuthorizationsController < ApplicationController
   def require_authorization
   	auth = Authorization.find_by(slack_user_id: params[:user_id])
 
-  	render text: "before if"
   	if auth.nil?
   		session[:session_token] = Authorization.session_token
   		auth = Authorization.new(slack_user_id: params[:user_id], oauth_session_token: session[:session_token])
   		# TODO: add model level validation
 
   		if params[:user_id]
-puts "saved auth"
 	  		auth.save
   		end
 
   		# register our app with uber and a url before all these
   		# need a router for uber to make request
-  		# render text: "https://login.uber.com/oauth/v2/authorize?response_type=code&client_id=B4K8XNeyIq4qsI0QqCN8INGv7Ztn1XIL"
+  		render text: "https://login.uber.com/oauth/v2/authorize?response_type=code&client_id=#{ENV['uber_client_id']}"
   		# redirect_to "https://login.uber.com/oauth/v2/authorize?response_type=code&client_id=B4K8XNeyIq4qsI0QqCN8INGv7Ztn1XIL"
   	else
   		# render text: auth.to_s
