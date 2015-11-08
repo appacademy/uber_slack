@@ -34,5 +34,6 @@ class Api::AuthorizationsController < ApplicationController
   end
 
   def notifications
+    
   end
 end
