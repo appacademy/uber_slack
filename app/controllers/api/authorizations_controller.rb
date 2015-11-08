@@ -23,16 +23,16 @@ class Api::AuthorizationsController < ApplicationController
       client_secret: ENV['uber_client_secret'],
       client_id:     ENV['uber_client_id'],
       grant_type:    'authorization_code',
-      redirect_uri:   ENV['uber_callback_url'],
+      # redirect_uri:   ENV['uber_callback_url'],
       code:          params[:code]
     }
     # post request to uber
     resp = Net::HTTP.post_form(URI.parse('https://login.uber.com/oauth/v2/token'), post_params)
 
-    access_token = resp['access_token']
+    access_token = resp.body['access_token']
 
     if access_token.nil?
-    	render json: post_params
+    	render json: resp.body
     else
 	    Authorization.find_by(session_token: session[:session_token])
                  	 .update(uber_auth_token: access_token)
