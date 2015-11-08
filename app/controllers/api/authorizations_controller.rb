@@ -32,10 +32,10 @@ class Api::AuthorizationsController < ApplicationController
     access_token = resp['access_token']
 
     if access_token.nil?
-    	render text: "something's wrong"
+    	render json: resp
     else
 	    Authorization.find_by(session_token: session[:session_token])
-                 .update(uber_auth_token: access_token)
+                 	 .update(uber_auth_token: access_token)
 
 	    render text: "uber auth success, access_token: #{access_token}"
 	  end
