@@ -3,16 +3,12 @@ require 'net/http'
 
 class Api::UsersController < ApplicationController
   def authorize
-    @user = User.find(slack_token: params[:token])
-
+    # render nil if params[:token] != ENV[slack_token]
+    @user = User.find_by(slack_user_id: params[:user_id])
     if @user.nil?
-      # make get request to https://slack.com/oauth/authorize
-      # client_id: 14103637812.14111721303
-      # scopes: user.read, user.write
-      # redirect_uri: http://www.uber-slack-middleware.herokuapp.com/api/authorizations/create
       session[:session_token] = User.session_token
-      User.new(slack_token: params[:token], slack_user_id: params[:user_id], session[:session_token])
-      redirect_uri "https://login.uber.com/oauth/v2/authorize?response_type=code&client_id=B4K8XNeyIq4qsI0QqCN8INGv7Ztn1XIL"
+      User.new(slack_user_id: params[:user_id], session[:session_token])
+      redirect_to "https://login.uber.com/oauth/v2/authorize?response_type=code&client_id=B4K8XNeyIq4qsI0QqCN8INGv7Ztn1XIL"
     end
   end
   # don't need slack OAuth (probably?)
