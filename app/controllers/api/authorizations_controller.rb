@@ -46,12 +46,12 @@ class Api::AuthorizationsController < ApplicationController
   def require_authorization
   	auth = Authorization.find_by(slack_user_id: params[:user_id])
 
-  	unless auth
+  	if auth.nil?
   		session[:session_token] = Authorization.session_token
   		auth = Authorization.new(slack_user_id: params[:user_id], oauth_session_token: session[:session_token])
   		# TODO: add model level validation
 
-  		unless params[:user_id].nil?
+  		if params[:user_id]
 	  		auth.save
   		end
 
