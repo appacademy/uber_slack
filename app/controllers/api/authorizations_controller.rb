@@ -65,7 +65,9 @@ class Api::AuthorizationsController < ApplicationController
 
     # Response would be a list of poducts. May be able to take the port out
     res = Net::HTTP.start(uri.hostname, uri.port) { |http| http.request(req) }
+    header = {Authorization: ("Bearer " + @bearer_token) }
 
+    RestClient.get("https://sandbox-api.uber.com/v1/products", get_products_params, header)
     render text: result.body
   end
 
