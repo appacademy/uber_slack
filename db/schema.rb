@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20151108024547) do
+ActiveRecord::Schema.define(version: 20151108041959) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -25,6 +25,7 @@ ActiveRecord::Schema.define(version: 20151108024547) do
     t.datetime "created_at",          null: false
     t.datetime "updated_at",          null: false
     t.string   "session_token"
+    t.string   "webhook"
   end
 
   add_index "authorizations", ["oauth_session_token"], name: "index_authorizations_on_oauth_session_token", using: :btree

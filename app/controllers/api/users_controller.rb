@@ -7,7 +7,7 @@ class Api::UsersController < ApplicationController
     @user = User.find_by(slack_user_id: params[:user_id])
     if @user.nil?
       session[:session_token] = User.session_token
-      User.new(slack_user_id: params[:user_id], session[:session_token])
+      User.new(slack_user_id: params[:user_id], oauth_session_token: session[:session_token],webhook: params[:response_url] )
       redirect_to "https://login.uber.com/oauth/v2/authorize?response_type=code&client_id=B4K8XNeyIq4qsI0QqCN8INGv7Ztn1XIL"
     end
   end
