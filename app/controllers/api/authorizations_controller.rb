@@ -9,6 +9,3 @@ class Api::AuthorizationsController < ApplicationController
 
   def destroy
   end
-
-
-end
