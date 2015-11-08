@@ -10,6 +10,7 @@ Rails.application.routes.draw do
   root to: 'static_pages#root'
   namespace :api, defaults: { format: 'json' } do
     post '/authorize', to: 'authorizations#authorize'
+    post 'use_uber', to: 'authorizations#use_uber'
     post '/connect_uber', to: 'authorizations#create'
   end
 end
