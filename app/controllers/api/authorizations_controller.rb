@@ -75,7 +75,7 @@ class Api::AuthorizationsController < ApplicationController
 
   def verify_slack_token
 		unless slack_params[:token] == ENV['slack_app_token']
-			render text: "you're crazy. Go away"
+			render json: slack_params
 		end
 	end
 
