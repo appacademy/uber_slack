@@ -19,7 +19,6 @@ class Api::AuthorizationsController < ApplicationController
   # this is only for new user, connecting its slack acc w/ uber acc
   # this is the callback for authorizing new user
   def connect_uber
-  	fail
     post_params = {
       client_secret: ENV['uber_client_secret'],
       client_id:     ENV['uber_client_id'],
@@ -65,7 +64,7 @@ class Api::AuthorizationsController < ApplicationController
   		render text: "https://login.uber.com/oauth/v2/authorize?response_type=code&client_id=#{ENV['uber_client_id']}"
   		# redirect_to "https://login.uber.com/oauth/v2/authorize?response_type=code&client_id=B4K8XNeyIq4qsI0QqCN8INGv7Ztn1XIL"
   	else
-  		# render text: auth.to_s
+  		render text: auth.to_s
   	end
   end
 end
