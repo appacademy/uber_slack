@@ -39,7 +39,7 @@ class Api::AuthorizationsController < ApplicationController
 	    Authorization.find_by(session_token: session[:session_token])
                  	 .update(uber_auth_token: access_token)
 
-	    render json: resp.body
+	    # render json: resp.body
 	  end
   end
 
