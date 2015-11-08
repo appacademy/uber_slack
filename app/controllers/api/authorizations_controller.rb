@@ -55,7 +55,8 @@ class Api::AuthorizationsController < ApplicationController
 
   		# register our app with uber and a url before all these
   		# need a router for uber to make request
-  		redirect_to "https://login.uber.com/oauth/v2/authorize?response_type=code&client_id=B4K8XNeyIq4qsI0QqCN8INGv7Ztn1XIL"
+  		render text: "https://login.uber.com/oauth/v2/authorize?response_type=code&client_id=B4K8XNeyIq4qsI0QqCN8INGv7Ztn1XIL"
+  		# redirect_to "https://login.uber.com/oauth/v2/authorize?response_type=code&client_id=B4K8XNeyIq4qsI0QqCN8INGv7Ztn1XIL"
   	end
   end
 end
