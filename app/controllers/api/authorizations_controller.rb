@@ -1,5 +1,4 @@
 class Api::AuthorizationsController < ApplicationController
-  require 'net/http'
   def echo
     render json: params
   end
