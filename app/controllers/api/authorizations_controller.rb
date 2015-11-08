@@ -20,11 +20,11 @@ class Api::AuthorizationsController < ApplicationController
   # this is the callback for authorizing new user
   def connect_uber
     post_params = {
-      client_secret: ENV['uber_client_secret'],
-      client_id:     ENV['uber_client_id'],
-      grant_type:    'authorization_code',
-      redirect_uri:  ENV['uber_callback_url'],
-      code:          params[:code]
+      'client_secret' => ENV['uber_client_secret'],
+      'client_id' =>     ENV['uber_client_id'],
+      'grant_type' =>    'authorization_code',
+      'redirect_uri' =>  "http://localhost:3000/api/connect_uber",
+      'code' =>          params[:code]
     }
     # post request to uber
     resp = Net::HTTP.post_form(URI.parse('https://login.uber.com/oauth/v2/token'), post_params)
