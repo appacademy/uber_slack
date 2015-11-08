@@ -30,7 +30,7 @@ class Api::AuthorizationsController < ApplicationController
     resp = RestClient.post('https://login.uber.com/oauth/v2/token', post_params)
     # resp = Net::HTTP.post_form(URI.parse('https://login.uber.com/oauth/v2/token'), post_params)
 
-    access_token = resp.body['access_token']
+    access_token = JSON.parse(resp.body)['access_token']
 
     if access_token.nil?
     	render json: resp.body
