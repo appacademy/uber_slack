@@ -45,6 +45,15 @@ class Api::AuthorizationsController < ApplicationController
   	# here order car
   end
 
+  def establish_session
+  	auth = Authorization.find_by(slack_user_id: params[:user_id])
+  	session[:session_token] = Authorization.create_session_token
+
+  	auth.update(session_token: session[:session_token])
+
+  	redirect_to "https://login.uber.com/oauth/v2/authorize?response_type=code&client_id=#{ENV['uber_client_id']}"
+  end
+
   private
 
   def require_authorization
@@ -53,13 +62,12 @@ class Api::AuthorizationsController < ApplicationController
   	return if auth && auth.uber_registered?
 
   	if auth.nil?
-  		session[:session_token] = Authorization.create_session_token
-  		auth = Authorization.new(slack_user_id: params[:user_id], session_token: session[:session_token])
+  		auth = Authorization.new(slack_user_id: params[:user_id])
   		auth.save
   	end
 
   	if !auth.uber_registered?
-  		render text: "https://login.uber.com/oauth/v2/authorize?response_type=code&client_id=#{ENV['uber_client_id']}"
+  		render text: "#{api_activate_url}?user_id=#{auth.slack_user_id}"
   	end
   end
 end
