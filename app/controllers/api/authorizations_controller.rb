@@ -1,5 +1,5 @@
 class Api::AuthorizationsController < ApplicationController
   def echo 
-    render json: { " "}
+    render json: { " echo data "}
   end 
 end
