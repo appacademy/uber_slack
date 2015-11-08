@@ -51,7 +51,7 @@ class Api::AuthorizationsController < ApplicationController
   		auth = Authorization.new(slack_user_id: params[:user_id], oauth_session_token: session[:session_token])
   		# TODO: add model level validation
 
-  		unless params[:user_id]
+  		unless params[:user_id].nil?
 	  		auth.save
   		end
 
@@ -59,6 +59,8 @@ class Api::AuthorizationsController < ApplicationController
   		# need a router for uber to make request
   		render text: "https://login.uber.com/oauth/v2/authorize?response_type=code&client_id=B4K8XNeyIq4qsI0QqCN8INGv7Ztn1XIL"
   		# redirect_to "https://login.uber.com/oauth/v2/authorize?response_type=code&client_id=B4K8XNeyIq4qsI0QqCN8INGv7Ztn1XIL"
+  	else
+  		render text: auth.to_s
   	end
   end
 end
