@@ -87,7 +87,6 @@ au = Authorization.find_by(session_token: session[:session_token])
 
   def require_authorization
   	auth = Authorization.find_by(slack_user_id: params[:user_id])
-  	render json: auth.to_json
 
   	return if auth && auth.uber_registered?
 
@@ -96,8 +95,8 @@ au = Authorization.find_by(session_token: session[:session_token])
   		auth.save!
   	end
 
-  	# if !auth.uber_registered?
-  	# 	render text: "#{api_activate_url}?user_id=#{auth.slack_user_id}"
-  	# end
+  	if !auth.uber_registered?
+  		render text: "#{api_activate_url}?user_id=#{auth.slack_user_id}"
+  	end
   end
 end
