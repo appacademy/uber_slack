@@ -3,9 +3,9 @@
 # Table name: authorizations
 #
 #  id                  :integer          not null, primary key
-#  slack_user_id       :integer
+#  slack_user_id       :string
 #  slack_auth_token    :string
-#  oauth_session_token :string     why did have this?
+#  oauth_session_token :string
 #  uber_user_id        :integer
 #  uber_auth_token     :string
 #  created_at          :datetime         not null

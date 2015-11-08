@@ -11,13 +11,13 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20151108041959) do
+ActiveRecord::Schema.define(version: 20151108214308) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
   create_table "authorizations", force: :cascade do |t|
-    t.integer  "slack_user_id"
+    t.string   "slack_user_id"
     t.string   "slack_auth_token"
     t.string   "oauth_session_token"
     t.integer  "uber_user_id"
