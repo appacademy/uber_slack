@@ -32,7 +32,7 @@ class Api::AuthorizationsController < ApplicationController
     access_token = resp['access_token']
 
     if access_token.nil?
-    	render json: resp
+    	render json: post_params
     else
 	    Authorization.find_by(session_token: session[:session_token])
                  	 .update(uber_auth_token: access_token)
