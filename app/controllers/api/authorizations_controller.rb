@@ -1,29 +1,19 @@
 class Api::AuthorizationsController < ApplicationController
+	before_action :require_authorization, only: :use_uber
+
   def echo
     render json: params
   end
 
   def authorize
     # render nil if params[:token] != ENV[slack_token]
-    auth = Authorization.find_by(slack_user_id: params[:user_id])
-
-    if auth.nil?
-      session[:session_token] = Authorization.session_token
-      auth = Authorization.new(slack_user_id: params[:user_id], oauth_session_token: session[:session_token])
-
-      # TODO: add model level validation
-      auth.save
-
-      # register our app with uber and a url before all these
-      # need a router for uber to make request
-      redirect_to "https://login.uber.com/oauth/v2/authorize?response_type=code&client_id=B4K8XNeyIq4qsI0QqCN8INGv7Ztn1XIL"
-    else
-    	# find the user
-    	# validate if user has uber tokens
-    	# if so, there should be location info
-    	# call a car for user
-    	use_uber
-    end
+    # if auth.nil?
+    # 	# find the user
+    # 	# validate if user has uber tokens
+    # 	# if so, there should be location info
+    # 	# call a car for user
+    # 	use_uber
+    # end
   end
 
   # this is only for new user, connecting its slack acc w/ uber acc
@@ -49,5 +39,23 @@ class Api::AuthorizationsController < ApplicationController
 
   def use_uber
   	# here order car
+  end
+
+  private
+
+  def require_authorization
+  	auth = Authorization.find_by(slack_user_id: params[:user_id])
+
+  	unless auth
+  		session[:session_token] = Authorization.session_token
+  		auth = Authorization.new(slack_user_id: params[:user_id], oauth_session_token: session[:session_token])
+
+  		# TODO: add model level validation
+  		auth.save
+
+  		# register our app with uber and a url before all these
+  		# need a router for uber to make request
+  		redirect_to "https://login.uber.com/oauth/v2/authorize?response_type=code&client_id=B4K8XNeyIq4qsI0QqCN8INGv7Ztn1XIL"
+  	end
   end
 end
