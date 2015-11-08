@@ -27,7 +27,8 @@ class Api::AuthorizationsController < ApplicationController
       'code' 					=> params[:code]
     }
     # post request to uber
-    resp = Net::HTTP.post_form(URI.parse('https://login.uber.com/oauth/v2/token'), post_params)
+    resp = RestClient.post('https://login.uber.com/oauth/v2/token', post_params)
+    # resp = Net::HTTP.post_form(URI.parse('https://login.uber.com/oauth/v2/token'), post_params)
 
     access_token = resp.body['access_token']
 
