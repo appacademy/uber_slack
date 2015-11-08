@@ -92,7 +92,7 @@ au = Authorization.find_by(session_token: session[:session_token])
 
   	if auth.nil?
   		auth = Authorization.new(slack_user_id: params[:user_id])
-  		auth.save
+  		auth.save!
   	end
 
   	if !auth.uber_registered?
