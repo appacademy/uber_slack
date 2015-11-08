@@ -3,10 +3,5 @@ class Api::AuthorizationsController < ApplicationController
     render json: params
   end
 
-  def create
+  def authorize
   end
-
-
-  def destroy
-  end
-end
