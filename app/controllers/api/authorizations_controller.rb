@@ -54,7 +54,7 @@ class Api::AuthorizationsController < ApplicationController
 
   	if auth.nil?
   		session[:session_token] = Authorization.create_session_token
-  		auth = Authorization.new(slack_user_id: params[:user_id], oauth_session_token: session[:session_token])
+  		auth = Authorization.new(slack_user_id: params[:user_id], session_token: session[:session_token])
   		auth.save
   	end
 
