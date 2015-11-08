@@ -9,9 +9,9 @@ class CreateAuthorizations < ActiveRecord::Migration
       t.timestamps null: false
     end
 
-    add_index :authorazations, [:slack_user_id, :uber_user_id], unique: true
+    add_index :authorizations, [:slack_user_id, :uber_user_id], unique: true
     add_index :authorizations, :slack_auth_token
     add_index :authorizations, :uber_auth_token
-    add_index :authorazations, :oauth_session_token
+    add_index :authorizations, :oauth_session_token
   end
 end
