@@ -10,10 +10,16 @@
 #  uber_auth_token     :string
 #  created_at          :datetime         not null
 #  updated_at          :datetime         not null
+#  session_token       :string
+#  webhook             :string
 #
 
 class Authorization < ActiveRecord::Base
-  def self.session_token
+  def self.create_session_token
     SecureRandom.urlsafe_base64(16)
+  end
+
+  def uber_registered?
+  	!self.uber_auth_token.nil?
   end
 end
