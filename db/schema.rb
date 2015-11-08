@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20151108003341) do
+ActiveRecord::Schema.define(version: 20151108024547) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -22,6 +22,10 @@ ActiveRecord::Schema.define(version: 20151108003341) do
     t.string   "uber_auth_token",  null: false
     t.datetime "created_at",       null: false
     t.datetime "updated_at",       null: false
+<<<<<<< HEAD
+=======
+    t.string   "session_token"
+>>>>>>> 07d83813c24ae2f1f6279e7e0bda0acf89265b55
   end
 
   add_index "authorizations", ["slack_auth_token"], name: "index_authorizations_on_slack_auth_token", using: :btree
