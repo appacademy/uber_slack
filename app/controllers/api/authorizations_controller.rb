@@ -6,13 +6,13 @@ class Api::AuthorizationsController < ApplicationController
 
   def authorize
     #assumes we have the following: "slack_user_id", "slack_tocken" (session), ""
-    CLIENT_ID = "aslkjdjasdlkjasdAAAAA"
+    CLIENT_ID = ENV['slack_client_id']
     uri = "https://slack.com/oauth/authorize"
 
     authorize = Authorization.find(user_id: params[:user_id])
-    if authorize
-    else
+    unless authorize
       authorize = Authorization.create(user_id: params[:user_id])
+      session[:remember_token] = Authorization.session_token
     end
 
     redirect_to uri + "?client_id=" + CLIENT_ID + "&scope=" + SCOPE +
