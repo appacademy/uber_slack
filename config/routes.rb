@@ -11,5 +11,6 @@ Rails.application.routes.draw do
   namespace :api, defaults: { format: 'json' } do
     post '/authorize', to: 'users#authorize'
     post '/create', to: 'users#create'
+    post '/notifications', to: 'users#notifications'
   end
 end

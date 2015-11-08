@@ -32,4 +32,7 @@ class Api::AuthorizationsController < ApplicationController
 
     render text: "uber auth success, access_token: #{access_token}"
   end
+
+  def notifications
+  end
 end
