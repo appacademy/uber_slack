@@ -1,5 +1,11 @@
 class Api::AuthorizationsController < ApplicationController
-  def echo 
-    render json: { " echo data "}
-  end 
-end
+  def echo
+    render json: params
+  end
+
+  def create
+  end
+
+
+  def destroy
+  end
