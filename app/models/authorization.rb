@@ -13,8 +13,6 @@
 #
 
 class Authorization < ActiveRecord::Base
-  validates :user_id, :uber_auth_token, :presence => true
-
   def self.session_token
     SecureRandom.urlsafe_base64(16)
   end
