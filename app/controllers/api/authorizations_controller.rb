@@ -1,5 +1,5 @@
 class Api::AuthorizationsController < ApplicationController
-	before_action :verify_slack_token, except: :connect_slack
+	before_action :verify_slack_token, only: :use_uber
 	before_action :require_authorization, only: :use_uber
 
   def echo
