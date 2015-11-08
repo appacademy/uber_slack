@@ -45,6 +45,7 @@ class Api::AuthorizationsController < ApplicationController
 
   def use_uber
   	# here order car
+  	render text: "ready to pickup"
   end
 
   def establish_session
