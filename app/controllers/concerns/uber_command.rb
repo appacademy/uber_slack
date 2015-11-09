@@ -34,7 +34,7 @@ class UberCommand
   end
 
   def ride input_str
-    origin_name, destination_name = input_str.split("to")
+    origin_name, destination_name = input_str.join(" ").split("to")
 
     origin_lat, origin_lng = resolve_address origin_name
     destination_lat, destination_lng = resolve_address destination_name
