@@ -1,24 +1,28 @@
 require 'addressable/uri'
 
 BASE_URL = "https://sandbox-api.uber.com"
-VALID_COMMANDS = ['ride', 'products']
+
+VALID_COMMANDS = ['ride', 'products', 'get_eta', 'help', 'accept' ]
+
 # returned when ride isn't requested in the format '{origin} to {destination}'
 RIDE_REQUEST_FORMAT_ERROR = <<-STRING
   To request a ride please use the format _/uber ride [origin] to [destination]_.
   For best results, specify a city or zip code.
   Ex: _/uber ride 1061 Market Street San Francisco to 405 Howard St_
-  STRING
+STRING
 
 UNKNOWN_COMMAND_ERROR = <<-STRING
   Sorry, we didn't quite catch that command.  Try /uber help for a list.
-  STRING
+STRING
 
 HELP_TEXT = <<-STRING
   Try these commands:
   - ride [origin address] to [destination address]
   - products [address]
   - help
-  STRING
+  - get_eta
+  - accept
+STRING
 
 class UberCommand
 
@@ -38,11 +42,12 @@ class UberCommand
     return response
   end
 
-  def get_eta address
-    location = resolve_address(address.split(" "))
-    lat = location[0]
-    lng = location[1]
+  private
 
+  attr_reader :bearer_token
+
+  def get_eta address
+    lat, lng = resolve_address(address)
     uri = Addressable::URI.parse("#{BASE_URL}/v1/estimates/time")
     uri.query_values = { 'start_latitude' => lat, 'start_longitude' => lng }
 
@@ -126,10 +131,6 @@ class UberCommand
   #   JSON.parse(result)
   # end
 
-  private
-
-  attr_reader :bearer_token
-
   def help
     HELP_TEXT
   end
@@ -210,7 +211,9 @@ class UberCommand
   end
 
   def format_products_response products_response
-    return "No Uber products available for that location." unless products_response['products']
+    unless products_response['products'] && !products_response['products'].empty?
+      return "No Uber products available for that location."
+    end
     response = "The following products are available: \n"
     products_response['products'].each do |product|
       response += "- #{product['display_name']}: #{product['description']} (Capacity: #{product['capacity']})\n"
@@ -223,7 +226,8 @@ class UberCommand
   end
 
   def invalid_command? name
-    VALID_COMMANDS.include? name ? false : true
+    # VALID_COMMANDS.include? name ? false : true
+    !VALID_COMMANDS.include? name
   end
 
   def resolve_address address
