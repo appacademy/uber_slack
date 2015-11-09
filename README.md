@@ -19,14 +19,14 @@ All commands will follow the following format:
 #### Hailing a Ride
 To hail a ride, enter a 'ride' command in your Slack chat in the following format:
 ```
-/uber ride [enter address here]
+/uber ride [pickup address] to [destination address]
 ```
 
 This can handle a variety of address formats:
 ```
-/uber ride 1061 market st
-/uber ride 1061 Market St.
-/uber ride 1061 market street san francisco
+/uber ride 1061 market st to 24 willie mays plaza
+/uber ride 1061 Market St. to 24 Willie Mays Plaza
+/uber ride 1061 market street san francisco to 24 willie mays plaza san francisco
 ```
 
 And will return a JSON string notifying you of the status:
@@ -43,7 +43,7 @@ You can cancel a ride by using the 'cancel' command:
 #### Uber Vehicles
 To see the various Über vehicles that are available:
 ```
-/uber products
+/uber products [destination address]
 ```
 
 This will return a response like so:
