@@ -2,6 +2,23 @@ require 'addressable/uri'
 
 BASE_URL = "https://sandbox-api.uber.com"
 VALID_COMMANDS = ['ride', 'products']
+# returned when ride isn't requested in the format '{origin} to {destination}'
+RIDE_REQUEST_FORMAT_ERROR = <<-STRING
+  To request a ride please use the format _/uber ride [origin] to [destination]_.
+  For best results, specify a city or zip code.
+  Ex: _/uber ride 1061 Market Street San Francisco to 405 Howard St_
+  STRING
+
+UNKNOWN_COMMAND_ERROR = <<-STRING
+  Sorry, we didn't quite catch that command.  Try /uber help for a list.
+  STRING
+
+HELP_TEXT = <<-STRING
+  Try these commands:
+  - ride [origin address] to [destination address]
+  - products [address]
+  - help
+  STRING
 
 class UberCommand
 
@@ -14,7 +31,7 @@ class UberCommand
     input = user_input_string.split(" ")
     command_name = input.first
 
-    return "Unknown command" if invalid_command? command_name
+    return UNKNOWN_COMMAND_ERROR if invalid_command? command_name || command_name.nil?
 
     response = self.send(command_name, input.drop(1))
     # Send back response if command is not valid
@@ -40,7 +57,7 @@ class UberCommand
 
     seconds = JSON.parse(result)
     # seconds = JSON.parse(result)['times'].first['estimate']
-    # 
+    #
     # if seconds < 60
     #   return "Your car is arriving in less than a minute"
     # else
@@ -54,12 +71,7 @@ class UberCommand
   attr_reader :bearer_token
 
   def help
-    lines = <<-STRING
-    Try these commands:
-    - ride [origin address] to [destination address]
-    - products [address]
-    - help
-    STRING
+    HELP_TEXT
   end
 
   def accept
@@ -67,6 +79,7 @@ class UberCommand
   end
 
   def ride input_str
+    return RIDE_REQUEST_FORMAT_ERROR unless input_str =~ \sto\s
     origin_name, destination_name = input_str.split("to")
 
     origin_lat, origin_lng = resolve_address origin_name
