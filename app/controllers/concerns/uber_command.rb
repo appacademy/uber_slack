@@ -72,10 +72,10 @@ class UberCommand
     resource = uri.to_s
 
     result = RestClient.get(
-    resource,
-    authorization: bearer_header,
-    "Content-Type" => :json,
-    accept: 'json'
+      resource,
+      authorization: bearer_header,
+      "Content-Type" => :json,
+      accept: 'json'
     )
 
     JSON.parse(result)
@@ -87,10 +87,10 @@ class UberCommand
     resource = uri.to_s
 
     result = RestClient.delete(
-    resource,
-    authorization: bearer_header,
-    "Content-Type" => :json,
-    accept: 'json'
+      resource,
+      authorization: bearer_header,
+      "Content-Type" => :json,
+      accept: 'json'
     )
 
     "Ride Cancelled" if result
@@ -102,10 +102,10 @@ class UberCommand
   #   resource = uri.to_s
   #
   #   result = RestClient.get(
-  #   resource,
-  #   authorization: bearer_header,
-  #   "Content-Type" => :json,
-  #   accept: 'json'
+  #     resource,
+  #     authorization: bearer_header,
+  #     "Content-Type" => :json,
+  #     accept: 'json'
   #   )
   #
   #   JSON.parse(result)
@@ -117,10 +117,10 @@ class UberCommand
   #   resource = uri.to_s
   #
   #   result = RestClient.get(
-  #   resource,
-  #   authorization: bearer_header,
-  #   "Content-Type" => :json,
-  #   accept: 'json'
+  #     resource,
+  #     authorization: bearer_header,
+  #     "Content-Type" => :json,
+  #     accept: 'json'
   #   )
   #
   #   JSON.parse(result)
@@ -173,11 +173,12 @@ class UberCommand
         # surge = make request and get surge in price
         response = RestClient.get(
         "#{BASE_URL}/v1/estimates/price",
-        body.to_json,
-        authorization: bearer_header,
-        "Content-Type" => :json,
-        accept: 'json'
+          body.to_json,
+          authorization: bearer_header,
+          "Content-Type" => :json,
+          accept: 'json'
         )
+
         surge_multiplier = response.prices.select{ |product| product.product_id = product_id }.surge_multiplier
         Ride.create(user_id: @user_id, surge_confirmation_id: response.meta.surge_confirmation.surge_confirmation_id)
         return "Surge in price: Price has increased with #{surge_multiplier}"
