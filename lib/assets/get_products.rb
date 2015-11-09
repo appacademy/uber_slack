@@ -64,6 +64,7 @@ class UberCommand
         "Content-Type" => :json,
         accept: 'json'
       )
+      return JSON.parse(response)
     end
   end
 
