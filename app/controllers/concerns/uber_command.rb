@@ -58,15 +58,12 @@ class UberCommand
       accept: 'json'
     )
 
-    rescue Exception => e
-      return available_products
-
     return response.body
   end
 
   def products address
     lat, lng = resolve_address(address)
-    get_products_for_lat_lng lat, lng
+    format_products_response(get_products_for_lat_lng lat, lng)
   end
 
   def get_products_for_lat_lng lat, lng
@@ -81,7 +78,7 @@ class UberCommand
       accept: 'json'
     )
 
-    format_products_response JSON.parse(result.body)
+    JSON.parse(result.body)
   end
 
   def format_products_response products_response
