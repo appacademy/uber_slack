@@ -1,6 +1,7 @@
 require 'addressable/uri'
 
 BASE_URL = "https://sandbox-api.uber.com/v1"
+VALID_COMMANDS = ['ride', 'products']
 
 class UberCommand
 
@@ -11,6 +12,9 @@ class UberCommand
   def run user_input_string
     input = user_input_string.split(" ")
     command_name = input.first
+
+    return "Unknown command" if invalid_command? command_name
+
     response = self.send(command_name, input.drop(1))
     # Send back response if command is not valid
     return response
@@ -19,6 +23,7 @@ class UberCommand
   private
 
   attr_reader :bearer_token
+
 
   def products address
     geocoder_location = Geocoder.search(address)[0].data["geometry"]["location"]
@@ -44,5 +49,9 @@ class UberCommand
 
   def bearer_string
     "Bearer #{bearer_token}"
+  end
+
+  def invalid_command? name
+    VALID_COMMANDS.includes? name ? false : true
   end
 end
