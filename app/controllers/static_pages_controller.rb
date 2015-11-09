@@ -6,5 +6,10 @@ class StaticPagesController < ApplicationController
   end
 
   def admin_success
+    
+  end
+
+  def  added_to_slack
+
   end
 end
