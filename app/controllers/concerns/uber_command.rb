@@ -6,13 +6,13 @@ VALID_COMMANDS = ['ride', 'products', 'get_eta', 'help', 'accept' ]
 
 # returned when ride isn't requested in the format '{origin} to {destination}'
 RIDE_REQUEST_FORMAT_ERROR = <<-STRING
-  To request a ride please use the format _/uber ride [origin] to [destination]_.
+  To request a ride please use the format */uber ride [origin] to [destination]*.
   For best results, specify a city or zip code.
-  Ex: _/uber ride 1061 Market Street San Francisco to 405 Howard St_
+  Ex: */uber ride 1061 Market Street San Francisco to 405 Howard St*
 STRING
 
 UNKNOWN_COMMAND_ERROR = <<-STRING
-  Sorry, we didn't quite catch that command.  Try /uber help for a list.
+  Sorry, we didn't quite catch that command.  Try */uber help* for a list.
 STRING
 
 HELP_TEXT = <<-STRING
@@ -21,7 +21,6 @@ HELP_TEXT = <<-STRING
   - products [address]
   - help
   - get_eta
-  - accept
 STRING
 
 class UberCommand
@@ -169,7 +168,7 @@ class UberCommand
     parsed_body = JSON.parse(response.body)
 
     if !parsed_body["errors"]
-      return parsed_body
+      return format_200_ride_request_response parsed_body
     elsif parsed_body["errors"]["code"] == "surge"
       if @user_id
         # surge = make request and get surge in price
@@ -185,10 +184,11 @@ class UberCommand
         Ride.create(user_id: @user_id, surge_confirmation_id: response.meta.surge_confirmation.surge_confirmation_id)
         return "Surge in price: Price has increased with #{surge_multiplier}"
       else
-        return parsed_body['errors']
+        return format_response_errors parsed_body['errors']
       end
     end
   end
+
 
   def products address
     lat, lng = resolve_address(address)
@@ -208,6 +208,18 @@ class UberCommand
     )
 
     JSON.parse(result.body)
+  end
+
+  def format_200_ride_request_response response
+    eta = response['eta'].to_i / 60
+    "Thanks!  A driver will be on their way soon. We expect them to arrive in #{eta} minutes."
+  end
+
+  def format_response_errors response_errors
+    response = "The following errors occurred: \n"
+    response_errors.each do |error|
+      response += "- *#{error['title']}* \n"
+    end
   end
 
   def format_products_response products_response
