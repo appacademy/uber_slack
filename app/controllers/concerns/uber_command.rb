@@ -16,7 +16,7 @@ class UberCommand
 
     return "Unknown command" if invalid_command? command_name
 
-    response = self.send(command_name, input.drop(1).join(" "))
+    response = self.send(command_name, input.drop(1))
     # Send back response if command is not valid
     return response
   end
@@ -39,7 +39,7 @@ class UberCommand
   end
 
   def ride input_str
-    origin_name, destination_name = input_str.split(" to ")
+    origin_name, destination_name = input_str.split("to")
 
     origin_lat, origin_lng = resolve_address origin_name
     destination_lat, destination_lng = resolve_address destination_name
@@ -55,14 +55,13 @@ class UberCommand
       "product_id" => product_id
     }
 
-    # debugger
-    b
+
     response = RestClient.post(
-    "#{BASE_URL}/v1/requests",
-    body.to_json,
-    authorization: bearer_header,
-    "Content-Type" => :json,
-    accept: 'json'
+      "#{BASE_URL}/v1/requests",
+      body.to_json,
+      authorization: bearer_header,
+      "Content-Type" => :json,
+      accept: 'json'
     )
 
     parsed_body = JSON.parse(response.body)
@@ -85,16 +84,14 @@ class UberCommand
         Ride.create(user_id: @user_id, surge_confirmation_id: response.meta.surge_confirmation.surge_confirmation_id)
         return "Surge in price: Price has increased with #{surge_multiplier}"
       else
-        return "error: no user ID"
+        return parsed_body['errors']
       end
     end
   end
 
-
   def products address
-    geocoder_location = Geocoder.search(address)[0].data["geometry"]["location"]
-    lat, lng = geocoder_location['lat'], geocoder_location['lng']
-    get_products_for_lat_lng lat, lng
+    lat, lng = resolve_address(address)
+    format_products_response(get_products_for_lat_lng lat, lng)
   end
 
   def get_products_for_lat_lng lat, lng
@@ -112,6 +109,15 @@ class UberCommand
     JSON.parse(result.body)
   end
 
+  def format_products_response products_response
+    return "No Uber products available for that location." unless products_response['products']
+    response = "The following products are available: \n"
+    products_response['products'].each do |product|
+      response += "- #{product['display_name']}: #{product['description']} (Capacity: #{product['capacity']})\n"
+    end
+    response
+  end
+
   def bearer_header
     "Bearer #{bearer_token}"
   end
@@ -121,7 +127,7 @@ class UberCommand
   end
 
   def resolve_address address
-    location = Geocoder.search(address)[0].data["geometry"]["location"]
+    location = Geocoder.search(address.join(" "))[0].data["geometry"]["location"]
     [location['lat'], location['lng']]
   end
 

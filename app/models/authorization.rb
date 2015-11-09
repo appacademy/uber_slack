@@ -2,18 +2,15 @@
 #
 # Table name: authorizations
 #
-#  id                  :integer          not null, primary key
-#  slack_user_id       :string
-#  slack_auth_token    :string
-#  oauth_session_token :string
-#  uber_user_id        :integer
-#  uber_auth_token     :string
-#  created_at          :datetime         not null
-#  updated_at          :datetime         not null
-#  session_token       :string
-#  webhook             :string
+#  id              :integer          not null, primary key
+#  slack_user_id   :string
+#  uber_auth_token :string
+#  created_at      :datetime         not null
+#  updated_at      :datetime         not null
+#  session_token   :string
 #
 
+# slack_user_id, session_token, uber_auth_token
 class Authorization < ActiveRecord::Base
   has_many :rides,
     class_name: "Ride",
