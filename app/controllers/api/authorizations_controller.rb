@@ -109,6 +109,6 @@ au = Authorization.find_by(session_token: session[:session_token])
   def uber_oauth_str_url(slack_user_id)
   	username = params[:user_name]
   	url = "#{api_activate_url}?user_id=#{slack_user_id}"
-  	"Hey #{username}! Looks like this is your first ride from Slack. Go <#{url}|here> to activate."
+  	"Hey @#{username}! Looks like this is your first ride from Slack. Go <#{url}|here> to activate."
   end
 end
