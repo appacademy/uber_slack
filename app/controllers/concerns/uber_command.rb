@@ -52,6 +52,6 @@ class UberCommand
   end
 
   def invalid_command? name
-    VALID_COMMANDS.includes? name ? false : true
+    VALID_COMMANDS.include? name ? false : true
   end
 end
