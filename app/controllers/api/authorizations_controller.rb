@@ -32,7 +32,7 @@ class Api::AuthorizationsController < ApplicationController
         .update(uber_auth_token: access_token)
 
      # sign up success, prompt user that they can order uber now
-			response_url = session[:slack_response_url]
+			response_url = Authorization.find_by_session_token(session[:session_token]).slack_response_url
 			slack_response_params = {
 				text: 'You can now order an Uber from Slack!'
 			}
@@ -45,10 +45,7 @@ class Api::AuthorizationsController < ApplicationController
 	# when authorizing with Uber:  first save session_token, then redirect to Uber OAuth page.
   	auth = Authorization.find_by(slack_user_id: params[:user_id])
   	session[:session_token] = Authorization.create_session_token
-		session[:slack_response_url] = slack_params[:response_url]
-
-  	auth.update(session_token: session[:session_token])
-
+  	auth.update(session_token: session[:session_token]) #refactor
   	redirect_to "https://login.uber.com/oauth/v2/authorize?response_type=code&client_id=#{ENV['uber_client_id']}"
   end
 
@@ -91,7 +88,8 @@ class Api::AuthorizationsController < ApplicationController
   end
 
   def register_new_user
-  	Authorization.create!(slack_user_id: params[:user_id])
+		# save the slack response url so we can send an alert upon uber auth success
+  	Authorization.create!(slack_user_id: params[:user_id], slack_response_url: params[:response_url])
   end
 
   def uber_oauth_str_url(slack_user_id)
