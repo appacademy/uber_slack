@@ -256,7 +256,7 @@ class UberCommand
   end
 
   def resolve_address address
-    location = Geocoder.search(address)
+    location = Geocoder.search(address).first
 
     if location.blank?
       LOCATION_NOT_FOUND_ERROR
