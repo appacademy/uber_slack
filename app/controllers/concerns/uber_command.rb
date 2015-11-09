@@ -38,13 +38,10 @@ class UberCommand
 
   def run user_input_string
     input = user_input_string.split(" ")
-<<<<<<< HEAD
     command_name = input.first.downcase
 
-=======
-    command_name = input.first
     command_argument = input.drop(1)
->>>>>>> 19c6d7838d165937967fe9932cbb4390a19c2f2f
+
     return UNKNOWN_COMMAND_ERROR if invalid_command? command_name || command_name.nil?
 
     response = self.send(command_name, command_argument)
