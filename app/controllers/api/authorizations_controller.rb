@@ -29,22 +29,25 @@ class Api::AuthorizationsController < ApplicationController
     }
     # post request to uber
     resp = RestClient.post('https://login.uber.com/oauth/v2/token', post_params)
-    # resp = Net::HTTP.post_form(URI.parse('https://login.uber.com/oauth/v2/token'), post_params)
 
     access_token = JSON.parse(resp.body)['access_token']
 
     if access_token.nil?
+    	# error handling
     	render json: resp.body
     else
 	    Authorization.find_by(session_token: session[:session_token])
                  	 .update(uber_auth_token: access_token)
 
-	    # render json: resp.body
+     # sign up success, prompt user that they can order uber now
+au = Authorization.find_by(session_token: session[:session_token])
+	    render text: au.to_json
 	  end
   end
 
   def use_uber
   	# here order car
+  	render text: "ready to pickup"
   end
 
   def establish_session
@@ -89,12 +92,22 @@ class Api::AuthorizationsController < ApplicationController
   	return if auth && auth.uber_registered?
 
   	if auth.nil?
-  		auth = Authorization.new(slack_user_id: params[:user_id])
-  		auth.save
+  		register_new_user
   	end
 
   	if !auth.uber_registered?
-  		render text: "#{api_activate_url}?user_id=#{auth.slack_user_id}"
+  		render text: uber_oauth_str_url(auth.slack_user_id)
   	end
+  end
+
+  def register_new_user
+  	auth = Authorization.new(slack_user_id: params[:user_id])
+		auth.save!
+  end
+
+  def uber_oauth_str_url(slack_user_id)
+  	username = params[:user_name]
+  	url = "#{api_activate_url}?user_id=#{slack_user_id}"
+  	"Hey #{username}! Looks like this is your first ride from Slack. Go <a href='#{url}'>here</a> to activate."
   end
 end
