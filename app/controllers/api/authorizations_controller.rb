@@ -88,7 +88,7 @@ class Api::AuthorizationsController < ApplicationController
     else
       access_token = resp['access_token']
       #add static success.
-      render text: "Your team is now connected to Slack."
+      redirect_to static_pages_admin_success
     end
   end
 
