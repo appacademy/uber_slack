@@ -276,5 +276,5 @@ class UberCommand
     end
   end
 
-  alias_method :product, :products
+  alias_method :products, :product
 end
