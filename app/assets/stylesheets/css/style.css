@@ -4,22 +4,25 @@ Author URL: http://w3layouts.com
 License: Creative Commons Attribution 3.0 Unported
 License URL: http://creativecommons.org/licenses/by/3.0/
 --*/
-h4, h5, h6,
+
+.adjust-padding {
+  padding-top:2em !important;
+}
+
+.gray {
+  background-color: rgba(20,20,20,0.6) !important;
+  padding-top:1em !important;
+  padding-bottom:1em !important;
+}
+
+h4 {margin-top: 0; color: #1EACC7;}
+ h5, h6 {margin-top: 0; color: hsla(0,0%,75%,1);}
 h1, h2, h3 {margin-top: 0;}
 ul, ol {margin: 0;}
 p {margin: 0;}
 html, body{
- font-family: 'Oxygen-Regular';
    font-size: 100%;
    background: url("https://d1a3f4spazzrp4.cloudfront.net/web-fresh/cities-heros/worldmap-1440-900.gif");
-}
-@font-face {
-    font-family: 'Viga-Regular';
-    src:url(../fonts/Viga-Regular.ttf) format('truetype');
-}
-@font-face {
-    font-family:  'Oxygen-Regular';
-    src:url(../fonts/Oxygen-Regular.ttf) format('truetype');
 }
 a {
   text-decoration: none;
@@ -83,7 +86,7 @@ span.menu {
 .logo h1 {
   text-align: center;
   font-size: 2.5em;
-  font-family: 'Viga-Regular';
+  font-family: 'times new roman';
   margin: 0em;
 }
 .logo h1 a{
@@ -340,17 +343,6 @@ input:focus {
 }
 /*--top nav end here--*/
 /*--banner start here--*/
-.banner {
-  background: url(../images/veg.jpg)no-repeat;
-  background-size: cover;
-  min-height: 700px;
-  padding: 13em 0em 0em 0em;
-}
-.banner-two {
-  background: url(../images/veg.jpg)no-repeat;
-  background-size: cover;
-  min-height: 250px;
-}
 .banner-main {
   width: 50%;
   margin: 0em auto 0em;
@@ -369,7 +361,7 @@ input:focus {
   width: 100%;
   margin: 0 auto;
   padding-bottom: 0.3em;
-  font-family: 'Viga-Regular';
+  font-family: 'arial';
 }
 .banner-main p {
   font-size: 0.95em;
@@ -382,11 +374,13 @@ input:focus {
   font-size: 1em;
   font-weight: 400;
   color: #fff;
-  padding: 0.61em 0em 0.61em 0em;
+  padding: 0.61em 0.61em 0.61em 0.61em;
   display: block;
-  border-top: 1px solid #fff;
+  /* border-top: 1px solid #fff; */
+  background: hsla(0,0%,66%,.3);
   width: 22%;
   margin: 1em auto 0em;
+  border: 3px solid hsl(0, 0%, 50%);
 }
 /*--banner end here--*/
 /*--bann info start here--*/
@@ -410,13 +404,13 @@ span.glyphicon.glyphicon-grain {
   font-size: 1em;
   font-weight: 500;
   color: #956295;
-  font-family: 'Viga-Regular';
+  font-family: 'arial';
 }
 .bann-grid h3 {
   font-size: 1.5em;
   font-weight: 500;
   color: #000;
-  font-family: 'Viga-Regular';
+  font-family: 'arial';
 }
 .bann-grid p {
   font-size: 0.95em;
@@ -549,14 +543,14 @@ span.glyphicon.glyphicon-eye-open {
   font-weight: 500;
   color: #956295;
   margin: 0.5em 0em 0.8em 0em;
-  font-family:'Viga-Regular';
+  font-family:'arial';
 }
 .wedo-grid h4 {
   font-size: 1.2em;
   font-weight: 500;
   color: #f4d638;
   line-height:1.5em;
-  font-family:'Viga-Regular';
+  font-family:'arial';
 }
 .wedo-grid p {
   font-size: 0.95em;
@@ -588,10 +582,6 @@ span.glyphicon.glyphicon-circle-arrow-right:hover {
 }
 /*--//wedo--*/
 /*--agro strip start here--*/
-.agro-strip {
-  background: url(../images/strip.jpg)no-repeat;
-  background-size: cover;
-}
 .agro-strip-main {
   text-align: center;
   padding: 5em 0em 0em 0em;
@@ -616,7 +606,7 @@ span.glyphicon.glyphicon-circle-arrow-right:hover {
   color: #fff;
   display: block;
   /*background: #956295;*/
-  width: 10%;
+  /*width: 10%;*/
   margin: auto, auto, 0em;
 }
 .agro-strip-main a:hover {
@@ -647,7 +637,7 @@ span.glyphicon.glyphicon-circle-arrow-right:hover {
   font-size: 2em;
   color: #FFFFFF;
   margin: 0em 0em 0.6em 0em;
-  font-family:'Viga-Regular';
+  font-family:'arial';
 }
 .ftr-grd p {
   font-size: 0.95em;
@@ -711,18 +701,18 @@ span.glyphicon.glyphicon-circle-arrow-right:hover {
 }
 .copy-right {
   text-align: center;
-  padding: 3em 0em 0em 0em;
+  padding: 0em 0em 2em 0em;
+  color: white;
 }
 .copy-right p {
   font-size: 1em;
   font-weight: 400;
-  color: #fff;
 }
 .copy-right p a {
   color: #f4d638;
 }
 .copy-right p a:hover {
-  color: #fff;
+  color: white;
   text-decoration: none;
 }
 /*--//footer--*/
@@ -739,14 +729,14 @@ span.glyphicon.glyphicon-circle-arrow-right:hover {
 	font-weight: 400;
 	color: #956295;
 	margin: 0px 0px 15px 0px;
-	font-family:'Viga-Regular';
+	font-family:'arial';
 }
 .about-left h4 {
 	font-size: 1.2em;
 	font-weight: 400;
 	color: #413F3F;
 	margin: 0px 0px 5px 0px;
-	font-family:'Viga-Regular';
+	font-family:'arial';
 }
 .about-left p {
 	font-size: 0.95em;
@@ -760,7 +750,7 @@ span.glyphicon.glyphicon-circle-arrow-right:hover {
 	font-weight: 500;
 	color: #000;
 	margin: 0px 0px 12px 13px;
-	font-family:'Viga-Regular';
+	font-family:'arial';
 }
 .team {
 	padding-bottom: 4em;
@@ -796,7 +786,7 @@ span.glyphicon.glyphicon-circle-arrow-right:hover {
   font-weight: 400;
   color: #f4d638;
   margin: 0px 0px 15px 0px;
-  font-family:'Viga-Regular';
+  font-family:'arial';
 }
 .histort p {
   font-size: 0.95em;
@@ -810,7 +800,7 @@ span.glyphicon.glyphicon-circle-arrow-right:hover {
 /*--single--*/
 .single-grid h4{
 	font-size:1.5em;
-	font-family:'Viga-Regular';
+	font-family:'arial';
 	margin: 0.7em 0;
 	color:#956295;
 }
@@ -829,7 +819,7 @@ span.glyphicon.glyphicon-circle-arrow-right:hover {
 .comments-top h3,.comment-bottom h3{
 	font-size:2.5em;
 	color:#f4d638;
-	font-family:'Viga-Regular';
+	font-family:'arial';
 	 margin-bottom: 0.5em;
 }
 .single {
@@ -838,7 +828,7 @@ span.glyphicon.glyphicon-circle-arrow-right:hover {
 h4.media-heading{
 	font-size:1.5em;
 	color:#956295;
-	font-family:'Viga-Regular';
+	font-family:'arial';
 }
 .media-body p{
 	color: #7c7c7c;
@@ -920,7 +910,7 @@ i.glyphicon.glyphicon-comment {
   font-weight: 400;
   color: #956295;
   margin: 0px 0px 15px 0px;
-  font-family:'Viga-Regular';
+  font-family:'arial';
 }
 .services-top p {
   font-size: 0.95em;
@@ -935,7 +925,7 @@ i.glyphicon.glyphicon-comment {
   font-weight: 400;
   color: #000;
   margin: 1.2em 0em 0.5em 0em ;
-  font-family:'Viga-Regular';
+  font-family:'arial';
 }
 .main-serv-grid p {
   font-size: 0.95em;
@@ -951,14 +941,14 @@ i.glyphicon.glyphicon-comment {
   font-weight: 300;
   color: #000;
   margin: 0px 0px 15px 13px;
-  font-family:'Viga-Regular';
+  font-family:'arial';
 }
 .other-serv-grid h4 {
   font-size: 1.1em;
   font-weight: 400;
   color: #956295;
   margin: 0.5em 0em 0.5em 0em;
-  font-family:'Viga-Regular';
+  font-family:'arial';
 }
 .other-serv-grid p {
   font-size: 0.95em;
@@ -997,7 +987,7 @@ h3.typo1 {
     font-size: 2.5em;
   color: #956295;
   text-align: center;
-   font-family:'Viga-Regular';
+   font-family:'arial';
 }
 /*--//typo--*/
 /*--gallery start here--*/
@@ -1016,7 +1006,7 @@ h3.typo1 {
   font-weight: 400;
   color: #956295;
   margin: 0px 0px 15px 0px;
-  font-family:'Viga-Regular';
+  font-family:'arial';
 }
 .gallery-top p {
   font-size: 0.95em;
@@ -1058,7 +1048,7 @@ h3.typo1 {
   font-weight: 500;
   margin: 0 0 0.8em 0;
   letter-spacing: 1px;
-  font-family:'Viga-Regular';
+  font-family:'arial';
 }
 .contact-infom h4 {
   color: #000;
@@ -1066,13 +1056,13 @@ h3.typo1 {
   font-weight: 500;
   margin: 0 0 0.8em 0;
   letter-spacing: 1px;
-  font-family:'Viga-Regular';
+  font-family:'arial';
 }
 .contact-top h3 {
   font-size: 2.5em;
   font-weight: 400;
   color: #956295;
-  font-family:'Viga-Regular';
+  font-family:'arial';
 }
 .contact-top p {
   font-size: 0.95em;
@@ -1169,16 +1159,23 @@ h3.typo1 {
 }
 @media(max-width:1366px){
 .banner {
-  min-height: 400px;
-  padding: 10em 0em 0em 0em;
+  min-height: 200px;
+  padding: 5em 0em 0em 0em;
 }
 }
 @media(max-width:1280px){
 
 }
+.slack-integrate{
+  width: 139px;
+  right: 50%;
+  position: absolute;
+  margin-right: -69.5px;
+  display: inline;
+}
 @media(max-width:1024px){
 .banner {
-  min-height: 500px;
+  min-height: 200px;
 }
 .banner-main {
   padding: 2em 1em 2em 1em;
@@ -1224,9 +1221,7 @@ h3.typo1 {
 .bann-grid a {
   width: 22%;
 }
-#slack-integrate{
-  width: 100%;
-}
+
 .ser-btn a {
   width: 46%;
 }
@@ -1288,8 +1283,8 @@ ul.res li a:hover,ul.res li a.active{
   padding: 1em 0em 1em 0em;
 }
 .banner {
-  min-height: 350px;
-  padding: 5em 0em 0em 0em;
+  min-height: 150px;
+  padding: 5em 0em 0em 0em;s
 }
 .banner-main {
   padding: 1.5em 1em 1.5em 1em;
@@ -1509,7 +1504,7 @@ h1.grid2 {
   width: 100%;
 }
 .agro-strip {
-  min-height: 265px;
+  min-height: 65px;
 }
 .agro-strip-main a {
   width: 16%;
@@ -1626,6 +1621,7 @@ span.ph-numb {
 }
 .logo h1 {
   font-size: 2.2em;
+  font-family: "Maven";
 }
 span.menu img {
   width: 6%;
@@ -1642,7 +1638,7 @@ span.menu img {
   font-size: 1.3em;
 }
 .banner {
-  min-height: 245px;
+  min-height: 100px;
   padding: 3em 0em 0em 0em;
 }
 .banner-main p {
@@ -1691,7 +1687,7 @@ span.glyphicon.glyphicon-grain {
   padding: 2.5em 0em 0em 0em;
 }
 .agro-strip {
-  min-height: 240px;
+  min-height: 100px;
 }
 .latest-grid p {
   font-size: 0.9em;
@@ -2217,7 +2213,23 @@ h4.media-heading {
 }
 }
 .logo h1{
-  font-family: "ff-clan-web-pro-wide",sans-serif;
+  font-family: "Maven",sans-serif;
   color: white;
   text-shadow: 2px 2px #000000;
+}
+#uber-banner{
+  margin-left: 25%;
+  margin-bottom: -5%;
+}
+
+.learn-more {
+  border: 3px solid lime;
+  min-width: 150px;
+}
+.container {
+  position: relative;
+}
+
+.agro-strip-main a {
+  width: 100%;
 }
