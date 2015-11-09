@@ -207,9 +207,15 @@ class UberCommand
     if address.blank?
       return PRODUCTS_REQUEST_FORMAT_ERROR
     end
-    return address
-    lat, lng = resolve_address(address)
-    format_products_response(get_products_for_lat_lng lat, lng)
+
+    resolved_add = resolve_address(address)
+
+    if resolved_add == LOCATION_NOT_FOUND_ERROR
+      LOCATION_NOT_FOUND_ERROR
+    else
+      lat, lng = resolved_add
+      format_products_response(get_products_for_lat_lng lat, lng)
+    end
   end
 
   def get_products_for_lat_lng lat, lng
@@ -265,7 +271,6 @@ class UberCommand
     if location.blank?
       LOCATION_NOT_FOUND_ERROR
     else
-      return location
       location = location.data["geometry"]["location"]
       [location['lat'], location['lng']]
     end
