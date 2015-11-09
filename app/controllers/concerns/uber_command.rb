@@ -38,14 +38,15 @@ class UberCommand
     accept: 'json'
     )
 
-    seconds = JSON.parse(result)['times'].first['estimate']
-
-    if seconds < 60
-      return "Your car is arriving in less than a minute"
-    else
-      minutes = seconds/60 #Rounding down by a minute
-      return "Your car is arriving in #{minutes} minutes"
-    end
+    seconds = JSON.parse(result)
+    # seconds = JSON.parse(result)['times'].first['estimate']
+    # 
+    # if seconds < 60
+    #   return "Your car is arriving in less than a minute"
+    # else
+    #   minutes = seconds/60 #Rounding down by a minute
+    #   return "Your car is arriving in #{minutes} minutes"
+    # end
   end
 
   private
