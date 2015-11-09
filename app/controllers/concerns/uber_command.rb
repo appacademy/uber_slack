@@ -16,7 +16,7 @@ class UberCommand
 
     return "Unknown command" if invalid_command? command_name
 
-    response = self.send(command_name, input.drop(1).join(" "))
+    response = self.send(command_name, input.drop(1))
     # Send back response if command is not valid
     return response
   end
@@ -56,11 +56,11 @@ class UberCommand
     }
 
     response = RestClient.post(
-    "#{BASE_URL}/v1/requests",
-    body.to_json,
-    authorization: bearer_header,
-    "Content-Type" => :json,
-    accept: 'json'
+      "#{BASE_URL}/v1/requests",
+      body.to_json,
+      authorization: bearer_header,
+      "Content-Type" => :json,
+      accept: 'json'
     )
 
     parsed_body = JSON.parse(response.body)
@@ -81,11 +81,10 @@ class UberCommand
         Ride.create(user_id: @user_id, surge_confirmation_id: response.meta.surge_confirmation.surge_confirmation_id)
         return "Surge in price: Price has increased with #{surge_multiplier}"
       else
-        return "error: no user ID"
+        return parsed_body['errors']
       end
     end
   end
-
 
   def products address
     lat, lng = resolve_address(address)
