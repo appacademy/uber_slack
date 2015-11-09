@@ -24,6 +24,15 @@ class UberCommand
 
   attr_reader :bearer_token
 
+  def help
+    lines = <<-STRING
+      Try these commands:
+      - ride [origin address] to [destination address]
+      - products [address]
+      - help
+    STRING
+  end
+
   def ride input_str
     origin_name, destination_name = input_str.split("to")
 
