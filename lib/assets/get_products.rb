@@ -2,6 +2,7 @@ class UberCommand
 
   def initialize (bearer_token)
     @bearer_token = bearer_token
+    @rides = {}
   end
 
   def run user_input_string
