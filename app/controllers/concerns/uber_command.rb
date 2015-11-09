@@ -195,7 +195,7 @@ class UberCommand
 
 
   def products address
-    if address.nil? || address == ""
+    if address.nil? || address == "" || address == "products"
       return "Please type in an address with your command ('/uber products [address]')."
     end
     lat, lng = resolve_address(address)
@@ -251,6 +251,9 @@ class UberCommand
 
   def resolve_address address
     location = Geocoder.search(address.join(" "))[0].data["geometry"]["location"]
+    if location.nil?
+      return "Please enter a valid address. Be as specific as possible (e.g. include city)."
+    end
     [location['lat'], location['lng']]
   end
 
