@@ -26,7 +26,7 @@ class Api::AuthorizationsController < ApplicationController
       'code' 	      	=> params[:code]
     }
     # post request to uber to trade code for user access token
-    resp = RestClient.post('https://login.uber.com/oauth/v2/token', post_params)
+    resp = RestClient.post(ENV['uber_oauth_url'], post_params)
 
     if resp.code == 500
       render text: "Sorry, something went wrong on our end."
@@ -68,7 +68,7 @@ class Api::AuthorizationsController < ApplicationController
 
     auth.update(session_token: session[:session_token])
 
-    redirect_to "https://login.uber.com/oauth/v2/authorize?response_type=code&client_id=#{ENV['uber_client_id']}&scope=request+surge_accept"
+    redirect_to "#{ENV['uber_authorize_url']}#{ENV['uber_client_id']}&scope=request+surge_accept"
   end
 
   def connect_slack
@@ -80,7 +80,7 @@ class Api::AuthorizationsController < ApplicationController
       code: slack_params[:code]
     }
 
-    resp = RestClient.post('https://slack.com/api/oauth.access', slack_auth_params)
+    resp = RestClient.post(ENV['slack_oauth_url'], slack_auth_params)
 
     if resp.code == 500
       render text: "Sorry, something went wrong on our end."
@@ -127,7 +127,7 @@ class Api::AuthorizationsController < ApplicationController
       'grant_type'    => 'refresh_token',
       'refresh_token' => auth.uber_refresh_token
     }
-    resp = RestClient.post('https://login.uber.com/oauth/v2/token', post_params)
+    resp = RestClient.post(ENV['uber_oauth_url'], post_params)
 
     if resp.code == 500
       render text: "Sorry, something went wrong on our end."
