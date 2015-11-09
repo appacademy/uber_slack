@@ -5,6 +5,8 @@ VALID_COMMANDS = ['ride', 'products']
 
 class UberCommand
 
+
+
   def initialize bearer_token, user_id = nil
     @user_id = user_id
     @bearer_token = bearer_token
