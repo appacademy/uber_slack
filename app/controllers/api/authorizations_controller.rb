@@ -45,7 +45,7 @@ class Api::AuthorizationsController < ApplicationController
      # sign up success, prompt user that they can order uber now
 			response_url = Authorization.find_by_session_token(session[:session_token]).slack_response_url
 			slack_response_params = {
-				text: 'You can now order an Uber from Slack!'
+				body: 'You can now order an Uber from Slack!'
 			}
 			RestClient.post(response_url, slack_response_params)
 	    render text: "Successfully connected!"
