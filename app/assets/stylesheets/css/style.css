@@ -4,9 +4,20 @@ Author URL: http://w3layouts.com
 License: Creative Commons Attribution 3.0 Unported
 License URL: http://creativecommons.org/licenses/by/3.0/
 --*/
+
+.adjust-padding {
+  padding-top:2em !important;
+}
+
+.gray {
+  background-color: rgba(20,20,20,0.6) !important;
+  padding-top:1em !important;
+  padding-bottom:1em !important;
+}
+
 h4 {margin-top: 0; color: #1EACC7;}
  h5, h6 {margin-top: 0; color: hsla(0,0%,75%,1);}
-h1, h2, h3 {margin-top: 0;}
+h1, h2, h3 {margin-top: 0; color: #FFF; text-align: center;}
 ul, ol {margin: 0;}
 p {margin: 0;}
 html, body{
@@ -1273,7 +1284,7 @@ ul.res li a:hover,ul.res li a.active{
 }
 .banner {
   min-height: 150px;
-  padding: 5em 0em 0em 0em;s
+  padding: 5em 0em 0em 0em;
 }
 .banner-main {
   padding: 1.5em 1em 1.5em 1em;

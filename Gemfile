@@ -2,6 +2,8 @@ source 'https://rubygems.org'
 
 # Bundle edge Rails instead: gem 'rails', github: 'rails/rails'
 gem 'rails', '4.2.1'
+gem 'unicorn'
+gem "rack-handlers"
 # Use postgresql as the database for Active Record
 gem 'pg'
 # Use SCSS for stylesheets
@@ -26,6 +28,8 @@ gem 'geocoder'
 gem 'figaro'
 
 gem 'rest-client'
+gem 'addressable'
+
 
 # Use ActiveModel has_secure_password
 # gem 'bcrypt', '~> 3.1.7'
@@ -42,7 +46,7 @@ end
 
 group :development, :test do
   # Call 'byebug' anywhere in the code to stop execution and get a debugger console
-  gem 'rails-pry'
+  gem 'pry-rails'
   gem 'better_errors'
   gem 'binding_of_caller'
 
