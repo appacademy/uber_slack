@@ -136,8 +136,10 @@ class UberCommand
         "Content-Type" => :json,
         accept: 'json'
       )
-      # format_200_ride_request_response(JSON.parse(response.body))
-      "Thank you. Keep an eye on your phone while we look for a driver to pick you up."
+      success_msg = format_200_ride_request_response(JSON.parse(response.body))
+
+      reply_to_slack(success_msg)
+      ""
     end
   end
 
@@ -189,10 +191,15 @@ class UberCommand
         accept: :json
       )
       success_msg = format_200_ride_request_response(JSON.parse(response.body))
-      slack_response = { text: success_msg }
-
-      RestClient.post(@response_url, slack_response.to_json, "Content-Type" => :json)
+      reply_to_slack(success_msg)
+      ""
     end
+  end
+
+  def reply_to_slack(response)
+      payload = { text: response}
+
+      RestClient.post(@response_url, payload.to_json, "Content-Type" => :json)
   end
 
   def products address = nil
@@ -232,7 +239,7 @@ class UberCommand
     estimate_msg = "in 1 minute" if eta == 1
     estimate_msg = "in #{eta} minutes" if eta > 1
 
-    "Thanks! A driver will be on their way soon. We expect them to arrive #{estimate_msg}."
+    "Thanks! We are looking for a driver and we expect them to arrive #{estimate_msg}."
   end
 
   def format_response_errors response_errors
