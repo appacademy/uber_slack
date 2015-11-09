@@ -275,6 +275,4 @@ class UberCommand
       [location['lat'], location['lng']]
     end
   end
-
-  alias_method :products, :product
 end
