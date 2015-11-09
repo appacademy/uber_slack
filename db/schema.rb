@@ -27,4 +27,11 @@ ActiveRecord::Schema.define(version: 20151109014835) do
 
   add_index "authorizations", ["uber_auth_token"], name: "index_authorizations_on_uber_auth_token", using: :btree
 
+  create_table "rides", force: :cascade do |t|
+    t.integer  "user_id",               null: false
+    t.string   "surge_confirmation_id"
+    t.datetime "created_at",            null: false
+    t.datetime "updated_at",            null: false
+  end
+
 end
