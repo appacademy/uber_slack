@@ -184,8 +184,7 @@ class UberCommand
         "Content-Type" => :json,
         accept: :json
       )
-
-      return JSON.parse(response.body)
+      format_200_ride_request_response(JSON.parse(response.body))
     end
   end
 
