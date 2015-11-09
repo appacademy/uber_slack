@@ -36,15 +36,35 @@ class UberCommand
 
   def accept
     @ride = Ride.where(user_id: @user_id).order(:updated_at).last
+    surge_confirmation_id = @ride.surge_confirmation_id
+    product_id = @ride.product_id
+    start_latitude = @ride.start_latitude
+    start_longitude = @ride.start_longitude
+    end_latitude = @ride.end_latitude
+    end_longitude = @ride.end_longitude
+
     if (Time.now - @ride.updated_at) > 5.minutes
-      @ride.delete!
       return ride "1061 Market Street, San Francisco, CA to 1 Mandor Dr, San Francisco, CA"
     else
-      return ride "1061 Market Street, San Francisco, CA to 1 Mandor Dr, San Francisco, CA", @ride.surge_confirmation_id
+      body = {
+        "start_latitude" => start_latitude,
+        "start_longitude" => start_longitude,
+        "end_latitude" => end_latitude,
+        "end_longitude" => end_longitude,
+        "product_id" => product_id
+      }
+
+      response = RestClient.post(
+        "#{BASE_URL}/v1/requests",
+        body.to_json,
+        authorization: bearer_header,
+        "Content-Type" => :json,
+        accept: 'json'
+      )
     end
   end
 
-  def ride input_str, surge_id = nil
+  def ride input_str
     origin_name, destination_name = input_str.split(" to ")
 
     origin_lat, origin_lng = resolve_address origin_name
@@ -52,6 +72,10 @@ class UberCommand
 
     available_products = get_products_for_lat_lng(origin_lat, origin_lng)
     product_id = available_products["products"].first["product_id"]
+
+    response = RestClient.post(
+      ""
+    )
 
     body = {
       "start_latitude" => origin_lat,
@@ -61,44 +85,30 @@ class UberCommand
       "product_id" => product_id
     }
 
-    debugger
-    body["surge_confirmation_id"] = surge_id if surge_id
-
-    # debugger
-    begin
-      response = RestClient.post(
-      "#{BASE_URL}/v1/requests",
+    response = RestClient.post(
+      "#{BASE_URL}/v1/requests/estimates",
       body.to_json,
       authorization: bearer_header,
       "Content-Type" => :json,
       accept: 'json'
+    )
+
+    surge_multiplier = response.body["price"]["surge_multiplier"]
+    surge_confirmation_id = response.body["price"]["surge_confirmation_id"]
+
+    if surge_multiplier > 1
+      Ride.create(
+        user_id: @user_id,
+        surge_confirmation_id: surge_confirmation_id,
+        :start_latitude => origin_lat,
+        :start_longitude => origin_lng,
+        :end_latitude => destination_lat,
+        :end_longitude => destination_lng,
+        :product_id => product_id
       )
-
-
-      parsed_body = JSON.parse(response.body)
-      return parsed_body
-    rescue RestClient::Conflict => e
-      if @user_id
-        # surge = make request and get surge in price
-        uri = Addressable::URI.parse("#{BASE_URL}/v1/estimates/price")
-        uri.query_values = body
-        resource = uri.to_s
-
-        response = RestClient.get(
-        resource,
-        authorization: bearer_header,
-        "Content-Type" => :json,
-        accept: 'json'
-        )
-
-        parsed_response = JSON.parse(response.body)
-        surge_multiplier = parsed_response["prices"].select{ |product| product["product_id"] == product_id }[0]["surge_multiplier"]
-        # debugger
-        Ride.create(user_id: @user_id, surge_confirmation_id: JSON.parse(e.response)["meta"]["surge_confirmation"]["surge_confirmation_id"])
-        return "Surge in price: Price has increased with #{surge_multiplier}"
-      else
-        return "error: no user ID"
-      end
+      return "#{surge_multiplier} surge is in effect. Reply 'Accept' to confirm the ride."
+    else
+      # request a ride.
     end
   end
 
