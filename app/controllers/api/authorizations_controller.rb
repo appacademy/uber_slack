@@ -57,7 +57,7 @@ class Api::AuthorizationsController < ApplicationController
 
     auth.update(session_token: session[:session_token])
 
-    redirect_to "https://login.uber.com/oauth/v2/authorize?response_type=code&client_id=#{ENV['uber_client_id']}"
+    redirect_to "https://login.uber.com/oauth/v2/authorize?response_type=code&client_id=#{ENV['uber_client_id']}&scope=request+surge_accept"
   end
 
   def connect_slack
