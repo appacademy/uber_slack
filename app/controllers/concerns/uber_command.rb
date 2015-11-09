@@ -11,6 +11,12 @@ RIDE_REQUEST_FORMAT_ERROR = <<-STRING
   Ex: */uber ride 1061 Market Street San Francisco to 405 Howard St*
 STRING
 
+PRODUCTS_REQUEST_FORMAT_ERROR = <<-STRING
+  To see a list of products please use the format */uber products [address]*.
+  For best results, specify a city or zip code.
+  Ex: */uber products 1061 Market Street San Francisco
+STRING
+
 UNKNOWN_COMMAND_ERROR = <<-STRING
   Sorry, we didn't quite catch that command.  Try */uber help* for a list.
 STRING
@@ -33,10 +39,10 @@ class UberCommand
   def run user_input_string
     input = user_input_string.split(" ")
     command_name = input.first
-
+    command_argument = input.drop(1)
     return UNKNOWN_COMMAND_ERROR if invalid_command? command_name || command_name.nil?
 
-    response = self.send(command_name, input.drop(1))
+    response = self.send(command_name, command_argument)
     # Send back response if command is not valid
     return response
   end
@@ -130,7 +136,7 @@ class UberCommand
   #   JSON.parse(result)
   # end
 
-  def help
+  def help(args = nil)   # accept and ignore extra args after help
     HELP_TEXT
   end
 
@@ -190,7 +196,8 @@ class UberCommand
   end
 
 
-  def products address
+  def products address = nil
+    return PRODUCTS_REQUEST_FORMAT_ERROR unless address
     lat, lng = resolve_address(address)
     format_products_response(get_products_for_lat_lng lat, lng)
   end
