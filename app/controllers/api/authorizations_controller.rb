@@ -16,6 +16,7 @@ class Api::AuthorizationsController < ApplicationController
   end
 
 
+
   def connect_uber
     # After user has clicked "yes" on Uber OAuth page
     post_params = {
