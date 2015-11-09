@@ -195,7 +195,7 @@ class UberCommand
 
 
   def products address
-    if !address
+    if address.nil? || address == ""
       return "Please type in an address with your command ('/uber products [address]')."
     end
     lat, lng = resolve_address(address)
