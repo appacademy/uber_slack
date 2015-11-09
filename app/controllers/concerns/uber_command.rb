@@ -202,9 +202,11 @@ class UberCommand
   end
 
   def products address = nil
-    if address.nil? || address == "" || address == "products"
+    if address.blank?
       return PRODUCTS_REQUEST_FORMAT_ERROR
     end
+
+    return address
     lat, lng = resolve_address(address)
     format_products_response(get_products_for_lat_lng lat, lng)
   end
@@ -264,5 +266,5 @@ class UberCommand
     [location['lat'], location['lng']]
   end
 
-  alias_method :product, :products
+  # alias_method :product, :products
 end
