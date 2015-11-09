@@ -115,7 +115,10 @@ class UberCommand
     end_longitude = @ride.end_longitude
 
     if (Time.now - @ride.updated_at) > 5.minutes
-      return ride "1061 Market Street, San Francisco, CA to 1 Mandor Dr, San Francisco, CA"
+      # TODO: Break out address resolution in #ride so that we can pass lat/lngs directly.
+      start_location = "#{@ride.start_latitude}, #{@ride.start_longitude}"
+      end_location = "#{@ride.end_latitude}, #{@ride.end_longitude}"
+      return ride "#{start_location} to #{end_location}"
     else
       body = {
         "start_latitude" => start_latitude,
