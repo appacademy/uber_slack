@@ -138,9 +138,10 @@ class UberCommand
     @ride = Ride.new
   end
 
-  def ride input_str
-    return RIDE_REQUEST_FORMAT_ERROR unless input_str =~ /\sto\s/
-    origin_name, destination_name = input_str.split("to")
+  def ride input_arr
+    split_input = input_arr.split("to")
+    return RIDE_REQUEST_FORMAT_ERROR unless split_input.length == 2
+    origin_name, destination_name = split_input
 
     origin_lat, origin_lng = resolve_address origin_name
     destination_lat, destination_lng = resolve_address destination_name
