@@ -1,6 +1,6 @@
 class Api::AuthorizationsController < ApplicationController
-	before_action :require_authorization, only: :use_uber
 	before_action :verify_slack_token, only: :use_uber
+	before_action :require_authorization, only: :use_uber
 
   def echo
     render json: params
@@ -8,6 +8,7 @@ class Api::AuthorizationsController < ApplicationController
 
   def use_uber
   	# here order car
+		render text: "ready to pickup"
   end
 
 
@@ -30,10 +31,11 @@ class Api::AuthorizationsController < ApplicationController
 	    Authorization.find_by(session_token: session[:session_token])
         .update(uber_auth_token: access_token)
 
-	    render json: {status: "success", body: resp.body}
+     # sign up success, prompt user that they can order uber now
+			au = Authorization.find_by(session_token: session[:session_token])
+	    render json: {status: "success", user:au}
 	  end
   end
-
 
   def establish_session
 	# when authorizing with Uber:  first save session_token, then redirect to Uber OAuth page.
@@ -66,7 +68,7 @@ class Api::AuthorizationsController < ApplicationController
   def verify_slack_token
 		#verify request to use_uber is from slack.
 		unless slack_params[:token] == ENV['slack_app_token']
-			render text: "Missing Slack app token"
+			render json: {error: "Missing slack_app_token", params: slack_params}
 		end
 	end
 
@@ -79,7 +81,17 @@ class Api::AuthorizationsController < ApplicationController
   	auth = Authorization.find_by(slack_user_id: params[:user_id])
   	return if auth && auth.uber_registered?
 
-		auth = Authorization.create(slack_user_id: params[:user_id]) if auth.nil?
-		render text: "Connect your Uber account to Slack: #{api_activate_url}?user_id=#{auth.slack_user_id}"
+		auth = register_new_user if auth.nil?
+		render text: uber_oauth_str_url(auth.slack_user_id)
+  end
+
+  def register_new_user
+  	auth = Authorization.create!(slack_user_id: params[:user_id])
+  end
+
+  def uber_oauth_str_url(slack_user_id)
+  	username = params[:user_name]
+  	url = "#{api_activate_url}?user_id=#{slack_user_id}"
+  	"Hey @#{username}! Looks like this is your first ride from Slack. Go <#{url}|here> to activate."
   end
 end
