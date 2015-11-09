@@ -165,6 +165,10 @@ class UberCommand
       accept: 'json'
     )
 
+    if response.code == 500
+      return "Please enter a valid address. Be as specific as possible (e.g. include city)."
+    end
+
     parsed_body = JSON.parse(response.body)
 
     if !parsed_body["errors"]
@@ -191,6 +195,9 @@ class UberCommand
 
 
   def products address
+    if !address
+      return "Please type in an address with your command ('/uber products [address]')."
+    end
     lat, lng = resolve_address(address)
     format_products_response(get_products_for_lat_lng lat, lng)
   end
