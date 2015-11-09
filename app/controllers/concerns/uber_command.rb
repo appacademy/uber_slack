@@ -206,7 +206,7 @@ class UberCommand
 
   def products address
     if address.nil? || address == "" || address == "products"
-      return "Please type in an address with your command ('/uber products [address]')."
+      return PRODUCTS_REQUEST_FORMAT_ERROR
     end
     lat, lng = resolve_address(address)
     format_products_response(get_products_for_lat_lng lat, lng)
