@@ -55,6 +55,7 @@ class UberCommand
       "product_id" => product_id
     }
 
+    # debugger
 
     response = RestClient.post(
     "#{BASE_URL}/v1/requests",
@@ -66,7 +67,9 @@ class UberCommand
 
     parsed_body = JSON.parse(response.body)
 
-    if !parsed_body["errors"]
+    # debugger
+
+    if parsed_body["errors"].empty?
       return parsed_body
     elsif parsed_body["errors"]["code"] == "surge"
       if @user_id
@@ -78,7 +81,7 @@ class UberCommand
         "Content-Type" => :json,
         accept: 'json'
         )
-        surge_multiplier = response.prices.select{ |product| product.product_id = product_id }.surge_multiplier
+        surge_multiplier = response.prices.select{ |product| product.product_id == product_id }.surge_multiplier
         Ride.create(user_id: @user_id, surge_confirmation_id: response.meta.surge_confirmation.surge_confirmation_id)
         return "Surge in price: Price has increased with #{surge_multiplier}"
       else
