@@ -69,7 +69,7 @@ class Api::AuthorizationsController < ApplicationController
       code: slack_params[:code]
     }
 
-    resp = RestClient.post('https://slack.com/api/oauth.access', slack_auth_params.to_json)
+    resp = RestClient.post('https://slack.com/api/oauth.access', slack_auth_params)
 
     access_token = resp['access_token']
 
