@@ -12,9 +12,9 @@ class Api::AuthorizationsController < ApplicationController
 
   	uber_command = UberCommand.new(auth.uber_auth_token)
 
-  	uber_command.run(params[:text])
+  	resp = uber_command.run(params[:text])
 
-		render text: "ready to pickup"
+		render text: resp
   end
 
 
