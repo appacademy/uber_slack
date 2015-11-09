@@ -8,6 +8,7 @@ class Api::AuthorizationsController < ApplicationController
 
   def use_uber
   	# here order car
+  	
 		render text: "ready to pickup"
   end
 
@@ -98,5 +99,9 @@ class Api::AuthorizationsController < ApplicationController
   	username = params[:user_name]
   	url = "#{api_activate_url}?user_id=#{slack_user_id}"
   	"Hey @#{username}! Looks like this is your first ride from Slack. Go <#{url}|here> to activate."
+  end
+
+  def notifications
+    # Take the params and redirect data to slack
   end
 end
