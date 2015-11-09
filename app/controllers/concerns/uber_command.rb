@@ -264,6 +264,7 @@ class UberCommand
     if location.blank?
       LOCATION_NOT_FOUND_ERROR
     else
+      return location
       location = location.data["geometry"]["location"]
       [location['lat'], location['lng']]
     end
