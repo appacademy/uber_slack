@@ -83,7 +83,7 @@ class UberCommand
   end
 
   def format_products_response products_response
-    if products_response[:products].length < 1 return "No Uber products available for that location."
+    return "No Uber products available for that location." if products_response[:products].length < 1
     response = "The following products are available: \n"
     products_response[:products].each do |product|
       response += "- #{product[:display_name]}: #{product[:description]} (Capacity: #{product[:capacity]})\n"
