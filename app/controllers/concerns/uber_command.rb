@@ -59,8 +59,7 @@ class UberCommand
     )
 
     rescue Exception => e
-      body['bearer_header'] = bearer_header
-      return body
+      return available_products
 
     return response.body
   end
