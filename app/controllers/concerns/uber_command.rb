@@ -21,6 +21,33 @@ class UberCommand
     return response
   end
 
+  def get_eta address
+    location = resolve_address(address.split(" "))
+    lat = location[0]
+    lng = location[1]
+
+    uri = Addressable::URI.parse("#{BASE_URL}/v1/estimates/time")
+    uri.query_values = { 'start_latitude' => lat, 'start_longitude' => lng }
+
+    resource = uri.to_s
+
+    result = RestClient.get(
+    resource,
+    authorization: bearer_header,
+    "Content-Type" => :json,
+    accept: 'json'
+    )
+
+    seconds = JSON.parse(result)['times'].first['estimate']
+
+    if seconds < 60
+      return "Your car is arriving in less than a minute"
+    else
+      minutes = seconds/60 #Rounding down by a minute
+      return "Your car is arriving in #{minutes} minutes"
+    end
+  end
+
   private
 
   attr_reader :bearer_token
