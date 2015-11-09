@@ -26,14 +26,13 @@ HELP_TEXT = <<-STRING
   - ride [origin address] to [destination address]
   - products [address]
   - help
-  - get_eta
 STRING
 
 LOCATION_NOT_FOUND_ERROR = "Please enter a valid address. Be as specific as possible (e.g. include city)."
 
 class UberCommand
 
-  def initialize bearer_token, user_id = nil
+  def initialize bearer_token, user_id
     @user_id = user_id
     @bearer_token = bearer_token
   end
@@ -70,14 +69,6 @@ class UberCommand
     )
 
     seconds = JSON.parse(result)
-    # seconds = JSON.parse(result)['times'].first['estimate']
-    #
-    # if seconds < 60
-    #   return "Your car is arriving in less than a minute"
-    # else
-    #   minutes = seconds/60 #Rounding down by a minute
-    #   return "Your car is arriving in #{minutes} minutes"
-    # end
   end
 
   def ride_request_details request_id
@@ -110,48 +101,44 @@ class UberCommand
     "Ride Cancelled" if result
   end
 
-  # def ride_request_map request_id
-  #   uri = Addressable::URI.parse("#{BASE_URL}/v1/requests/#{request_id}/map")
-  #   uri.query_values = { 'request_id' => request_id }
-  #   resource = uri.to_s
-  #
-  #   result = RestClient.get(
-  #     resource,
-  #     authorization: bearer_header,
-  #     "Content-Type" => :json,
-  #     accept: 'json'
-  #   )
-  #
-  #   JSON.parse(result)
-  # end
-  #
-  # def ride_request_receipt request_id
-  #   uri = Addressable::URI.parse("#{BASE_URL}/v1/requests/#{request_id}/receipt")
-  #   uri.query_values = { 'request_id' => request_id }
-  #   resource = uri.to_s
-  #
-  #   result = RestClient.get(
-  #     resource,
-  #     authorization: bearer_header,
-  #     "Content-Type" => :json,
-  #     accept: 'json'
-  #   )
-  #
-  #   JSON.parse(result)
-  # end
-
   def help(args = nil)   # accept and ignore extra args after help
     HELP_TEXT
   end
 
-  def accept
-    @ride = Ride.new
+  def accept _
+    @ride = Ride.where(user_id: @user_id).order(:updated_at).last
+    surge_confirmation_id = @ride.surge_confirmation_id
+    product_id = @ride.product_id
+    start_latitude = @ride.start_latitude
+    start_longitude = @ride.start_longitude
+    end_latitude = @ride.end_latitude
+    end_longitude = @ride.end_longitude
+
+    if (Time.now - @ride.updated_at) > 5.minutes
+      return ride "1061 Market Street, San Francisco, CA to 1 Mandor Dr, San Francisco, CA"
+    else
+      body = {
+        "start_latitude" => start_latitude,
+        "start_longitude" => start_longitude,
+        "end_latitude" => end_latitude,
+        "end_longitude" => end_longitude,
+        "surge_confirmation_id" => surge_confirmation_id,
+        "product_id" => product_id
+      }
+      response = RestClient.post(
+        "#{BASE_URL}/v1/requests",
+        body.to_json,
+        authorization: bearer_header,
+        "Content-Type" => :json,
+        accept: 'json'
+      )
+
+      return JSON.parse(response)
+    end
   end
 
-  def ride input_arr
-    split_input = input_arr.split("to")
-    return RIDE_REQUEST_FORMAT_ERROR unless split_input.length == 2
-    origin_name, destination_name = split_input
+  def ride input_str
+    origin_name, destination_name = input_str.split(" to ")
 
     origin_lat, origin_lng = resolve_address origin_name
     destination_lat, destination_lng = resolve_address destination_name
@@ -168,38 +155,37 @@ class UberCommand
     }
 
     response = RestClient.post(
-      "#{BASE_URL}/v1/requests",
+      "#{BASE_URL}/v1/requests/estimate",
       body.to_json,
       authorization: bearer_header,
       "Content-Type" => :json,
-      accept: 'json'
+      accept: :json
     )
 
-    if response.code == 500
-      return "Please enter a valid address. Be as specific as possible (e.g. include city)."
-    end
+    surge_multiplier = JSON.parse(response.body)["price"]["surge_multiplier"]
+    surge_confirmation_id = JSON.parse(response.body)["price"]["surge_confirmation_id"]
 
-    parsed_body = JSON.parse(response.body)
+    if surge_multiplier > 1
+      Ride.create(
+        user_id: @user_id,
+        surge_confirmation_id: surge_confirmation_id,
+        :start_latitude => origin_lat,
+        :start_longitude => origin_lng,
+        :end_latitude => destination_lat,
+        :end_longitude => destination_lng,
+        :product_id => product_id
+      )
+      return "#{surge_multiplier} surge is in effect. Reply '/uber accept' to confirm the ride."
+    else
+      response = RestClient.post(
+        "#{BASE_URL}/v1/requests",
+        body.to_json,
+        authorization: bearer_header,
+        "Content-Type" => :json,
+        accept: :json
+      )
 
-    if !parsed_body["errors"]
-      return format_200_ride_request_response parsed_body
-    elsif parsed_body["errors"]["code"] == "surge"
-      if @user_id
-        # surge = make request and get surge in price
-        response = RestClient.get(
-        "#{BASE_URL}/v1/estimates/price",
-          body.to_json,
-          authorization: bearer_header,
-          "Content-Type" => :json,
-          accept: 'json'
-        )
-
-        surge_multiplier = response.prices.select{ |product| product.product_id = product_id }.surge_multiplier
-        Ride.create(user_id: @user_id, surge_confirmation_id: response.meta.surge_confirmation.surge_confirmation_id)
-        return "Surge in price: Price has increased with #{surge_multiplier}"
-      else
-        return format_response_errors parsed_body['errors']
-      end
+      return JSON.parse(response.body)
     end
   end
 
@@ -235,7 +221,12 @@ class UberCommand
 
   def format_200_ride_request_response response
     eta = response['eta'].to_i / 60
-    "Thanks!  A driver will be on their way soon. We expect them to arrive in #{eta} minutes."
+
+    estimate_msg = "very soon" if eta == 0
+    estimate_msg = "in 1 minute" if eta == 1
+    estimate_msg = "in #{eta} minutes" if eta > 1
+
+    "Thanks! A driver will be on their way soon. We expect them to arrive #{estimate_msg}."
   end
 
   def format_response_errors response_errors
@@ -261,7 +252,6 @@ class UberCommand
   end
 
   def invalid_command? name
-    # VALID_COMMANDS.include? name ? false : true
     !VALID_COMMANDS.include? name
   end
 
