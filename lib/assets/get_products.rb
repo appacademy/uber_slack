@@ -5,7 +5,8 @@ VALID_COMMANDS = ['ride', 'products']
 
 class UberCommand
 
-  def initialize bearer_token
+  def initialize bearer_token, user_id = nil
+    @user_id = user_id
     @bearer_token = bearer_token
   end
 
@@ -33,6 +34,10 @@ class UberCommand
     STRING
   end
 
+  def accept
+    @ride = Ride.new
+  end
+
   def ride input_str
     origin_name, destination_name = input_str.split("to")
 
@@ -50,15 +55,32 @@ class UberCommand
       "product_id" => product_id
     }
 
-    response = RestClient.post(
-      "#{BASE_URL}/v1/requests",
-      body.to_json,
-      authorization: bearer_header,
-      "Content-Type" => :json,
-      accept: 'json'
-    )
-
-    return response.body
+    begin
+      response = RestClient.post(
+        "#{BASE_URL}/v1/requests",
+        body.to_json,
+        authorization: bearer_header,
+        "Content-Type" => :json,
+        accept: 'json'
+      )
+      return response.body
+    rescue => e
+      if @user_id
+        # surge = make request and get surge in price
+        response = RestClient.get(
+          "#{BASE_URL}/v1/estimates/price",
+          body.to_json,
+          authorization: bearer_header,
+          "Content-Type" => :json,
+          accept: 'json'
+        )
+        surge_multiplier = response.prices.select{ |product| product.product_id = product_id }.surge_multiplier
+        Ride.create(user_id: @user_id, surge_confirmation_id: response.meta.surge_confirmation.surge_confirmation_id)
+        return "surge in price: price has increased with #{surge_multiplier}"
+      else
+        return "error: no user ID gotten"
+      end
+    end
   end
 
   def products address

@@ -15,6 +15,11 @@
 #
 
 class Authorization < ActiveRecord::Base
+  has_many :rides,
+    class_name: "Ride",
+    foreign_key: :user_id,
+    primary_key: :id
+
   def self.create_session_token
     SecureRandom.urlsafe_base64(16)
   end

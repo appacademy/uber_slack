@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20151108214308) do
+ActiveRecord::Schema.define(version: 20151109015634) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -32,5 +32,12 @@ ActiveRecord::Schema.define(version: 20151108214308) do
   add_index "authorizations", ["slack_auth_token"], name: "index_authorizations_on_slack_auth_token", using: :btree
   add_index "authorizations", ["slack_user_id", "uber_user_id"], name: "index_authorizations_on_slack_user_id_and_uber_user_id", unique: true, using: :btree
   add_index "authorizations", ["uber_auth_token"], name: "index_authorizations_on_uber_auth_token", using: :btree
+
+  create_table "rides", force: :cascade do |t|
+    t.integer  "user_id",               null: false
+    t.string   "surge_confirmation_id"
+    t.datetime "created_at",            null: false
+    t.datetime "updated_at",            null: false
+  end
 
 end
