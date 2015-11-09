@@ -139,7 +139,7 @@ class UberCommand
   end
 
   def ride input_str
-    return RIDE_REQUEST_FORMAT_ERROR unless input_str =~ \sto\s
+    return RIDE_REQUEST_FORMAT_ERROR unless input_str =~ /\sto\s/
     origin_name, destination_name = input_str.split("to")
 
     origin_lat, origin_lng = resolve_address origin_name
