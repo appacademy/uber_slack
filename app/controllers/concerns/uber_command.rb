@@ -191,7 +191,7 @@ class UberCommand
       success_msg = format_200_ride_request_response(JSON.parse(response.body))
       slack_response = { text: success_msg }
 
-      RestClient.post(@response_url, slack_response, "Content-Type" => :json)
+      RestClient.post(@response_url, slack_response.to_json, "Content-Type" => :json)
     end
   end
 
