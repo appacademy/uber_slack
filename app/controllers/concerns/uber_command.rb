@@ -53,7 +53,7 @@ class UberCommand
     response = RestClient.post(
       "#{BASE_URL}/v1/requests",
       body.to_json,
-      scope: "profile-history",
+      # scope: "profile-history",
       authorization: bearer_header,
       "Content-Type" => :json,
       accept: 'json'
