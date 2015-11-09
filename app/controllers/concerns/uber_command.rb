@@ -132,8 +132,8 @@ class UberCommand
         "Content-Type" => :json,
         accept: 'json'
       )
-
-      return JSON.parse(response)
+      # format_200_ride_request_response(JSON.parse(response.body))
+      "Thank you. Keep an eye on your phone while we look for a driver to pick you up."
     end
   end
 
@@ -184,7 +184,8 @@ class UberCommand
         "Content-Type" => :json,
         accept: :json
       )
-      format_200_ride_request_response(JSON.parse(response.body))
+      # format_200_ride_request_response(JSON.parse(response.body))
+      "Thank you. Keep an eye on your phone while we look for a driver to pick you up."
     end
   end
 
