@@ -16,7 +16,7 @@ class UberCommand
 
     return "Unknown command" if invalid_command? command_name
 
-    response = self.send(command_name, input.drop(1))
+    response = self.send(command_name, input.drop(1).join(" "))
     # Send back response if command is not valid
     return response
   end
@@ -27,10 +27,10 @@ class UberCommand
 
   def help
     lines = <<-STRING
-      Try these commands:
-      - ride [origin address] to [destination address]
-      - products [address]
-      - help
+    Try these commands:
+    - ride [origin address] to [destination address]
+    - products [address]
+    - help
     STRING
   end
 
@@ -39,7 +39,7 @@ class UberCommand
   end
 
   def ride input_str
-    origin_name, destination_name = input_str.split("to")
+    origin_name, destination_name = input_str.split(" to ")
 
     origin_lat, origin_lng = resolve_address origin_name
     destination_lat, destination_lng = resolve_address destination_name
@@ -55,33 +55,38 @@ class UberCommand
       "product_id" => product_id
     }
 
-    begin
-      response = RestClient.post(
-        "#{BASE_URL}/v1/requests",
+
+    response = RestClient.post(
+    "#{BASE_URL}/v1/requests",
+    body.to_json,
+    authorization: bearer_header,
+    "Content-Type" => :json,
+    accept: 'json'
+    )
+
+    parsed_body = JSON.parse(response.body)
+
+    if !parsed_body["errors"]
+      return parsed_body
+    elsif parsed_body["errors"]["code"] == "surge"
+      if @user_id
+        # surge = make request and get surge in price
+        response = RestClient.get(
+        "#{BASE_URL}/v1/estimates/price",
         body.to_json,
         authorization: bearer_header,
         "Content-Type" => :json,
         accept: 'json'
-      )
-      return response.body
-    rescue => e
-      if @user_id
-        # surge = make request and get surge in price
-        response = RestClient.get(
-          "#{BASE_URL}/v1/estimates/price",
-          body.to_json,
-          authorization: bearer_header,
-          "Content-Type" => :json,
-          accept: 'json'
         )
         surge_multiplier = response.prices.select{ |product| product.product_id = product_id }.surge_multiplier
         Ride.create(user_id: @user_id, surge_confirmation_id: response.meta.surge_confirmation.surge_confirmation_id)
-        return "surge in price: price has increased with #{surge_multiplier}"
+        return "Surge in price: Price has increased with #{surge_multiplier}"
       else
-        return "error: no user ID gotten"
+        return "error: no user ID"
       end
     end
   end
+
 
   def products address
     geocoder_location = Geocoder.search(address)[0].data["geometry"]["location"]
@@ -95,10 +100,10 @@ class UberCommand
     resource = uri.to_s
 
     result = RestClient.get(
-      resource,
-      authorization: bearer_header,
-      "Content-Type" => :json,
-      accept: 'json'
+    resource,
+    authorization: bearer_header,
+    "Content-Type" => :json,
+    accept: 'json'
     )
 
     JSON.parse(result.body)
@@ -109,7 +114,7 @@ class UberCommand
   end
 
   def invalid_command? name
-    VALID_COMMANDS.includes? name ? false : true
+    VALID_COMMANDS.include? name ? false : true
   end
 
   def resolve_address address
