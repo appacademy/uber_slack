@@ -10,11 +10,8 @@ class Api::AuthorizationsController < ApplicationController
   def use_uber
   	# here order car
   	auth = Authorization.find_by(slack_user_id: params[:user_id])
-
   	uber_command = UberCommand.new(auth.uber_auth_token)
-
   	resp = uber_command.run(params[:text])
-
 		render json: resp
   end
 

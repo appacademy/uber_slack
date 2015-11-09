@@ -79,7 +79,16 @@ class UberCommand
       accept: 'json'
     )
 
-    JSON.parse(result.body)
+    format_products_response JSON.parse(result.body)
+  end
+
+  def format_products_response products_response
+    return "No Uber products available for that location." unless products_response['products']
+    response = "The following products are available: \n"
+    products_response['products'].each do |product|
+      response += "- #{product[:display_name]}: #{product[:description]} (Capacity: #{product[:capacity]})\n"
+    end
+    response
   end
 
   def bearer_header
