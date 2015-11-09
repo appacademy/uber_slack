@@ -1,6 +1,6 @@
 require 'addressable/uri'
 
-BASE_URL = "https://sandbox-api.uber.com"
+BASE_URL = ENV["uber_base_url"]
 
 VALID_COMMANDS = ['ride', 'products', 'get_eta', 'help', 'accept' ]
 
@@ -41,9 +41,9 @@ class UberCommand
     input = user_input_string.split(" ", 2) # Only split on first space.
     command_name = input.first.downcase
 
-    command_argument = input.second.downcase
+    command_argument = command_argument.nil? ? nil : input.second.downcase
 
-    return UNKNOWN_COMMAND_ERROR if invalid_command? command_name || command_name.nil?
+    return UNKNOWN_COMMAND_ERROR if invalid_command?(command_name) || command_name.nil?
 
     response = self.send(command_name, command_argument)
     # Send back response if command is not valid
