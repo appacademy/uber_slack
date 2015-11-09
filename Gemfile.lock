@@ -102,6 +102,8 @@ GEM
     pry-rails (0.3.4)
       pry (>= 0.9.10)
     rack (1.6.4)
+    rack-handlers (0.7.0)
+      rack
     rack-test (0.6.3)
       rack (>= 1.0)
     rails (4.2.1)
@@ -194,6 +196,7 @@ DEPENDENCIES
   jquery-rails
   pg
   pry-rails
+  rack-handlers
   rails (= 4.2.1)
   rest-client
   sass-rails (~> 5.0)
