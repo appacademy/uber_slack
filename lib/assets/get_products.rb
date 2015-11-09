@@ -35,10 +35,16 @@ class UberCommand
   end
 
   def accept
-    @ride = Ride.new
+    @ride = Ride.where(user_id: @user_id).order(:updated_at).last
+    if (Time.now - @ride.updated_at) > 5.minutes
+      @ride.delete!
+      return ride "1061 Market Street, San Francisco, CA to 1 Mandor Dr, San Francisco, CA"
+    else
+      return ride "1061 Market Street, San Francisco, CA to 1 Mandor Dr, San Francisco, CA", @ride.surge_confirmation_id
+    end
   end
 
-  def ride input_str
+  def ride input_str, surge_id = nil
     origin_name, destination_name = input_str.split(" to ")
 
     origin_lat, origin_lng = resolve_address origin_name
@@ -55,34 +61,40 @@ class UberCommand
       "product_id" => product_id
     }
 
-    # debugger
-    b
-    response = RestClient.post(
-    "#{BASE_URL}/v1/requests",
-    body.to_json,
-    authorization: bearer_header,
-    "Content-Type" => :json,
-    accept: 'json'
-    )
-
-    parsed_body = JSON.parse(response.body)
+    debugger
+    body["surge_confirmation_id"] = surge_id if surge_id
 
     # debugger
+    begin
+      response = RestClient.post(
+      "#{BASE_URL}/v1/requests",
+      body.to_json,
+      authorization: bearer_header,
+      "Content-Type" => :json,
+      accept: 'json'
+      )
 
-    if parsed_body["errors"].empty?
+
+      parsed_body = JSON.parse(response.body)
       return parsed_body
-    elsif parsed_body["errors"]["code"] == "surge"
+    rescue RestClient::Conflict => e
       if @user_id
         # surge = make request and get surge in price
+        uri = Addressable::URI.parse("#{BASE_URL}/v1/estimates/price")
+        uri.query_values = body
+        resource = uri.to_s
+
         response = RestClient.get(
-        "#{BASE_URL}/v1/estimates/price",
-        body.to_json,
+        resource,
         authorization: bearer_header,
         "Content-Type" => :json,
         accept: 'json'
         )
-        surge_multiplier = response.prices.select{ |product| product.product_id == product_id }.surge_multiplier
-        Ride.create(user_id: @user_id, surge_confirmation_id: response.meta.surge_confirmation.surge_confirmation_id)
+
+        parsed_response = JSON.parse(response.body)
+        surge_multiplier = parsed_response["prices"].select{ |product| product["product_id"] == product_id }[0]["surge_multiplier"]
+        # debugger
+        Ride.create(user_id: @user_id, surge_confirmation_id: JSON.parse(e.response)["meta"]["surge_confirmation"]["surge_confirmation_id"])
         return "Surge in price: Price has increased with #{surge_multiplier}"
       else
         return "error: no user ID"
