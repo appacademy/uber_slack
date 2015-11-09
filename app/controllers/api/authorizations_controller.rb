@@ -87,7 +87,8 @@ class Api::AuthorizationsController < ApplicationController
       render text: "Sorry, something went wrong on our end."
     else
       access_token = resp['access_token']
-      render text: "slack auth success, access_token: #{resp.body}"
+      #add static success.
+      render text: "Your team is now connected to Slack."
     end
   end
 
