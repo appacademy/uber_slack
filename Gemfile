@@ -27,6 +27,7 @@ gem 'geocoder'
 gem 'figaro'
 
 gem 'rest-client'
+gem 'addressable'
 
 # Use ActiveModel has_secure_password
 # gem 'bcrypt', '~> 3.1.7'
