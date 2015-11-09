@@ -6,8 +6,6 @@ VALID_COMMANDS = ['ride', 'products']
 
 class UberCommand
 
-
-
   def initialize bearer_token, user_id = nil
     @user_id = user_id
     @bearer_token = bearer_token
@@ -37,7 +35,7 @@ class UberCommand
     STRING
   end
 
-  def accept
+  def accept _
     @ride = Ride.where(user_id: @user_id).order(:updated_at).last
     surge_confirmation_id = @ride.surge_confirmation_id
     product_id = @ride.product_id
@@ -54,9 +52,9 @@ class UberCommand
         "start_longitude" => start_longitude,
         "end_latitude" => end_latitude,
         "end_longitude" => end_longitude,
+        "surge_confirmation_id" => surge_confirmation_id,
         "product_id" => product_id
       }
-
       response = RestClient.post(
         "#{BASE_URL}/v1/requests",
         body.to_json,
@@ -64,6 +62,7 @@ class UberCommand
         "Content-Type" => :json,
         accept: 'json'
       )
+
       return JSON.parse(response)
     end
   end
@@ -86,15 +85,15 @@ class UberCommand
     }
 
     response = RestClient.post(
-      "#{BASE_URL}/v1/requests/estimates",
+      "#{BASE_URL}/v1/requests/estimate",
       body.to_json,
       authorization: bearer_header,
       "Content-Type" => :json,
       accept: :json
     )
 
-    surge_multiplier = response.body["price"]["surge_multiplier"]
-    surge_confirmation_id = response.body["price"]["surge_confirmation_id"]
+    surge_multiplier = JSON.parse(response.body)["price"]["surge_multiplier"]
+    surge_confirmation_id = JSON.parse(response.body)["price"]["surge_confirmation_id"]
 
     if surge_multiplier > 1
       Ride.create(
