@@ -50,9 +50,9 @@ class UberCommand
 
     result = RestClient.get(
     resource,
-    authorization: bearer_header,
-    "Content-Type" => :json,
-    accept: 'json'
+      authorization: bearer_header,
+      "Content-Type" => :json,
+      accept: 'json'
     )
 
     seconds = JSON.parse(result)
