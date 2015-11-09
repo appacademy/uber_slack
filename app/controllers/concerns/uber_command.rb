@@ -146,6 +146,10 @@ class UberCommand
   def ride input_str
     origin_name, destination_name = input_str.split(" to ")
 
+    if origin_name.start_with? "from "
+      origin_name = origin_name["from".length..-1]
+    end
+
     origin_lat, origin_lng = resolve_address origin_name
     destination_lat, destination_lng = resolve_address destination_name
 
