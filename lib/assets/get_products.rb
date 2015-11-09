@@ -1,6 +1,7 @@
 require 'addressable/uri'
 
 BASE_URL = "https://sandbox-api.uber.com"
+#BASE_URL = "http://localhost:1234"
 VALID_COMMANDS = ['ride', 'products']
 
 class UberCommand
@@ -75,10 +76,6 @@ class UberCommand
     available_products = get_products_for_lat_lng(origin_lat, origin_lng)
     product_id = available_products["products"].first["product_id"]
 
-    response = RestClient.post(
-      ""
-    )
-
     body = {
       "start_latitude" => origin_lat,
       "start_longitude" => origin_lng,
@@ -92,7 +89,7 @@ class UberCommand
       body.to_json,
       authorization: bearer_header,
       "Content-Type" => :json,
-      accept: 'json'
+      accept: :json
     )
 
     surge_multiplier = response.body["price"]["surge_multiplier"]
@@ -108,12 +105,19 @@ class UberCommand
         :end_longitude => destination_lng,
         :product_id => product_id
       )
-      return "#{surge_multiplier} surge is in effect. Reply 'Accept' to confirm the ride."
+      return "#{surge_multiplier} surge is in effect. Reply '/uber accept' to confirm the ride."
     else
-      # request a ride.
+      response = RestClient.post(
+        "#{BASE_URL}/v1/requests",
+        body.to_json,
+        authorization: bearer_header,
+        "Content-Type" => :json,
+        accept: :json
+      )
+
+      return JSON.parse(response.body)
     end
   end
-
 
   def products address
     geocoder_location = Geocoder.search(address)[0].data["geometry"]["location"]
@@ -127,10 +131,10 @@ class UberCommand
     resource = uri.to_s
 
     result = RestClient.get(
-    resource,
-    authorization: bearer_header,
-    "Content-Type" => :json,
-    accept: 'json'
+      resource,
+      authorization: bearer_header,
+      "Content-Type" => :json,
+      accept: :json
     )
 
     JSON.parse(result.body)
