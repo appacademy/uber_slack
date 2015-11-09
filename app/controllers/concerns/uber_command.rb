@@ -66,6 +66,66 @@ class UberCommand
     # end
   end
 
+  def ride_request_details request_id
+    uri = Addressable::URI.parse("#{BASE_URL}/v1/requests/#{request_id}")
+    uri.query_values = { 'request_id' => request_id }
+    resource = uri.to_s
+
+    result = RestClient.get(
+    resource,
+    authorization: bearer_header,
+    "Content-Type" => :json,
+    accept: 'json'
+    )
+
+    JSON.parse(result)
+  end
+
+  def cancel_ride request_id
+    uri = Addressable::URI.parse("#{BASE_URL}/v1/requests/#{request_id}")
+    # uri.query_values = { 'request_id' => request_id }
+    resource = uri.to_s
+
+    result = RestClient.delete(
+    resource,
+    authorization: bearer_header,
+    "Content-Type" => :json,
+    accept: 'json'
+    )
+
+    "Ride Cancelled" if result
+  end
+
+  # def ride_request_map request_id
+  #   uri = Addressable::URI.parse("#{BASE_URL}/v1/requests/#{request_id}/map")
+  #   uri.query_values = { 'request_id' => request_id }
+  #   resource = uri.to_s
+  #
+  #   result = RestClient.get(
+  #   resource,
+  #   authorization: bearer_header,
+  #   "Content-Type" => :json,
+  #   accept: 'json'
+  #   )
+  #
+  #   JSON.parse(result)
+  # end
+  #
+  # def ride_request_receipt request_id
+  #   uri = Addressable::URI.parse("#{BASE_URL}/v1/requests/#{request_id}/receipt")
+  #   uri.query_values = { 'request_id' => request_id }
+  #   resource = uri.to_s
+  #
+  #   result = RestClient.get(
+  #   resource,
+  #   authorization: bearer_header,
+  #   "Content-Type" => :json,
+  #   accept: 'json'
+  #   )
+  #
+  #   JSON.parse(result)
+  # end
+
   private
 
   attr_reader :bearer_token
