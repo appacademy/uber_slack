@@ -201,7 +201,7 @@ class UberCommand
     end
   end
 
-  def products address
+  def products address = nil
     if address.nil? || address == "" || address == "products"
       return PRODUCTS_REQUEST_FORMAT_ERROR
     end
