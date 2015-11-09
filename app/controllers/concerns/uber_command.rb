@@ -207,6 +207,7 @@ class UberCommand
     if address.blank?
       return PRODUCTS_REQUEST_FORMAT_ERROR
     end
+    return address
     lat, lng = resolve_address(address)
     format_products_response(get_products_for_lat_lng lat, lng)
   end
@@ -260,7 +261,6 @@ class UberCommand
 
   def resolve_address address
     location = Geocoder.search(address.join(" "))[0]
-    return location
 
     if location.blank?
       LOCATION_NOT_FOUND_ERROR
