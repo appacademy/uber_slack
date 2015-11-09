@@ -26,7 +26,7 @@ class Api::AuthorizationsController < ApplicationController
       'client_id'     => ENV['uber_client_id'],
       'grant_type'    => 'authorization_code',
       'redirect_uri'  => ENV['uber_callback_url'],
-      'code' 	      => params[:code]
+      'code' 	      	=> params[:code]
     }
     # post request to uber to trade code for user access token
     resp = RestClient.post('https://login.uber.com/oauth/v2/token', post_params)
@@ -45,9 +45,9 @@ class Api::AuthorizationsController < ApplicationController
      # sign up success, prompt user that they can order uber now
 			response_url = Authorization.find_by_session_token(session[:session_token]).slack_response_url
 			slack_response_params = {
-				body: 'You can now order an Uber from Slack!'
+				text: 'You can now order an Uber from Slack!'
 			}
-			RestClient.post(response_url, slack_response_params)
+			RestClient.post(response_url, slack_response_params.to_json)
 	    render text: "Successfully connected!"
 	  end
   end
@@ -67,12 +67,12 @@ class Api::AuthorizationsController < ApplicationController
     # First channel admin agrees to use app
     slack_auth_params = {
       client_secret: ENV['slack_client_secret'],
-      client_id: ENV['slack_client_id'],
-      redirect_uri: ENV['slack_redirect'],
+      client_id: 		 ENV['slack_client_id'],
+      redirect_uri:  ENV['slack_redirect'],
       code: slack_params[:code]
     }
 
-    resp = RestClient.post('https://slack.com/api/oauth.access', slack_auth_params)
+    resp = RestClient.post('https://slack.com/api/oauth.access', slack_auth_params.to_json)
 
     access_token = resp['access_token']
 
