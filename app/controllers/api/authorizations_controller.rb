@@ -14,7 +14,7 @@ class Api::AuthorizationsController < ApplicationController
 
   	resp = uber_command.run(params[:text])
 
-		render text: resp
+		render json: resp
   end
 
 
