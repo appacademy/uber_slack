@@ -32,7 +32,7 @@ class UberCommand
 
   def run user_input_string
     input = user_input_string.split(" ")
-    command_name = input.first
+    command_name = input.first.downcase
 
     return UNKNOWN_COMMAND_ERROR if invalid_command? command_name || command_name.nil?
 
