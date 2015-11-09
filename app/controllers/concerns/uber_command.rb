@@ -26,7 +26,7 @@ class UberCommand
 
 
   def products address
-    geocoder_location = Geocoder.search(address)[0].data["geometry"]["location"]
+    geocoder_location = Geocoder.search(address.join(" "))[0].data["geometry"]["location"]
     lat, lng = geocoder_location['lat'], geocoder_location['lng']
     get_products_for_lat_lng lat, lng
   end
