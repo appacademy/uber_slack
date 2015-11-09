@@ -29,6 +29,8 @@ HELP_TEXT = <<-STRING
   - get_eta
 STRING
 
+LOCATION_NOT_FOUND_ERROR = "Please enter a valid address. Be as specific as possible (e.g. include city)."
+
 class UberCommand
 
   def initialize bearer_token, user_id = nil
@@ -205,8 +207,6 @@ class UberCommand
     if address.blank?
       return PRODUCTS_REQUEST_FORMAT_ERROR
     end
-
-    return address
     lat, lng = resolve_address(address)
     format_products_response(get_products_for_lat_lng lat, lng)
   end
@@ -259,12 +259,15 @@ class UberCommand
   end
 
   def resolve_address address
-    location = Geocoder.search(address.join(" "))[0].data["geometry"]["location"]
-    if location.nil?
-      return "Please enter a valid address. Be as specific as possible (e.g. include city)."
+    location = Geocoder.search(address.join(" "))[0]
+
+    if location.blank?
+      LOCATION_NOT_FOUND_ERROR
+    else
+      location = location.data["geometry"]["location"]
+      [location['lat'], location['lng']]
     end
-    [location['lat'], location['lng']]
   end
 
-  # alias_method :product, :products
+  alias_method :product, :products
 end
