@@ -8,6 +8,8 @@
 
 Rails.application.routes.draw do
   root to: 'static_pages#root'
+  get 'static_pages/user_success', to: 'static_pages#user_success'
+  get 'static_pages/admin_success', to: 'static_pages#admin_success'
   namespace :api, defaults: { format: 'json' } do
     post '/authorize', to: 'authorizations#authorize'
     post '/use_uber', to: 'authorizations#use_uber'
