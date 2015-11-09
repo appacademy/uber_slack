@@ -1,7 +1,7 @@
 require 'addressable/uri'
 
 BASE_URL = "https://sandbox-api.uber.com"
-VALID_COMMANDS = ['ride', 'products']
+VALID_COMMANDS = ['ride', 'products', 'get_eta', 'help', 'accept' ]
 
 class UberCommand
 
@@ -14,18 +14,19 @@ class UberCommand
     input = user_input_string.split(" ")
     command_name = input.first
 
-    return "Unknown command" if invalid_command? command_name
+    return "Unknown Command" if invalid_command?(command_name)
 
     response = self.send(command_name, input.drop(1))
     # Send back response if command is not valid
     return response
   end
 
-  def get_eta address
-    location = resolve_address(address.split(" "))
-    lat = location[0]
-    lng = location[1]
+  private
 
+  attr_reader :bearer_token
+
+  def get_eta address
+    lat, lng = resolve_address(address)
     uri = Addressable::URI.parse("#{BASE_URL}/v1/estimates/time")
     uri.query_values = { 'start_latitude' => lat, 'start_longitude' => lng }
 
@@ -40,7 +41,7 @@ class UberCommand
 
     seconds = JSON.parse(result)
     # seconds = JSON.parse(result)['times'].first['estimate']
-    # 
+    #
     # if seconds < 60
     #   return "Your car is arriving in less than a minute"
     # else
@@ -48,10 +49,6 @@ class UberCommand
     #   return "Your car is arriving in #{minutes} minutes"
     # end
   end
-
-  private
-
-  attr_reader :bearer_token
 
   def help
     lines = <<-STRING
@@ -135,7 +132,9 @@ class UberCommand
   end
 
   def format_products_response products_response
-    return "No Uber products available for that location." unless products_response['products']
+    unless products_response['products'] && !products_response['products'].empty?
+      return "No Uber products available for that location."
+    end
     response = "The following products are available: \n"
     products_response['products'].each do |product|
       response += "- #{product['display_name']}: #{product['description']} (Capacity: #{product['capacity']})\n"
@@ -148,7 +147,8 @@ class UberCommand
   end
 
   def invalid_command? name
-    VALID_COMMANDS.include? name ? false : true
+    # VALID_COMMANDS.include? name ? false : true
+    !VALID_COMMANDS.include? name
   end
 
   def resolve_address address
