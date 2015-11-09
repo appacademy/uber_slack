@@ -92,7 +92,7 @@ au = Authorization.find_by(session_token: session[:session_token])
   	return if auth && auth.uber_registered?
 
   	if auth.nil?
-  		register_new_user
+  		auth = register_new_user
   	end
 
   	if !auth.uber_registered?
@@ -103,6 +103,7 @@ au = Authorization.find_by(session_token: session[:session_token])
   def register_new_user
   	auth = Authorization.new(slack_user_id: params[:user_id])
 		auth.save!
+		auth
   end
 
   def uber_oauth_str_url(slack_user_id)
