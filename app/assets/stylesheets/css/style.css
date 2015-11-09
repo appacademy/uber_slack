@@ -690,8 +690,7 @@ span.glyphicon.glyphicon-circle-arrow-right:hover {
 }
 .copy-right {
   text-align: center;
-  padding: 3em 0em 0em 0em;
-  margin-top: 50px;
+  padding: 0em 0em 2em 0em;
   color: white;
 }
 .copy-right p {
@@ -1165,7 +1164,7 @@ h3.typo1 {
 }
 @media(max-width:1024px){
 .banner {
-  min-height: 500px;
+  min-height: 200px;
 }
 .banner-main {
   padding: 2em 1em 2em 1em;
@@ -1273,7 +1272,7 @@ ul.res li a:hover,ul.res li a.active{
   padding: 1em 0em 1em 0em;
 }
 .banner {
-  min-height: 350px;
+  min-height: 150px;
   padding: 5em 0em 0em 0em;s
 }
 .banner-main {
@@ -1494,7 +1493,7 @@ h1.grid2 {
   width: 100%;
 }
 .agro-strip {
-  min-height: 265px;
+  min-height: 65px;
 }
 .agro-strip-main a {
   width: 16%;
@@ -1628,7 +1627,7 @@ span.menu img {
   font-size: 1.3em;
 }
 .banner {
-  min-height: 245px;
+  min-height: 100px;
   padding: 3em 0em 0em 0em;
 }
 .banner-main p {
@@ -1677,7 +1676,7 @@ span.glyphicon.glyphicon-grain {
   padding: 2.5em 0em 0em 0em;
 }
 .agro-strip {
-  min-height: 240px;
+  min-height: 100px;
 }
 .latest-grid p {
   font-size: 0.9em;
@@ -2214,6 +2213,7 @@ h4.media-heading {
 
 .learn-more {
   border: 3px solid lime;
+  min-width: 150px;
 }
 .container {
   position: relative;
