@@ -141,7 +141,7 @@ class UberCommand
   end
 
   def ride input_str
-    return RIDE_REQUEST_FORMAT_ERROR unless input_str =~ \sto\s
+    return RIDE_REQUEST_FORMAT_ERROR unless input_str =~ /\sto\s/
     #isn't input string still an array here? won't this always fail?
     origin_name, destination_name = input_str.split("to")
 
