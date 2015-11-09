@@ -11,7 +11,7 @@ p {margin: 0;}
 html, body{
  font-family: 'Oxygen-Regular';
    font-size: 100%;
-   background:#fff; 
+   background: url("https://d1a3f4spazzrp4.cloudfront.net/web-fresh/cities-heros/worldmap-1440-900.gif");
 }
 @font-face {
     font-family: 'Viga-Regular';
@@ -35,9 +35,8 @@ a:hover {
   float: left;
   width: 45%;
 }
-.header-right {
-  float: right;
-  width: 55%;
+.header {
+  width: 100%;
 }
 .head-left p {
   font-size: 1em;
@@ -60,31 +59,29 @@ span.menu {
   float: right;
    width: 50%;
 }
-.logo {
-  float: left;
-}
 .header-login {
   float: right;
 }
 .search{
 	float:right;
-	  margin-top: 0.8em;	
+	  margin-top: 0.8em;
 }
 .search a {
 	font-size:1.3em;
 	color:#1c1c1c;
 	text-decoration:none;
-	outline:none;	
+	outline:none;
 }
 .search a i{
 	width: 26px;
 	height: 26px;
 	background: url(../images/magi.png)no-repeat;
-	display:inline-block;	
+	display:inline-block;
 	vertical-align: middle;
 	margin: 0 4px 0 0;
 }
 .logo h1 {
+  text-align: center;
   font-size: 2.5em;
   font-family: 'Viga-Regular';
   margin: 0em;
@@ -125,8 +122,8 @@ span.menu {
   -o-transition: 0.5s all;
  }
 /* Login Button */
-#loginButton { 
-    display:inline-block;  
+#loginButton {
+    display:inline-block;
     position:relative;
     z-index:30;
     cursor:pointer;
@@ -357,16 +354,13 @@ input:focus {
 .banner-main {
   width: 50%;
   margin: 0em auto 0em;
-  background: #956295;
+  background: rgba(8,8,16,.6);
   padding: 3em 1em 3em 1em;
-  text-align:center;
-   transition: 0.5s all;
+  text-align: center;
+  transition: 0.5s all;
   -webkit-transition: 0.5s all;
   -moz-transition: 0.5s all;
   -o-transition: 0.5s all;
-}
-.banner-main:hover {
-  background: #f4d638;
 }
 .banner-main h3 {
   font-size: 2em;
@@ -393,10 +387,6 @@ input:focus {
   border-top: 1px solid #fff;
   width: 22%;
   margin: 1em auto 0em;
-}
-.banner-main a:hover {
-  text-decoration:none;
-  color:#000;
 }
 /*--banner end here--*/
 /*--bann info start here--*/
@@ -601,7 +591,6 @@ span.glyphicon.glyphicon-circle-arrow-right:hover {
 .agro-strip {
   background: url(../images/strip.jpg)no-repeat;
   background-size: cover;
-  min-height: 300px;
 }
 .agro-strip-main {
   text-align: center;
@@ -625,15 +614,14 @@ span.glyphicon.glyphicon-circle-arrow-right:hover {
   font-size: 1em;
   font-weight: 400;
   color: #fff;
-  padding: 0.51em 0em 0.51em 0em;
   display: block;
-  background: #956295;
+  /*background: #956295;*/
   width: 10%;
-  margin: 1.5em auto 0em;
+  margin: auto, auto, 0em;
 }
 .agro-strip-main a:hover {
 	text-decoration:none;
-	background:#f4d638;
+	/*background:#f4d638;*/
 }
 /*--agro strip end here--*/
 /*--latest news start here--*/
@@ -988,7 +976,7 @@ i.glyphicon.glyphicon-comment {
 .page-header h3{
 	font-size: 3em;
 	color:#000;
-	
+
 }
 .table > thead > tr > th, .table > tbody > tr > th, .table > tfoot > tr > th, .table > thead > tr > td, .table > tbody > tr > td, .table > tfoot > tr > td {
   padding: 8px;
@@ -1177,23 +1165,23 @@ h3.typo1 {
 }
 /*--//contact--*/
 @media(max-width:1440px){
-	
+
 }
 @media(max-width:1366px){
 .banner {
-  min-height: 585px;
+  min-height: 400px;
   padding: 10em 0em 0em 0em;
 }
 }
 @media(max-width:1280px){
-	
+
 }
 @media(max-width:1024px){
 .banner {
   min-height: 500px;
 }
 .banner-main {
-  padding: 2em 1em 2em 1em;	
+  padding: 2em 1em 2em 1em;
 }
 .agro-grain {
   width: 90%;
@@ -1236,8 +1224,8 @@ h3.typo1 {
 .bann-grid a {
   width: 22%;
 }
-.agro-strip-main a {
-  width: 11.5%;
+#slack-integrate{
+  width: 100%;
 }
 .ser-btn a {
   width: 46%;
@@ -1301,7 +1289,7 @@ ul.res li a:hover,ul.res li a.active{
 }
 .banner {
   min-height: 350px;
-  padding: 5em 0em 0em 0em;
+  padding: 5em 0em 0em 0em;s
 }
 .banner-main {
   padding: 1.5em 1em 1.5em 1em;
@@ -1466,10 +1454,10 @@ h3.typo1 {
 }
 h1.grid2 {
   font-size: 2.3em;
-}	
+}
 .contact-bottom input[type="text"] {
   padding: 0.5em;
-}	
+}
 /*--single--*/
 .comment-bottom input[type="submit"] {
   width: 13%;
@@ -1591,7 +1579,7 @@ h3.typo1 {
 }
 .page {
   margin: 2em 0;
-}	
+}
 /*--single--*/
 .comments-top h3, .comment-bottom h3 {
   font-size: 2em;
@@ -1758,7 +1746,7 @@ span.glyphicon.glyphicon-grain {
 }
 /*--typo--*/
 .page-header h3 {
-  font-size: 2em; 
+  font-size: 2em;
 }
 button.btn.btn-lg {
   font-size: 1em;
@@ -1795,7 +1783,7 @@ h3.typo1 {
 }
 .page {
   margin: 2em 0;
-}		
+}
 /*--single--*/
 .single-grid h4 {
   font-size: 1.2em;
@@ -2126,7 +2114,7 @@ h3.typo1 {
 }
 .page-header h3 {
   font-size: 1.8em;
-} 	
+}
 /*--single--*/
 .single-grid h4 {
   font-size: 0.8em;
@@ -2227,4 +2215,9 @@ h4.media-heading {
   width: 30%;
   font-size: 14px;
 }
+}
+.logo h1{
+  font-family: "ff-clan-web-pro-wide",sans-serif;
+  color: white;
+  text-shadow: 2px 2px #000000;
 }
