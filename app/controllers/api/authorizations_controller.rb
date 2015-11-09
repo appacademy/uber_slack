@@ -88,7 +88,7 @@ class Api::AuthorizationsController < ApplicationController
     else
       access_token = resp['access_token']
       #add static success.
-      redirect_to static_pages_admin_success
+      redirect_to static_pages_admin_success_url
     end
   end
 
