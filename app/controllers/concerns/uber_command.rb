@@ -41,7 +41,7 @@ class UberCommand
     input = user_input_string.split(" ", 2) # Only split on first space.
     command_name = input.first.downcase
 
-    command_argument = command_argument.nil? ? nil : input.second.downcase
+    command_argument = input.second.nil? ? nil : input.second.downcase
 
     return UNKNOWN_COMMAND_ERROR if invalid_command?(command_name) || command_name.nil?
 
