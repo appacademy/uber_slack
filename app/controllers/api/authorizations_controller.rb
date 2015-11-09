@@ -91,7 +91,7 @@ class Api::AuthorizationsController < ApplicationController
   end
 
   def register_new_user
-  	auth = Authorization.create!(slack_user_id: params[:user_id])
+  	Authorization.create!(slack_user_id: params[:user_id])
   end
 
   def uber_oauth_str_url(slack_user_id)
