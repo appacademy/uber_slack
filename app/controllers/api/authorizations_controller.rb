@@ -27,26 +27,37 @@ class Api::AuthorizationsController < ApplicationController
     }
     # post request to uber to trade code for user access token
     resp = RestClient.post('https://login.uber.com/oauth/v2/token', post_params)
-    access_token = JSON.parse(resp.body)['access_token']
-    refresh_token = JSON.parse(resp.body)['refresh_token']
-    expires_in = JSON.parse(resp.body)['expires_in']
 
-    if access_token.nil?
-      render json: {status: "Error: no access token", body: resp.body}
+    if resp.code == 500
+      render text: "Sorry, something went wrong on our end."
     else
-	    Authorization.find_by(session_token: session[:session_token])
-        					 .update(uber_auth_token: access_token,
-        					 				 uber_refresh_token: refresh_token,
-        					         uber_access_token_expiration_time: Time.now + expires_in)
+      access_token = JSON.parse(resp.body)['access_token']
+      refresh_token = JSON.parse(resp.body)['refresh_token']
+      expires_in = JSON.parse(resp.body)['expires_in']
 
-     # sign up success, prompt user that they can order uber now
-			response_url = Authorization.find_by_session_token(session[:session_token]).slack_response_url
-			slack_response_params = {
-				text: 'You can now order an Uber from Slack!'
-			}
-			RestClient.post(response_url, slack_response_params.to_json)
-	    render text: "Successfully connected!"
-	  end
+      if access_token.nil?
+        render json: {status: "Error: no access token", body: resp.body}
+      else
+  	    Authorization.find_by(session_token: session[:session_token])
+          					 .update(uber_auth_token: access_token,
+          					 				 uber_refresh_token: refresh_token,
+          					         uber_access_token_expiration_time: Time.now + expires_in)
+
+       # sign up success, prompt user that they can order uber now
+  			response_url = Authorization.find_by_session_token(session[:session_token]).slack_response_url
+  			slack_response_params = {
+  				text: 'You can now order an Uber from Slack!'
+  			}
+
+  			resp = RestClient.post(response_url, slack_response_params.to_json)
+
+        if resp.code == 500
+          render text: "Sorry, something went wrong on our end."
+        else
+    	    render text: "Successfully connected!"
+        end
+  	  end
+    end
   end
 
   def establish_session
@@ -71,9 +82,12 @@ class Api::AuthorizationsController < ApplicationController
 
     resp = RestClient.post('https://slack.com/api/oauth.access', slack_auth_params)
 
-    access_token = resp['access_token']
-
-    render text: "slack auth success, access_token: #{resp.body}"
+    if resp.code == 500
+      render text: "Sorry, something went wrong on our end."
+    else
+      access_token = resp['access_token']
+      render text: "slack auth success, access_token: #{resp.body}"
+    end
   end
 
   private
@@ -114,14 +128,19 @@ class Api::AuthorizationsController < ApplicationController
       'refresh_token' => auth.uber_refresh_token
     }
     resp = RestClient.post('https://login.uber.com/oauth/v2/token', post_params)
-    access_token = JSON.parse(resp.body)['access_token']
-    refresh_token = JSON.parse(resp.body)['refresh_token']
-    expires_in = JSON.parse(resp.body)['expires_in']
 
-    if access_token
-      auth.update(uber_auth_token: access_token,
-                  uber_refresh_token: refresh_token,
-                  uber_access_token_expiration_time: Time.now + expires_in)
+    if resp.code == 500
+      render text: "Sorry, something went wrong on our end."
+    else
+      access_token = JSON.parse(resp.body)['access_token']
+      refresh_token = JSON.parse(resp.body)['refresh_token']
+      expires_in = JSON.parse(resp.body)['expires_in']
+
+      if access_token
+        auth.update(uber_auth_token: access_token,
+                    uber_refresh_token: refresh_token,
+                    uber_access_token_expiration_time: Time.now + expires_in)
+      end
     end
   end
 
