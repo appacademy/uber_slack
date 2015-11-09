@@ -56,9 +56,9 @@ class UberCommand
 
     result = RestClient.get(
     resource,
-    authorization: bearer_header,
-    "Content-Type" => :json,
-    accept: 'json'
+      authorization: bearer_header,
+      "Content-Type" => :json,
+      accept: 'json'
     )
 
     seconds = JSON.parse(result)
@@ -71,6 +71,66 @@ class UberCommand
     #   return "Your car is arriving in #{minutes} minutes"
     # end
   end
+
+  def ride_request_details request_id
+    uri = Addressable::URI.parse("#{BASE_URL}/v1/requests/#{request_id}")
+    uri.query_values = { 'request_id' => request_id }
+    resource = uri.to_s
+
+    result = RestClient.get(
+      resource,
+      authorization: bearer_header,
+      "Content-Type" => :json,
+      accept: 'json'
+    )
+
+    JSON.parse(result)
+  end
+
+  def cancel_ride request_id
+    uri = Addressable::URI.parse("#{BASE_URL}/v1/requests/#{request_id}")
+    # uri.query_values = { 'request_id' => request_id }
+    resource = uri.to_s
+
+    result = RestClient.delete(
+      resource,
+      authorization: bearer_header,
+      "Content-Type" => :json,
+      accept: 'json'
+    )
+
+    "Ride Cancelled" if result
+  end
+
+  # def ride_request_map request_id
+  #   uri = Addressable::URI.parse("#{BASE_URL}/v1/requests/#{request_id}/map")
+  #   uri.query_values = { 'request_id' => request_id }
+  #   resource = uri.to_s
+  #
+  #   result = RestClient.get(
+  #     resource,
+  #     authorization: bearer_header,
+  #     "Content-Type" => :json,
+  #     accept: 'json'
+  #   )
+  #
+  #   JSON.parse(result)
+  # end
+  #
+  # def ride_request_receipt request_id
+  #   uri = Addressable::URI.parse("#{BASE_URL}/v1/requests/#{request_id}/receipt")
+  #   uri.query_values = { 'request_id' => request_id }
+  #   resource = uri.to_s
+  #
+  #   result = RestClient.get(
+  #     resource,
+  #     authorization: bearer_header,
+  #     "Content-Type" => :json,
+  #     accept: 'json'
+  #   )
+  #
+  #   JSON.parse(result)
+  # end
 
   def help
     HELP_TEXT
@@ -116,11 +176,12 @@ class UberCommand
         # surge = make request and get surge in price
         response = RestClient.get(
         "#{BASE_URL}/v1/estimates/price",
-        body.to_json,
-        authorization: bearer_header,
-        "Content-Type" => :json,
-        accept: 'json'
+          body.to_json,
+          authorization: bearer_header,
+          "Content-Type" => :json,
+          accept: 'json'
         )
+
         surge_multiplier = response.prices.select{ |product| product.product_id = product_id }.surge_multiplier
         Ride.create(user_id: @user_id, surge_confirmation_id: response.meta.surge_confirmation.surge_confirmation_id)
         return "Surge in price: Price has increased with #{surge_multiplier}"
