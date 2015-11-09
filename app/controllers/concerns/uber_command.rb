@@ -38,10 +38,10 @@ class UberCommand
   end
 
   def run user_input_string
-    input = user_input_string.split(" ")
+    input = user_input_string.split(" ", 2) # Only split on first space.
     command_name = input.first.downcase
 
-    command_argument = input.drop(1)
+    command_argument = input.second.downcase
 
     return UNKNOWN_COMMAND_ERROR if invalid_command? command_name || command_name.nil?
 
@@ -101,11 +101,11 @@ class UberCommand
     "Ride Cancelled" if result
   end
 
-  def help(args = nil)   # accept and ignore extra args after help
+  def help _ # No command argument.
     HELP_TEXT
   end
 
-  def accept _
+  def accept _ # No command argument.
     @ride = Ride.where(user_id: @user_id).order(:updated_at).last
     surge_confirmation_id = @ride.surge_confirmation_id
     product_id = @ride.product_id
@@ -256,7 +256,7 @@ class UberCommand
   end
 
   def resolve_address address
-    location = Geocoder.search(address.join(" "))[0]
+    location = Geocoder.search(address)
 
     if location.blank?
       LOCATION_NOT_FOUND_ERROR
