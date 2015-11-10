@@ -413,7 +413,7 @@ class UberCommand
   end
 
   def reply_to_slack(response)
-      payload = { text: response}
+      payload = { text: response }
 
       RestClient.post(@response_url, payload.to_json)
   end
@@ -452,7 +452,7 @@ class UberCommand
     ["Got it! We are looking for a driver",
      "to take you from #{origin} to #{destination}.",
      "Your pickup will be in #{estimate_msg}."
-    ]
+    ].join(" ")
   end
 
   def format_response_errors response_errors
