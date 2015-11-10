@@ -109,7 +109,7 @@ class UberCommand
       return "Sorry, we weren't able to get the link to share your last ride."
     end
 
-    return map_response["href"]
+    return JSON.parse(map_response.body)["href"]
   end
 
   def status _ # No command argument.
