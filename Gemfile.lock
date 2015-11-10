@@ -133,6 +133,9 @@ GEM
     raindrops (0.15.0)
     rake (10.4.2)
     rdoc (4.2.0)
+    redis (3.0.1)
+    redis-namespace (1.2.1)
+      redis (~> 3.0.0)
     resque (1.22.0)
       multi_json (~> 1.0)
       redis-namespace (~> 1.0)
@@ -203,6 +206,7 @@ DEPENDENCIES
   pry-rails
   rack-handlers
   rails (= 4.2.1)
+  resque (~> 1.22.0)
   rest-client
   sass-rails (~> 5.0)
   sdoc (~> 0.4.0)
