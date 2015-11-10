@@ -327,26 +327,20 @@ class UberCommand
     if surge_multiplier > 1
       return ask_for_surge_confirmation(surge_multiplier)
     else
-      ride_response = request_ride!(
+      Resque.enqueue(
+        RideJob,
+        bearer_header,
+        ride,
         origin_lat,
         origin_lng,
         destination_lat,
         destination_lng,
-        product_id
+        product_id,
+        @response_url
       )
-      if !ride_response["errors"].nil?
-        reply_to_slack("We were not able to request a ride from Uber. Please try again.")
-      else
-        ride.update!(request_id: ride_response['request_id'])  # TODO: Do async.
-        success_msg = format_200_ride_request_response(
-          origin_name,
-          destination_name,
-          ride_response
-        )
-        reply_to_slack(success_msg)
-      end
-      ""  # Return empty string in case we answer Slack soon enough for response to go through.
     end
+
+    "Pinging Uber to drive you from #{origin_name} to #{destination_name}."
   end
 
   def ask_for_surge_confirmation(multiplier)
@@ -357,28 +351,6 @@ class UberCommand
     else
       [base, "Reply */uber accept* to confirm the ride"].join(" ")
     end
-  end
-
-  def request_ride!(start_lat, start_lng, end_lat, end_lng, product_id, surge_confirmation_id = nil)
-      body = {
-        start_latitude: start_lat,
-        start_longitude: start_lng,
-        end_latitude: end_lat,
-        end_longitude: end_lng,
-        product_id: product_id
-      }
-
-      body['surge_confirmation_id'] = surge_confirmation_id if surge_confirmation_id
-
-      response = RestClient.post(
-        "#{BASE_URL}/v1/requests",
-        body.to_json,
-        authorization: bearer_header,
-        "Content-Type" => :json,
-        accept: :json
-      )
-
-    JSON.parse(response.body)
   end
 
   def parse_start_and_end_address(input_str)
