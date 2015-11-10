@@ -75,7 +75,7 @@ class UberCommand
     @ride = Ride.where(user_id: @user_id).order(:updated_at).last
     surge_confirmation_id = @ride.surge_confirmation_id
     product_id = @ride.product_id
-    multiplier = @ride.multiplier
+    multiplier = @ride.surge_multiplier
 
     start_latitude = @ride.start_latitude
     start_longitude = @ride.start_longitude
@@ -143,7 +143,10 @@ class UberCommand
       :product_id => product_id
     }
 
-    ride_attrs['surge_confirmation_id'] = surge_confirmation_id if surge_confirmation_id
+    if surge_confirmation_id
+      ride_attrs['surge_confirmation_id'] = surge_confirmation_id
+      ride_attrs['surge_multiplier'] = surge_multiplier
+    end
 
     ride = Ride.create!(ride_attrs)
 
