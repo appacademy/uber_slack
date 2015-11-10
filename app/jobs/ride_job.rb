@@ -43,7 +43,7 @@ class RideJob
     end
   end
 
-  def request_ride!(
+  def self.request_ride!(
     bearer_header,
     origin_lat,
     origin_lng,
@@ -70,13 +70,13 @@ class RideJob
     JSON.parse(response.body)
   end
 
-  def reply_to_slack(slack_url, response)
+  def self.reply_to_slack(slack_url, response)
     payload = { text: response }
 
     RestClient.post(slack_url, payload.to_json)
   end
 
-  def format_200_ride_request_response origin, destination, response
+  def self.format_200_ride_request_response origin, destination, response
     eta = response['eta'].to_i / 60
 
     estimate_msg = "less than a minute" if eta == 0
