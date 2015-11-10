@@ -32,6 +32,17 @@ HELP_TEXT = <<-STRING
   - help
 STRING
 
+RIDE_STATUSES = {
+  "processing" => "Looking for a driver.",
+  "no_drivers_available" => "No drivers were available to pick you up. Try again.",
+  "accepted" => "A driver accepted and is on their way.",
+  "arriving" => "Your driver is arriving now.",
+  "in_progress" => "Your ride is in progress.",
+  "driver_canceled" => "Your driver canceled.",
+  "rider_canceled" => "You canceled your last ride.",
+  "completed" => "You completed your last ride requested through Slack."
+}
+
 LOCATION_NOT_FOUND_ERROR = "Please enter a valid address. Be as specific as possible (e.g. include city)."
 
 class UberCommand
@@ -114,7 +125,11 @@ class UberCommand
     eta = status_hash["eta"]
     eta_msg = eta == 1 ? "one minute" : "#{eta} minutes"
 
-    return "Your ride status is #{ride_status}. ETA: #{eta_msg}."
+    if ["processing", "accepted", "arriving", "in_progress"].include?(ride_status)
+      return [RIDE_STATUSES[ride_status], "ETA: #{eta_msg}"].join(" ")
+    end
+
+    return RIDE_STATUSES[ride_status]
   end
 
   def cancel _ # No command argument.
