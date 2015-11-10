@@ -106,8 +106,9 @@ class UberCommand
     )
     rescue
       return [
-        "Sorry, we could not get time and price estimates for that trip.",
-        "Can you try again with a more precise address?"
+        "Sorry, we could not get time and price estimates for a trip",
+        "from #{start_addr} to #{end_addr}.",
+        "Can you try again with more precise addresses?"
       ].join(" ")
 
     end
