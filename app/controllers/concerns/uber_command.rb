@@ -71,14 +71,22 @@ class UberCommand
     HELP_TEXT
   end
 
-  def accept _ # No command argument.
+  def accept stated_multiplier
     @ride = Ride.where(user_id: @user_id).order(:updated_at).last
     surge_confirmation_id = @ride.surge_confirmation_id
     product_id = @ride.product_id
+    multiplier = @ride.multiplier
+
     start_latitude = @ride.start_latitude
     start_longitude = @ride.start_longitude
     end_latitude = @ride.end_latitude
     end_longitude = @ride.end_longitude
+
+    stated_multiplier = stated_multiplier.to_f
+
+    if multiplier > 2.0 && stated_multiplier != multiplier
+      return "That didn't work. Please reply '/accept #{multiplier}' to confirm the ride."
+    end
 
     if (Time.now - @ride.updated_at) > 5.minutes
       # TODO: Break out address resolution in #ride so that we can pass lat/lngs directly.
