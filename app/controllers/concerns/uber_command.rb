@@ -253,11 +253,20 @@ class UberCommand
       end
 
       if response.code == 200 or response.code == 202
-        success_msg = format_200_ride_request_response(JSON.parse(response.body))
+        response_hash = JSON.parse(response.body)
+
+        success_msg = format_200_ride_request_response(
+          start_location,
+          end_location,
+          response_hash
+        )
+
+        @ride.update!(request_id: response_hash['request_id'])
         reply_to_slack(success_msg)
       else
         reply_to_slack(fail_msg)
       end
+
       ""
     end
   end
@@ -332,6 +341,7 @@ class UberCommand
 
   def ask_for_surge_confirmation(multiplier)
     base = "#{multiplier}x surge is in effect."
+
     if multiplier >= 2
       [base, "Reply */uber accept #{multiplier}'* to confirm the ride."].join(" ")
     else
