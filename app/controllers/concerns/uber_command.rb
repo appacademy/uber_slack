@@ -21,10 +21,11 @@ UNKNOWN_COMMAND_ERROR = <<-STRING
   Sorry, we didn't quite catch that command.  Try */uber help* for a list.
 STRING
 
+# Products is left out
 HELP_TEXT = <<-STRING
   Try these commands:
   - ride [origin address] to [destination address]
-  - products [address]
+  - estimate [origin address] to [destination address]
   - help
 STRING
 
@@ -244,12 +245,13 @@ class UberCommand
     response
   end
 
-  def format_ride_estimate_response(ride_esimate_hash)
-    duration = ride_esimate_hash["trip"]["duration_estimate"]
-    duration_msg = (duration == 1 ? "less than one minute" : "about #{duration} minutes")
-    cost = ride_esimate_hash["price"]["display"]
+  def format_ride_estimate_response(ride_estimate_hash)
+    cost = ride_estimate_hash["price"]["display"]
+    surge = ride_estimate_hash["price"]["surge_multiplier"]
 
-    "Hmm... That trip will take #{duration_msg} and cost about #{cost}."
+    surge_msg = surge > 1 ? "No surge currently in effect." : "Includes current surge at #{surge_multiplier}."
+
+    ["That trip would cost about #{cost}.", surge_msg].join (" ")
   end
 
   def bearer_header
