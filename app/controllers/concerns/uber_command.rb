@@ -97,7 +97,7 @@ class UberCommand
       ].join(" ")
 
     end
-    format_ride_estimate_response(ride_estimate_hash)
+    format_ride_estimate_response(start_addr, end_addr, ride_estimate_hash)
   end
 
   def help _ # No command argument.
@@ -354,6 +354,9 @@ class UberCommand
       origin_name = origin_name["from".length..-1]
     end
 
+    origin_name = origin_name.lstrip.rstrip
+    destination_name = destination_name.lstrip.rstrip
+
     [origin_name, destination_name]
   end
 
@@ -431,7 +434,7 @@ class UberCommand
     response
   end
 
-  def format_ride_estimate_response(ride_estimate_hash)
+  def format_ride_estimate_response(start_addr, end_addr, ride_estimate_hash)
     duration_secs = ride_estimate_hash["trip"]["duration_estimate"]
     duration_mins = duration_secs / 60
 
@@ -441,7 +444,11 @@ class UberCommand
     surge = ride_estimate_hash["price"]["surge_multiplier"]
     surge_msg = surge == 1 ? "No surge is currently in effect." : "Includes current surge at #{surge}."
 
-    ["Let's see... That trip would take about #{duration_msg} and cost #{cost}.", surge_msg].join (" ")
+    [
+      "Let's see... Driving from #{start_addr} to #{end_addr} would take",
+      "about #{duration_msg} and cost #{cost}.",
+      surge_msg
+    ].join (" ")
   end
 
   def bearer_header
