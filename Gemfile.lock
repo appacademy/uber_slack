@@ -206,6 +206,7 @@ DEPENDENCIES
   pry-rails
   rack-handlers
   rails (= 4.2.1)
+  redis
   resque (~> 1.22.0)
   rest-client
   sass-rails (~> 5.0)

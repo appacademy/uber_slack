@@ -35,6 +35,8 @@ gem 'addressable'
 
 # Use Unicorn as the app server
 gem 'unicorn'
+
+gem 'redis'
 # Resque for asyn tasks
 gem 'resque', "~> 1.22.0"
 
