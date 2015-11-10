@@ -1,5 +1,5 @@
 class Api::AuthorizationsController < ApplicationController
-  rescue_from Exception, with: :render_error
+  rescue_from RuntimeError, with: :render_error
 
   before_action :verify_slack_token, only: :use_uber
   before_action :require_authorization, only: :use_uber
