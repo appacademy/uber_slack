@@ -246,12 +246,16 @@ class UberCommand
   end
 
   def format_ride_estimate_response(ride_estimate_hash)
+    duration_secs = ride_estimate_hash["trip"]["duration_estimate"]
+    duration_mins = duration_secs / 60
+
+    duration_msg = duration_mins == 1 ? "one minute" : "#{duration_mins} minutes"
+
     cost = ride_estimate_hash["price"]["display"]
     surge = ride_estimate_hash["price"]["surge_multiplier"]
+    surge_msg = surge == 1 ? "No surge currently in effect." : "Includes current surge at #{surge_multiplier}."
 
-    surge_msg = surge > 1 ? "No surge currently in effect." : "Includes current surge at #{surge_multiplier}."
-
-    ["That trip would cost about #{cost}.", surge_msg].join (" ")
+    ["Let's see... That trip would take about #{duration_msg} and cost #{cost}.", surge_msg].join (" ")
   end
 
   def bearer_header
