@@ -49,8 +49,8 @@ RIDE_STATUSES = {
   "arriving" => "Your driver is arriving now.",
   "in_progress" => "Your ride is in progress.",
   "driver_canceled" => "Your driver canceled.",
-  "rider_canceled" => "You canceled your last ride.",
-  "completed" => "You completed your last ride requested through Slack."
+  "rider_canceled" => "You canceled the last ride you requested through Slack.",
+  "completed" => "You completed the last ride you requested through Slack."
 }
 
 LOCATION_NOT_FOUND_ERROR = "Please enter a valid address. Be as specific as possible (e.g. include city)."
@@ -131,7 +131,7 @@ class UberCommand
         accept: 'json'
       )
     rescue
-      return "Sorry, we weren't able to get the link to share your last ride."
+      return "Sorry, we weren't able to get the link to share your ride."
     end
 
     link = JSON.parse(map_response.body)["href"]
@@ -170,7 +170,7 @@ class UberCommand
 
     request_id = ride.request_id
 
-    fail_msg = "Sorry, we were unable to cancel your last ride."
+    fail_msg = "Sorry, we were unable to cancel your ride."
 
     begin
       resp = RestClient.delete(
@@ -183,7 +183,7 @@ class UberCommand
       return fail_msg
     end
 
-    return "Successfully canceled your last ride." if resp.code == 204
+    return "Successfully canceled your ride." if resp.code == 204
     return fail_msg
   end
 
@@ -331,9 +331,9 @@ class UberCommand
   end
 
   def ask_for_surge_confirmation(multiplier)
-    base = "#{surge_multiplier}x surge is in effect."
+    base = "#{multiplier}x surge is in effect."
     if multiplier >= 2
-      [base, "Reply '*/uber accept #{surge_multiplier}'* to confirm the ride."].join(" ")
+      [base, "Reply '*/uber accept #{multiplier}'* to confirm the ride."].join(" ")
     else
       [base, "Reply *'/uber accept* to confirm the ride"].join(" ")
     end
