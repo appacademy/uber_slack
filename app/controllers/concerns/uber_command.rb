@@ -82,9 +82,10 @@ class UberCommand
     end_latitude = @ride.end_latitude
     end_longitude = @ride.end_longitude
 
-    stated_multiplier = stated_multiplier.to_f
+    they_didnt_pass_a_float = !stated_multiplier.include?(".")
+    they_passed_the_wrong_float = stated_multiplier.to_f != multiplier
 
-    if multiplier >= 2.0 && stated_multiplier != multiplier
+    if multiplier >= 2.0 and (they_didnt_pass_a_float or they_passed_the_wrong_float)
       return "That didn't work. Please reply '/accept #{multiplier}' to confirm the ride."
     end
 
