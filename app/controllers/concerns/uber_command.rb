@@ -124,7 +124,8 @@ class UberCommand
       return "Sorry, we weren't able to get the link to share your last ride."
     end
 
-    return JSON.parse(map_response.body)["href"]
+    link = JSON.parse(map_response.body)["href"]
+    "Use this link to share your ride's progress: #{link}."
   end
 
   def status _ # No command argument.
@@ -304,7 +305,7 @@ class UberCommand
         destination_lng,
         product_id
       )
-      if ride_response["errors"]
+      if !ride_response["errors"].nil?
         reply_to_slack("We were not able to request a ride from Uber. Please try again.")
       else
         ride.update!(request_id: ride_response['request_id'])  # TODO: Do async.
