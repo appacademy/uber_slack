@@ -146,8 +146,9 @@ class UberCommand
       "Content-Type" => :json,
       accept: 'json'
     )
-    return "Successfully canceled your last ride." if resp.code == "204"
-    return "We were unable to cancel your last ride."
+
+    return "Successfully canceled your last ride." if resp.code == 204
+    return "Sorry, we were unable to cancel your last ride."
   end
 
   def get_ride_status(request_id)
