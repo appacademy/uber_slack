@@ -222,7 +222,7 @@ class UberCommand
         return
       end
 
-      if response.code == 200
+      if response.code == 200 or response.code == 202
         success_msg = format_200_ride_request_response(JSON.parse(response.body))
         reply_to_slack(success_msg)
       else
