@@ -18,13 +18,13 @@ VALID_COMMANDS = [
 RIDE_REQUEST_FORMAT_ERROR = <<-STRING
   To request a ride please use the format */uber ride [origin] to [destination]*.
   For best results, specify a city or zip code.
-  Ex: */uber ride 1061 Market Street San Francisco to 405 Howard St*
+  Ex: */uber ride 1061 Market Street San Francisco to 55 Music Concourse Dr San Francisco*
 STRING
 
 ESTIMATES_FORMAT_ERROR = <<-STRING
   To request estimates for a trip, please use the format */uber [origin] to [destination]*.
   For best results, specify a city or zip code.
-  Ex: */uber estimate 1061 Market Street San Francisco to 405 Howard St*
+  Ex: */uber estimate 1061 Market Street San Francisco to 55 Music Concourse Dr San Francisco*
 STRING
 
 UNKNOWN_COMMAND_ERROR = <<-STRING
