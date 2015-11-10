@@ -90,14 +90,11 @@ class UberCommand
     start_lat, start_lng = resolve_address(start_addr)
     end_lat, end_lng = resolve_address(end_addr)
 
-    begin
-      product_id = get_default_product_id_for_lat_lng(start_lat, start_lng)
-    rescue
+    product_id = get_default_product_id_for_lat_lng(start_lat, start_lng)
       return [
         "Sorry, we did not find any Uber products available near #{start_addr}.",
         "Can you try again with a more precise address?"
-      ].join(" ")
-    end
+      ].join(" ") if product_id.nil?
 
     begin
       ride_estimate_hash = get_ride_estimate(
@@ -285,14 +282,11 @@ class UberCommand
     origin_lat, origin_lng = resolve_address origin_name
     destination_lat, destination_lng = resolve_address destination_name
 
-    begin
-      product_id = get_default_product_id_for_lat_lng(start_lat, start_lng)
-    rescue
-      return [
-        "Sorry, we did not find any Uber products available near '#{origin_name}'.",
-        "Can you try again with a more precise address?"
-      ].join(" ")
-    end
+    product_id = get_default_product_id_for_lat_lng(start_lat, start_lng)
+    return [
+      "Sorry, we did not find any Uber products available near '#{origin_name}'.",
+      "Can you try again with a more precise address?"
+    ].join(" ") if product_id.nil?
 
     begin
       ride_estimate_hash = get_ride_estimate(
@@ -425,7 +419,11 @@ class UberCommand
   end
 
   def get_default_product_id_for_lat_lng lat, lng
-    available_products = get_products_for_lat_lng(lat, lng)
+    begin
+      available_products = get_products_for_lat_lng(lat, lng)
+    rescue RestClient::ResourceNotFound
+      return nil
+    end
     available_products["products"].first["product_id"]
   end
 
