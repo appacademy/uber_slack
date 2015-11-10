@@ -289,7 +289,7 @@ class UberCommand
       product_id = get_default_product_id_for_lat_lng(start_lat, start_lng)
     rescue
       return [
-        "Sorry, we did not find any Uber products available near #{start_addr}.",
+        "Sorry, we did not find any Uber products available near #{origin_name}.",
         "Can you try again with a more precise address?"
       ].join(" ")
     end
