@@ -60,7 +60,7 @@ class UberCommand
 
     command_name = input.first.downcase
 
-    command_argument = input.second.nil? ? nil : input.second.downcase
+    command_argument = input.second.nil? ? "" : input.second.downcase
 
     return UNKNOWN_COMMAND_ERROR if invalid_command?(command_name) || command_name.nil?
 
@@ -75,6 +75,7 @@ class UberCommand
 
   def estimate user_input_string
     return ESTIMATES_FORMAT_ERROR unless user_input_string.include?(" to ")
+
     start_addr, end_addr = parse_start_and_end_address(user_input_string)
     start_lat, start_lng = resolve_address(start_addr)
     end_lat, end_lng = resolve_address(end_addr)
