@@ -2,7 +2,7 @@ namespace :resque do
   task :setup
 
   desc "Start a Resque worker"
-  task :work => [ :preload, :setup ] do
+  task :work => [ :setup ] do
     require 'resque'
 
     worker = Resque::Worker.new
