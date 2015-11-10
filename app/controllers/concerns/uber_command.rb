@@ -2,7 +2,7 @@ require 'addressable/uri'
 
 BASE_URL = ENV["uber_base_url"]
 
-VALID_COMMANDS = ['ride', 'estimate', 'help', 'accept', 'share', 'status']  # Leave out 'products' until user can pick.
+VALID_COMMANDS = ['ride', 'estimate', 'help', 'accept', 'share', 'status', 'cancel']  # Leave out 'products' until user can pick.
 
 # returned when ride isn't requested in the format '{origin} to {destination}'
 RIDE_REQUEST_FORMAT_ERROR = <<-STRING
@@ -24,10 +24,11 @@ STRING
 # Products is left out
 HELP_TEXT = <<-STRING
   Try these commands:
-  - estimate [origin address] to [destination address]
   - ride [origin address] to [destination address]
+  - estimate [origin address] to [destination address]
   - share
   - status
+  - cancel
   - help
 STRING
 
@@ -114,6 +115,24 @@ class UberCommand
     eta_msg = eta == 1 ? "one minute" : "#{eta} minutes"
 
     return "Your ride status is #{ride_status}. ETA: #{eta_msg}."
+  end
+
+  def cancel _ # No command argument.
+    ride = Ride.where(user_id: @user_id).order(:updated_at).last
+    if ride.nil?
+      return "Sorry, we couldn't find a ride for you to cancel."
+    end
+
+    request_id = ride.request_id
+
+    resp = RestClient.delete(
+      "#{BASE_URL}/v1/requests/#{request_id}",
+      authorization: bearer_header,
+      "Content-Type" => :json,
+      accept: 'json'
+    )
+    return "Your last ride cancelled." if resp.code == "204"
+    return "We were unable to cancel your last ride."
   end
 
   def get_ride_status(request_id)
