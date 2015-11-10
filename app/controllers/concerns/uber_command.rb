@@ -224,8 +224,8 @@ class UberCommand
   end
 
   def get_default_product_id_for_lat_lng lat, lng
-    available_products = get_products_for_lat_lng(start_lat, start_lng)
-    product_id = available_products["products"].first["product_id"]
+    available_products = get_products_for_lat_lng(lat, lng)
+    available_products["products"].first["product_id"]
   end
 
   def get_products_for_lat_lng lat, lng
