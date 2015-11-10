@@ -58,12 +58,12 @@ class UberCommand
 
   def estimate user_input_string
     start_addr, end_addr = parse_start_and_end_address(user_input_string)
-
     start_lat, start_lng = resolve_address(start_addr)
     end_lat, end_lng = resolve_address(end_addr)
 
-    ride_estimate_hash = get_ride_estimate(start_lat, start_lng, end_lat, end_lng)
+    product_id = get_default_product_id_for_lat_lng(start_lat, start_lng)
 
+    ride_estimate_hash = get_ride_estimate(start_lat, start_lng, end_lat, end_lng, product_id)
     format_ride_estimate_response(ride_estimate_hash)
   end
 
@@ -113,11 +113,14 @@ class UberCommand
     origin_lat, origin_lng = resolve_address origin_name
     destination_lat, destination_lng = resolve_address destination_name
 
+    product_id = get_default_product_id_for_lat_lng(origin_lat, origin_lng)
+
     ride_estimate_hash = get_ride_estimate(
       origin_lat,
       origin_lng,
       destination_lat,
-      destination_lng
+      destination_lng,
+      product_id
     )
 
     surge_multiplier = ride_estimate_hash["price"]["surge_multiplier"]
@@ -179,10 +182,7 @@ class UberCommand
     [origin_name, destination_name]
   end
 
-  def get_ride_estimate(start_lat, start_lng, end_lat, end_lng)
-    available_products = get_products_for_lat_lng(start_lat, start_lng)
-    product_id = available_products["products"].first["product_id"]
-
+  def get_ride_estimate(start_lat, start_lng, end_lat, end_lng, product_id)
     body = {
       "start_latitude" => start_lat,
       "start_longitude" => start_lng,
@@ -221,6 +221,11 @@ class UberCommand
       lat, lng = resolved_add
       format_products_response(get_products_for_lat_lng lat, lng)
     end
+  end
+
+  def get_default_product_id_for_lat_lng lat, lng
+    available_products = get_products_for_lat_lng(start_lat, start_lng)
+    product_id = available_products["products"].first["product_id"]
   end
 
   def get_products_for_lat_lng lat, lng
