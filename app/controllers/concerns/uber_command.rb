@@ -419,12 +419,12 @@ class UberCommand
   end
 
   def get_default_product_id_for_lat_lng lat, lng
-    begin
-      available_products = get_products_for_lat_lng(lat, lng)
-    rescue RestClient::ResourceNotFound
-      return nil
+    product_id = Rails.cache.fetch("location: #{lat}/#{lng}", expires_in: 15.minutes) do
+      available_products = get_products_for_lat_lng(lat, lng)["products"]
+      available_products.empty? ? nil : available_products.first["product_id"]
     end
-    available_products["products"].first["product_id"]
+
+    product_id
   end
 
   def get_products_for_lat_lng lat, lng
@@ -499,7 +499,9 @@ class UberCommand
   end
 
   def resolve_address address
-    location = Geocoder.search(address).first
+    location = Rails.fetch("address: #{address}", expires_in: 1.day) do
+      Geocoder.search(address).first
+    end
 
     if location.blank?
       LOCATION_NOT_FOUND_ERROR
