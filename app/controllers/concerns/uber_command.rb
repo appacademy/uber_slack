@@ -90,7 +90,14 @@ class UberCommand
     start_lat, start_lng = resolve_address(start_addr)
     end_lat, end_lng = resolve_address(end_addr)
 
-    product_id = get_default_product_id_for_lat_lng(start_lat, start_lng)
+    begin
+      product_id = get_default_product_id_for_lat_lng(start_lat, start_lng)
+    rescue
+      return [
+        "Sorry, we did not find any Uber products available near #{start_addr}.",
+        "Can you try again with a more precise address?"
+      ].join(" ")
+    end
 
     begin
       ride_estimate_hash = get_ride_estimate(
@@ -278,7 +285,14 @@ class UberCommand
     origin_lat, origin_lng = resolve_address origin_name
     destination_lat, destination_lng = resolve_address destination_name
 
-    product_id = get_default_product_id_for_lat_lng(origin_lat, origin_lng)
+    begin
+      product_id = get_default_product_id_for_lat_lng(start_lat, start_lng)
+    rescue
+      return [
+        "Sorry, we did not find any Uber products available near #{start_addr}.",
+        "Can you try again with a more precise address?"
+      ].join(" ")
+    end
 
     begin
       ride_estimate_hash = get_ride_estimate(
