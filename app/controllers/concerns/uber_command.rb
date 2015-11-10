@@ -140,9 +140,18 @@ class UberCommand
     ride = Ride.create!(ride_attrs)
 
     if surge_multiplier > 1
-      return "#{surge_multiplier} surge is in effect. Reply '/uber accept' to confirm the ride."
+      return [
+        "#{surge_multiplier}x surge is in effect.",
+        "Reply '/uber accept #{surge_multiplier}' to confirm the ride."
+      ].join(" ")
     else
-      ride_response = request_ride!(start_lat, start_lng, end_lat, end_lng, product_id)
+      ride_response = request_ride!(
+        origin_lat,
+        origin_lng,
+        destination_lat,
+        destination_lng,
+        product_id
+      )
       ride.update!(request_id: ride_response['request_id'])  # TODO: Do async.
       success_msg = format_200_ride_request_response(ride_response)
       reply_to_slack(success_msg)
