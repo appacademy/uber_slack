@@ -84,7 +84,7 @@ class UberCommand
 
     stated_multiplier = stated_multiplier.to_f
 
-    if multiplier > 2.0 && stated_multiplier != multiplier
+    if multiplier >= 2.0 && stated_multiplier != multiplier
       return "That didn't work. Please reply '/accept #{multiplier}' to confirm the ride."
     end
 
