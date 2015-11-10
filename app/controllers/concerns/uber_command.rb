@@ -451,7 +451,7 @@ class UberCommand
     estimate_msg = "about #{eta} minutes" if eta > 1
     ack = ["Got it!", "Roger that.", "OK.", "10-4."].sample
 
-    ["#{ack} it! We are looking for a driver",
+    ["#{ack} We are looking for a driver",
      "to take you from #{origin} to #{destination}.",
      "Your pickup will be in #{estimate_msg}."
     ].join(" ")
