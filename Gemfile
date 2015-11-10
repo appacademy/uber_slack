@@ -36,7 +36,7 @@ gem 'addressable'
 # Use Unicorn as the app server
 gem 'unicorn'
 # Resque for asyn tasks
-gem 'resque'
+gem 'resque', "~> 1.22.0"
 
 # Use Capistrano for deployment
 # gem 'capistrano-rails', group: :development
