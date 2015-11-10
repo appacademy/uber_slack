@@ -2,7 +2,17 @@ require 'addressable/uri'
 
 BASE_URL = ENV["uber_base_url"]
 
-VALID_COMMANDS = ['ride', 'estimate', 'help', 'accept', 'share', 'status', 'cancel']  # Leave out 'products' until user can pick.
+# Leave out 'products' until user can pick.
+VALID_COMMANDS = [
+  'ride',
+  'estimate',
+  'help',
+  'accept',
+  'share',
+  'status',
+  'cancel',
+  'trigger_error',
+]
 
 # returned when ride isn't requested in the format '{origin} to {destination}'
 RIDE_REQUEST_FORMAT_ERROR = <<-STRING
@@ -65,7 +75,7 @@ class UberCommand
     return UNKNOWN_COMMAND_ERROR if invalid_command?(command_name) || command_name.nil?
 
     response = self.send(command_name, command_argument)
-    # Send back response if command is not valid
+
     return response
   end
 
@@ -401,7 +411,7 @@ class UberCommand
     resource = uri.to_s
 
     result = RestClient.get(
-    resource,
+      resource,
       authorization: bearer_header,
       "Content-Type" => :json,
       accept: 'json'
@@ -475,5 +485,9 @@ class UberCommand
       location = location.data["geometry"]["location"]
       [location['lat'], location['lng']]
     end
+  end
+
+  def trigger_error _ # No command argument.
+    fail
   end
 end

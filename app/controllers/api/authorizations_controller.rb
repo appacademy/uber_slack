@@ -1,4 +1,6 @@
 class Api::AuthorizationsController < ApplicationController
+  rescue_from Exception, with: :render_error
+
   before_action :verify_slack_token, only: :use_uber
   before_action :require_authorization, only: :use_uber
   before_action :ensure_fresh_access_token, only: :use_uber
@@ -7,16 +9,25 @@ class Api::AuthorizationsController < ApplicationController
     render json: params
   end
 
+  # Action for user commands.
   def use_uber
-  	# here order car
-  	auth = Authorization.find_by(slack_user_id: params[:user_id])
-       response_url = slack_params[:response_url]
-  	uber_command = UberCommand.new(auth.uber_auth_token, auth.id, response_url)
-  	resp = uber_command.run(slack_params[:text])
-		render json: resp
+    auth = Authorization.find_by(slack_user_id: params[:user_id])
+    response_url = slack_params[:response_url]
+    uber_command = UberCommand.new(auth.uber_auth_token, auth.id, response_url)
+    resp = uber_command.run(slack_params[:text])
+
+    render json: resp
   end
 
+  def render_error(error)
+    Raven.capture_exception(exception)
 
+    error_msg = [
+      "Sorry, we encountered an error.",
+      "Please let us know on Twitter at @Uber_API."
+    ].join(" ")
+    render json: { text: error_msg }
+  end
 
   def connect_uber
     # After user has clicked "yes" on Uber OAuth page
