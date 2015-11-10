@@ -82,11 +82,14 @@ class UberCommand
     end_latitude = @ride.end_latitude
     end_longitude = @ride.end_longitude
 
-    they_didnt_pass_a_float = !stated_multiplier.nil? and !stated_multiplier.include?(".")
-    they_passed_the_wrong_float = stated_multiplier.to_f != multiplier
+    surge_is_high = multiplier >= 2.0
 
-    if multiplier >= 2.0 and (they_didnt_pass_a_float or they_passed_the_wrong_float)
+    if surge_is_high and (stated_multiplier.nil? or stated_multiplier.to_f != multiplier)
       return "That didn't work. Please reply '/accept #{multiplier}' to confirm the ride."
+    end
+
+    if surge_is_high and !stated_multiplier.include?('.')
+      return "That didn't work. Please include decimals to confirm #{multiplier}x surge."
     end
 
     if (Time.now - @ride.updated_at) > 5.minutes
