@@ -2,7 +2,7 @@ require 'addressable/uri'
 
 BASE_URL = ENV["uber_base_url"]
 
-VALID_COMMANDS = ['ride', 'estimate', 'help', 'accept', 'share']  # Leave out 'products' until user can pick.
+VALID_COMMANDS = ['ride', 'estimate', 'help', 'accept', 'share', 'status']  # Leave out 'products' until user can pick.
 
 # returned when ride isn't requested in the format '{origin} to {destination}'
 RIDE_REQUEST_FORMAT_ERROR = <<-STRING
@@ -24,9 +24,10 @@ STRING
 # Products is left out
 HELP_TEXT = <<-STRING
   Try these commands:
-  - ride [origin address] to [destination address]
   - estimate [origin address] to [destination address]
+  - ride [origin address] to [destination address]
   - share
+  - status
   - help
 STRING
 
