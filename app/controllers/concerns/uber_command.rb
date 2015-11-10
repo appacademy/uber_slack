@@ -290,6 +290,15 @@ class UberCommand
     origin_lat, origin_lng = resolve_address origin_name
     destination_lat, destination_lng = resolve_address destination_name
 
+    return ["Sorry, we don't know where #{start_addr} is.",
+            "Can you try again with a more precise origin address?"
+    ].join(" ") if start_lat.nil?
+
+    return ["Sorry, we don't know where #{end_addr} is.",
+            "Can you try again with a more precise destination address?"
+    ].join(" ") if end_lat.nil?
+
+
     product_id = get_default_product_id_for_lat_lng(origin_lat, origin_lng)
     return [
       "Sorry, we did not find any Uber products available near '#{origin_name}'.",
