@@ -415,7 +415,7 @@ class UberCommand
   def reply_to_slack(response)
       payload = { text: response}
 
-      RestClient.post(@response_url, payload.to_json, "Content-Type" => :json)
+      RestClient.post(@response_url, payload.to_json)
   end
 
   def get_default_product_id_for_lat_lng lat, lng
