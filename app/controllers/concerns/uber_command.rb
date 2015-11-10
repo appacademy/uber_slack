@@ -102,7 +102,7 @@ class UberCommand
         accept: 'json'
       )
     rescue
-      return "Sorry, we weren't able to get the link to share you last ride."
+      return "Sorry, we weren't able to get the link to share your last ride."
     end
 
     return map_response["href"]
@@ -140,15 +140,21 @@ class UberCommand
 
     request_id = ride.request_id
 
-    resp = RestClient.delete(
-      "#{BASE_URL}/v1/requests/#{request_id}",
-      authorization: bearer_header,
-      "Content-Type" => :json,
-      accept: 'json'
-    )
+    fail_msg = "Sorry, we were unable to cancel your last ride."
+
+    begin
+      resp = RestClient.delete(
+        "#{BASE_URL}/v1/requests/#{request_id}",
+        authorization: bearer_header,
+        "Content-Type" => :json,
+        accept: 'json'
+      )
+    rescue
+      return fail_msg
+    end
 
     return "Successfully canceled your last ride." if resp.code == 204
-    return "Sorry, we were unable to cancel your last ride."
+    return fail_msg
   end
 
   def get_ride_status(request_id)
@@ -187,6 +193,8 @@ class UberCommand
       return "That didn't work. Please include decimals to confirm #{multiplier}x surge."
     end
 
+    fail_msg = "Sorry but something went wrong. We were unable to request a ride."
+
     if (Time.now - @ride.updated_at) > 5.minutes
       # TODO: Break out address resolution in #ride so that we can pass lat/lngs directly.
       start_location = "#{@ride.start_latitude}, #{@ride.start_longitude}"
@@ -201,16 +209,25 @@ class UberCommand
         "surge_confirmation_id" => surge_confirmation_id,
         "product_id" => product_id
       }
-      response = RestClient.post(
-        "#{BASE_URL}/v1/requests",
-        body.to_json,
-        authorization: bearer_header,
-        "Content-Type" => :json,
-        accept: 'json'
-      )
-      success_msg = format_200_ride_request_response(JSON.parse(response.body))
+      begin
+        response = RestClient.post(
+          "#{BASE_URL}/v1/requests",
+          body.to_json,
+          authorization: bearer_header,
+          "Content-Type" => :json,
+          accept: 'json'
+        )
+      rescue
+        reply_to_slack(fail_msg)
+        return
+      end
 
-      reply_to_slack(success_msg)
+      if response.code == 200
+        success_msg = format_200_ride_request_response(JSON.parse(response.body))
+        reply_to_slack(success_msg)
+      else
+        reply_to_slack(fail_msg)
+      end
       ""
     end
   end
