@@ -47,6 +47,13 @@ License URL: http://creativecommons.org/licenses/by/3.0/
    </div>
 </div>
 <!--header end here-->
+<div class="agro-strip">
+	<div class="container">
+		<div class="agro-strip-main adjust-padding">
+			<a id="slack-integrate" href="https://slack.com/oauth/authorize?scope=incoming-webhook,commands&client_id=<%= ENV['slack_client_id'] %>"><img alt="Add to Slack" height="40" width="139" src="https://platform.slack-edge.com/img/add_to_slack.png" srcset="https://platform.slack-edge.com/img/add_to_slack.png 1x, https://platform.slack-edge.com/img/add_to_slack@2x.png 2x"></a>
+		</div>
+	</div>
+</div>
 <!--banner start here-->
 <div class="banner">
 	<div class="container">
@@ -60,14 +67,6 @@ License URL: http://creativecommons.org/licenses/by/3.0/
 <!--banner end here-->
 <%= render "instructions" %>
 <!--agrom strip start here-->
-<div class="agro-strip">
-	<div class="container">
-		<div class="agro-strip-main adjust-padding">
-			<a id="slack-integrate" href="https://slack.com/oauth/authorize?scope=incoming-webhook,commands&client_id=<%= ENV['slack_client_id'] %>"><img alt="Add to Slack" height="40" width="139" src="https://platform.slack-edge.com/img/add_to_slack.png" srcset="https://platform.slack-edge.com/img/add_to_slack.png 1x, https://platform.slack-edge.com/img/add_to_slack@2x.png 2x"></a>
-		</div>
-	</div>
-
-</div>
 
 <div class="banner">
 	<div class="container">
