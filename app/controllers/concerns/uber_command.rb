@@ -499,7 +499,7 @@ class UberCommand
   end
 
   def resolve_address address
-    location = Rails.fetch("address: #{address}", expires_in: 1.day) do
+    location = Rails.cache.fetch("address: #{address}", expires_in: 1.day) do
       Geocoder.search(address).first
     end
 
