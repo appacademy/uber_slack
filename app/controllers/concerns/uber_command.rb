@@ -273,10 +273,7 @@ class UberCommand
     ride = Ride.create!(ride_attrs)
 
     if surge_multiplier > 1
-      return [
-        "#{surge_multiplier}x surge is in effect.",
-        "Reply '/uber accept #{surge_multiplier}' to confirm the ride."
-      ].join(" ")
+      return ask_for_surge_confirmation(surge_multiplier)
     else
       ride_response = request_ride!(
         origin_lat,
@@ -293,6 +290,15 @@ class UberCommand
         reply_to_slack(success_msg)
       end
       ""  # Return empty string in case we answer Slack soon enough for response to go through.
+    end
+  end
+
+  def ask_for_surge_confirmation(multiplier)
+    base = "#{surge_multiplier}x surge is in effect."
+    if multiplier >= 2
+      [base, "Reply '/uber accept #{surge_multiplier}' to confirm the ride."].join(" ")
+    else
+      [base, "Reply '/uber accept to confirm the ride"].join(" ")
     end
   end
 
