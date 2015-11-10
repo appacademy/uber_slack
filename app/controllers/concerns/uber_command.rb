@@ -2,7 +2,7 @@ require 'addressable/uri'
 
 BASE_URL = ENV["uber_base_url"]
 
-VALID_COMMANDS = ['ride', 'products', 'get_eta', 'help', 'accept' ]
+VALID_COMMANDS = ['ride', 'estimate', 'help', 'accept' ]  # Leave out 'products' until user can pick.
 
 # returned when ride isn't requested in the format '{origin} to {destination}'
 RIDE_REQUEST_FORMAT_ERROR = <<-STRING
@@ -55,51 +55,15 @@ class UberCommand
 
   attr_reader :bearer_token
 
-  def get_eta address
-    lat, lng = resolve_address(address)
-    uri = Addressable::URI.parse("#{BASE_URL}/v1/estimates/time")
-    uri.query_values = { 'start_latitude' => lat, 'start_longitude' => lng }
+  def estimate user_input_string
+    start_addr, end_addr = parse_start_and_end_address(user_input_string)
 
-    resource = uri.to_s
+    start_lat, start_lng = resolve_address(start_addr)
+    end_lat, end_lng = resolve_address(end_addr)
 
-    result = RestClient.get(
-    resource,
-      authorization: bearer_header,
-      "Content-Type" => :json,
-      accept: 'json'
-    )
+    ride_estimate_hash = get_ride_estimate(start_lat, start_lng, end_lat, end_lng)
 
-    seconds = JSON.parse(result)
-  end
-
-  def ride_request_details request_id
-    uri = Addressable::URI.parse("#{BASE_URL}/v1/requests/#{request_id}")
-    uri.query_values = { 'request_id' => request_id }
-    resource = uri.to_s
-
-    result = RestClient.get(
-      resource,
-      authorization: bearer_header,
-      "Content-Type" => :json,
-      accept: 'json'
-    )
-
-    JSON.parse(result)
-  end
-
-  def cancel_ride request_id
-    uri = Addressable::URI.parse("#{BASE_URL}/v1/requests/#{request_id}")
-    # uri.query_values = { 'request_id' => request_id }
-    resource = uri.to_s
-
-    result = RestClient.delete(
-      resource,
-      authorization: bearer_header,
-      "Content-Type" => :json,
-      accept: 'json'
-    )
-
-    "Ride Cancelled" if result
+    format_ride_estimate_response(ride_estimate_hash)
   end
 
   def help _ # No command argument.
@@ -144,36 +108,19 @@ class UberCommand
   end
 
   def ride input_str
-    origin_name, destination_name = input_str.split(" to ")
-
-    if origin_name.start_with? "from "
-      origin_name = origin_name["from".length..-1]
-    end
-
+    origin_name, destination_name = parse_start_and_end_address(input_str)
     origin_lat, origin_lng = resolve_address origin_name
     destination_lat, destination_lng = resolve_address destination_name
 
-    available_products = get_products_for_lat_lng(origin_lat, origin_lng)
-    product_id = available_products["products"].first["product_id"]
-
-    body = {
-      "start_latitude" => origin_lat,
-      "start_longitude" => origin_lng,
-      "end_latitude" => destination_lat,
-      "end_longitude" => destination_lng,
-      "product_id" => product_id
-    }
-
-    response = RestClient.post(
-      "#{BASE_URL}/v1/requests/estimate",
-      body.to_json,
-      authorization: bearer_header,
-      "Content-Type" => :json,
-      accept: :json
+    ride_estimate_hash = get_ride_estimate(
+      origin_lat,
+      origin_lng,
+      destination_lat,
+      destination_lng
     )
 
-    surge_multiplier = JSON.parse(response.body)["price"]["surge_multiplier"]
-    surge_confirmation_id = JSON.parse(response.body)["price"]["surge_confirmation_id"]
+    surge_multiplier = ride_estimate_hash["price"]["surge_multiplier"]
+    surge_confirmation_id = ride_estimate_hash["price"]["surge_confirmation_id"]
 
     if surge_multiplier > 1
       Ride.create(
@@ -198,6 +145,39 @@ class UberCommand
       reply_to_slack(success_msg)
       ""
     end
+  end
+
+  def parse_start_and_end_address(input_str)
+    origin_name, destination_name = input_str.split(" to ")
+
+    if origin_name.start_with? "from "
+      origin_name = origin_name["from".length..-1]
+    end
+
+    [origin_name, destination_name]
+  end
+
+  def get_ride_estimate(start_lat, start_lng, end_lat, end_lng)
+    available_products = get_products_for_lat_lng(start_lat, start_lng)
+    product_id = available_products["products"].first["product_id"]
+
+    body = {
+      "start_latitude" => start_lat,
+      "start_longitude" => start_lng,
+      "end_latitude" => end_lat,
+      "end_longitude" => end_lng,
+      "product_id" => product_id
+    }
+
+    response = RestClient.post(
+      "#{BASE_URL}/v1/requests/estimate",
+      body.to_json,
+      authorization: bearer_header,
+      "Content-Type" => :json,
+      accept: :json
+    )
+
+    JSON.parse(response.body)
   end
 
   def reply_to_slack(response)
@@ -262,6 +242,14 @@ class UberCommand
       response += "- #{product['display_name']}: #{product['description']} (Capacity: #{product['capacity']})\n"
     end
     response
+  end
+
+  def format_ride_estimate_response(ride_esimate_hash)
+    duration = ride_esimate_hash["trip"]["duration_estimate"]
+    duration_msg = (duration == 1 ? "less than one minute" : "about #{duration} minutes")
+    cost = ride_esimate_hash["price"]["display"]
+
+    "Hmm... That trip will take #{duration_msg} and cost about #{cost}."
   end
 
   def bearer_header
