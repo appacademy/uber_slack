@@ -110,7 +110,7 @@ class UberCommand
     rescue
       return [
         "Sorry, we could not get time and price estimates for that trip.",
-        "Can you try slightly different addresses?"
+        "Can you try again with a more precise address?"
       ].join(" ")
 
     end
@@ -289,7 +289,7 @@ class UberCommand
       product_id = get_default_product_id_for_lat_lng(start_lat, start_lng)
     rescue
       return [
-        "Sorry, we did not find any Uber products available near #{origin_name}.",
+        "Sorry, we did not find any Uber products available near '#{origin_name}'.",
         "Can you try again with a more precise address?"
       ].join(" ")
     end
@@ -305,7 +305,7 @@ class UberCommand
     rescue
       return [
         "Sorry, we weren't able to request a ride for that trip.",
-        "Can you try again with slightly different addresses?"
+        "Can you try again with a more precise address?"
       ].join(" ")
     end
 
