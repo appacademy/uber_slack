@@ -462,10 +462,10 @@ class UberCommand
     surge_msg = surge == 1 ? "No surge is currently in effect." : "Includes current surge at #{surge}."
 
     [
-      "Let's see... Driving from #{start_addr} to #{end_addr} would take",
+      "Driving from #{start_addr} to #{end_addr} would take",
       "about #{duration_msg} and cost #{cost}.",
       surge_msg
-    ].join (" ")
+    ].join(" ")
   end
 
   def bearer_header
