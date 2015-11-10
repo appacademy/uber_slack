@@ -47,16 +47,18 @@ class Api::AuthorizationsController < ApplicationController
 
        # sign up success, prompt user that they can order uber now
   			response_url = Authorization.find_by_session_token(session[:session_token]).slack_response_url
-  			slack_response_params = {
-  				text: 'You can now order an Uber from Slack!'
-  			}
+  			slack_response_payload = { text: 'You can now request a ride from Slack!' }
 
-  			resp = RestClient.post(response_url, slack_response_params.to_json)
+  			resp = RestClient.post(
+          response_url,
+          slack_response_payload.to_json,
+          "Content-Type" => :json
+        )
 
         if resp.code == 500
           render text: "Sorry, something went wrong on our end."
         else
-    	    render text: "Successfully connected!"
+          redirect_to static_pages_user_success_url
         end
   	  end
     end
@@ -88,7 +90,7 @@ class Api::AuthorizationsController < ApplicationController
       render text: "Sorry, something went wrong on our end."
     else
       access_token = resp['access_token']
-      #add static success.
+
       redirect_to static_pages_admin_success_url
     end
   end
