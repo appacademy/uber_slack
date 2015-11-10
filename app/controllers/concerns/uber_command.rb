@@ -12,6 +12,7 @@ VALID_COMMANDS = [
   'status',
   'cancel',
   'trigger_error',
+  'test_resque'
 ]
 
 # returned when ride isn't requested in the format '{origin} to {destination}'
@@ -515,5 +516,10 @@ class UberCommand
 
   def trigger_error _ # No command argument.
     fail
+  end
+
+  def test_resque input
+    Resque.enqueue(TestJob, @response_url, input)
+    "Enqueued test."
   end
 end
