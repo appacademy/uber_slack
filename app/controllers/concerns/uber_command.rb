@@ -45,7 +45,7 @@ STRING
 RIDE_STATUSES = {
   "processing" => "Looking for a driver.",
   "no_drivers_available" => "No drivers were available to pick you up. Try again.",
-  "accepted" => "A driver accepted and is on their way.",
+  "accepted" => "A driver accepted your request and is on their way.",
   "arriving" => "Your driver is arriving now.",
   "in_progress" => "Your ride is in progress.",
   "driver_canceled" => "Your driver canceled.",
@@ -448,8 +448,9 @@ class UberCommand
     estimate_msg = "less than a minute" if eta == 0
     estimate_msg = "about one minute" if eta == 1
     estimate_msg = "about #{eta} minutes" if eta > 1
+    ack = ["Got it!", "Roger that.", "OK.", "10-4."].sample
 
-    ["Got it! We are looking for a driver",
+    ["#{ack} it! We are looking for a driver",
      "to take you from #{origin} to #{destination}.",
      "Your pickup will be in #{estimate_msg}."
     ].join(" ")
