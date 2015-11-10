@@ -7,7 +7,7 @@ class TestJob
       fail
     end
 
-    reply_to_slack(url, "Received #{str}")
+    reply_to_slack(url, "Received '#{str}'")
     Rails.logger.info("Ran Resque test.")
   end
 
