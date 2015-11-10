@@ -24,7 +24,8 @@ class Api::AuthorizationsController < ApplicationController
 
     error_msg = [
       "Sorry, we encountered an error.",
-      "Please let us know on Twitter at @Uber_API."
+      "Please let us know on Twitter at @Uber_API.",
+      "If you requested a pickup, enter */uber status* to see if the request went through."
     ].join(" ")
     render json: { text: error_msg }
   end
