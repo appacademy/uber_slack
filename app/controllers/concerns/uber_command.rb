@@ -82,7 +82,7 @@ class UberCommand
     end_latitude = @ride.end_latitude
     end_longitude = @ride.end_longitude
 
-    they_didnt_pass_a_float = !stated_multiplier.include?(".")
+    they_didnt_pass_a_float = !stated_multiplier.nil? and !stated_multiplier.include?(".")
     they_passed_the_wrong_float = stated_multiplier.to_f != multiplier
 
     if multiplier >= 2.0 and (they_didnt_pass_a_float or they_passed_the_wrong_float)
