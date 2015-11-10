@@ -123,18 +123,41 @@ class UberCommand
     surge_multiplier = ride_estimate_hash["price"]["surge_multiplier"]
     surge_confirmation_id = ride_estimate_hash["price"]["surge_confirmation_id"]
 
+    ride_attrs = {
+      user_id: @user_id,
+      :start_latitude => origin_lat,
+      :start_longitude => origin_lng,
+      :end_latitude => destination_lat,
+      :end_longitude => destination_lng,
+      :product_id => product_id
+    }
+
+    ride_attrs['surge_confirmation_id'] = surge_confirmation_id if surge_confirmation_id
+
+    ride = Ride.create!(ride_attrs)
+
     if surge_multiplier > 1
-      Ride.create(
-        user_id: @user_id,
-        surge_confirmation_id: surge_confirmation_id,
-        :start_latitude => origin_lat,
-        :start_longitude => origin_lng,
-        :end_latitude => destination_lat,
-        :end_longitude => destination_lng,
-        :product_id => product_id
-      )
       return "#{surge_multiplier} surge is in effect. Reply '/uber accept' to confirm the ride."
     else
+      ride_response = request_ride!(start_lat, start_lng, end_lat, end_lng, product_id)
+      ride.update!(request_id: ride_response['request_id'])  # TODO: Do async.
+      success_msg = format_200_ride_request_response(ride_response)
+      reply_to_slack(success_msg)
+      ""  # Return empty string in case we answer Slack soon enough for response to go through.
+    end
+  end
+
+  def request_ride!(start_lat, start_lng, end_lat, end_lng, product_id, surge_confirmation_id = nil)
+      body = {
+        start_latitude: start_lat,
+        start_longitude: start_lng,
+        end_latitude: end_lat,
+        end_longitude: end_lng,
+        product_id: product_id
+      }
+
+      body['surge_confirmation_id'] = surge_confirmation_id if surge_confirmation_id
+
       response = RestClient.post(
         "#{BASE_URL}/v1/requests",
         body.to_json,
@@ -142,10 +165,8 @@ class UberCommand
         "Content-Type" => :json,
         accept: :json
       )
-      success_msg = format_200_ride_request_response(JSON.parse(response.body))
-      reply_to_slack(success_msg)
-      ""
-    end
+
+    JSON.parse(response.body)
   end
 
   def parse_start_and_end_address(input_str)
