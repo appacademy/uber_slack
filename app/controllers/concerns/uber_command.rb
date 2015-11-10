@@ -82,7 +82,21 @@ class UberCommand
 
     product_id = get_default_product_id_for_lat_lng(start_lat, start_lng)
 
-    ride_estimate_hash = get_ride_estimate(start_lat, start_lng, end_lat, end_lng, product_id)
+    begin
+      ride_estimate_hash = get_ride_estimate(
+        start_lat,
+        start_lng,
+        end_lat,
+        end_lng,
+        product_id
+    )
+    rescue
+      return [
+        "Sorry, we could not get time and price estimates for that trip.",
+        "Can you try slightly different addresses?"
+      ].join(" ")
+
+    end
     format_ride_estimate_response(ride_estimate_hash)
   end
 
@@ -246,13 +260,20 @@ class UberCommand
 
     product_id = get_default_product_id_for_lat_lng(origin_lat, origin_lng)
 
-    ride_estimate_hash = get_ride_estimate(
-      origin_lat,
-      origin_lng,
-      destination_lat,
-      destination_lng,
-      product_id
-    )
+    begin
+      ride_estimate_hash = get_ride_estimate(
+        origin_lat,
+        origin_lng,
+        destination_lat,
+        destination_lng,
+        product_id
+      )
+    rescue
+      return [
+        "Sorry, we weren't able to request a ride for that trip.",
+        "Can you try again with slightly different addresses?"
+      ].join(" ")
+    end
 
     surge_multiplier = ride_estimate_hash["price"]["surge_multiplier"]
     surge_confirmation_id = ride_estimate_hash["price"]["surge_confirmation_id"]
