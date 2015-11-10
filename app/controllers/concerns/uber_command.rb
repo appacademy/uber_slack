@@ -54,8 +54,6 @@ RIDE_STATUSES = {
   "completed" => "You completed the last ride you requested through Slack."
 }
 
-LOCATION_NOT_FOUND_ERROR = "Please enter a valid address. Be as specific as possible (e.g. include city)."
-
 class UberCommand
 
   def initialize bearer_token, user_id, response_url
@@ -90,6 +88,14 @@ class UberCommand
     start_addr, end_addr = parse_start_and_end_address(user_input_string)
     start_lat, start_lng = resolve_address(start_addr)
     end_lat, end_lng = resolve_address(end_addr)
+
+    return ["Sorry, we don't know where #{start_addr} is.",
+            "Can you try again with a more precise origin address?"
+    ].join(" ") if start_lat.nil?
+
+    return ["Sorry, we don't know where #{end_addr} is.",
+            "Can you try again with a more precise destination address?"
+    ].join(" ") if end_lat.nil?
 
     product_id = get_default_product_id_for_lat_lng(start_lat, start_lng)
       return [
@@ -479,7 +485,7 @@ class UberCommand
     end
 
     if location.blank?
-      LOCATION_NOT_FOUND_ERROR
+      return [nil, nil]
     else
       location = location.data["geometry"]["location"]
       [location['lat'], location['lng']]
