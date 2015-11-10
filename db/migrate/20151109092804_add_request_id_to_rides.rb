@@ -1,4 +1,4 @@
-class AddMoreColumnsToRides < ActiveRecord::Migration
+class AddRequestIdToRides < ActiveRecord::Migration
   def change
     add_column :rides, :request_id, :string
   end
