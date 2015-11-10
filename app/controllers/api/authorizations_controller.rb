@@ -20,7 +20,7 @@ class Api::AuthorizationsController < ApplicationController
   end
 
   def render_error(error)
-    Raven.capture_exception(exception)
+    Raven.capture_exception(error)
 
     error_msg = [
       "Sorry, we encountered an error.",
