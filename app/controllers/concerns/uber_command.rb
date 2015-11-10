@@ -11,10 +11,10 @@ RIDE_REQUEST_FORMAT_ERROR = <<-STRING
   Ex: */uber ride 1061 Market Street San Francisco to 405 Howard St*
 STRING
 
-PRODUCTS_REQUEST_FORMAT_ERROR = <<-STRING
-  To see a list of products please use the format */uber products [address]*.
+ESTIMATES_FORMAT_ERROR = <<-STRING
+  To request estimates for a trip, please use the format */uber [origin] to [destination]*.
   For best results, specify a city or zip code.
-  Ex: */uber products 1061 Market Street San Francisco
+  Ex: */uber estimate 1061 Market Street San Francisco to 405 Howard St*
 STRING
 
 UNKNOWN_COMMAND_ERROR = <<-STRING
@@ -55,6 +55,9 @@ class UberCommand
 
   def run user_input_string
     input = user_input_string.split(" ", 2) # Only split on first space.
+
+    return UNKNOWN_COMMAND_ERROR if input.empty?
+
     command_name = input.first.downcase
 
     command_argument = input.second.nil? ? nil : input.second.downcase
@@ -71,6 +74,7 @@ class UberCommand
   attr_reader :bearer_token
 
   def estimate user_input_string
+    return ESTIMATES_FORMAT_ERROR unless user_input_string.include?(" to ")
     start_addr, end_addr = parse_start_and_end_address(user_input_string)
     start_lat, start_lng = resolve_address(start_addr)
     end_lat, end_lng = resolve_address(end_addr)
@@ -174,15 +178,7 @@ class UberCommand
       return "Sorry, we're not sure which ride you want to confirm. Please try requesting another."
     end
 
-    surge_confirmation_id = @ride.surge_confirmation_id
-    product_id = @ride.product_id
     multiplier = @ride.surge_multiplier
-
-    start_latitude = @ride.start_latitude
-    start_longitude = @ride.start_longitude
-    end_latitude = @ride.end_latitude
-    end_longitude = @ride.end_longitude
-
     surge_is_high = multiplier >= 2.0
 
     if surge_is_high and (stated_multiplier.nil? or stated_multiplier.to_f != multiplier)
@@ -192,6 +188,14 @@ class UberCommand
     if surge_is_high and !stated_multiplier.include?('.')
       return "That didn't work. Please include decimals to confirm #{multiplier}x surge."
     end
+
+    surge_confirmation_id = @ride.surge_confirmation_id
+    product_id = @ride.product_id
+
+    start_latitude = @ride.start_latitude
+    start_longitude = @ride.start_longitude
+    end_latitude = @ride.end_latitude
+    end_longitude = @ride.end_longitude
 
     fail_msg = "Sorry but something went wrong. We were unable to request a ride."
 
@@ -233,6 +237,8 @@ class UberCommand
   end
 
   def ride input_str
+    return RIDE_REQUEST_FORMAT_ERROR unless input_str.include?(" to ")
+
     origin_name, destination_name = parse_start_and_end_address(input_str)
     origin_lat, origin_lng = resolve_address origin_name
     destination_lat, destination_lng = resolve_address destination_name
@@ -346,21 +352,6 @@ class UberCommand
       payload = { text: response}
 
       RestClient.post(@response_url, payload.to_json, "Content-Type" => :json)
-  end
-
-  def products address = nil
-    if address.blank?
-      return PRODUCTS_REQUEST_FORMAT_ERROR
-    end
-
-    resolved_add = resolve_address(address)
-
-    if resolved_add == LOCATION_NOT_FOUND_ERROR
-      LOCATION_NOT_FOUND_ERROR
-    else
-      lat, lng = resolved_add
-      format_products_response(get_products_for_lat_lng lat, lng)
-    end
   end
 
   def get_default_product_id_for_lat_lng lat, lng
