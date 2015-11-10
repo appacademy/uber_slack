@@ -309,7 +309,11 @@ class UberCommand
         reply_to_slack("We were not able to request a ride from Uber. Please try again.")
       else
         ride.update!(request_id: ride_response['request_id'])  # TODO: Do async.
-        success_msg = format_200_ride_request_response(ride_response)
+        success_msg = format_200_ride_request_response(
+          origin_name,
+          destination_name,
+          ride_response
+        )
         reply_to_slack(success_msg)
       end
       ""  # Return empty string in case we answer Slack soon enough for response to go through.
@@ -406,14 +410,17 @@ class UberCommand
     JSON.parse(result.body)
   end
 
-  def format_200_ride_request_response response
+  def format_200_ride_request_response origin, destination, response
     eta = response['eta'].to_i / 60
 
-    estimate_msg = "very soon" if eta == 0
-    estimate_msg = "in 1 minute" if eta == 1
-    estimate_msg = "in #{eta} minutes" if eta > 1
+    estimate_msg = "less than a minute" if eta == 0
+    estimate_msg = "about one minute" if eta == 1
+    estimate_msg = "about #{eta} minutes" if eta > 1
 
-    "Got it! We are looking for a driver and we expect them to arrive #{estimate_msg}."
+    ["Got it! We are looking for a driver",
+     "to take you from #{origin} to #{destination}.",
+     "Your pickup will be in #{estimate_msg}."
+    ]
   end
 
   def format_response_errors response_errors
