@@ -2,7 +2,7 @@ require 'addressable/uri'
 
 BASE_URL = ENV["uber_base_url"]
 
-VALID_COMMANDS = ['ride', 'estimate', 'help', 'accept' ]  # Leave out 'products' until user can pick.
+VALID_COMMANDS = ['ride', 'estimate', 'help', 'accept', 'share']  # Leave out 'products' until user can pick.
 
 # returned when ride isn't requested in the format '{origin} to {destination}'
 RIDE_REQUEST_FORMAT_ERROR = <<-STRING
@@ -26,6 +26,7 @@ HELP_TEXT = <<-STRING
   Try these commands:
   - ride [origin address] to [destination address]
   - estimate [origin address] to [destination address]
+  - share
   - help
 STRING
 
@@ -71,8 +72,27 @@ class UberCommand
     HELP_TEXT
   end
 
+  def share _ # No command argument.
+    ride = Ride.where(user_id: @user_id).order(:updated_at).last
+
+    if ride.nil?
+      return "Sorry, we couldn't find a ride for you to share."
+    end
+
+    request_id = ride.request_id
+
+    map_response = RestClient.get("#{BASE_URL}/v1/requests/#{request_id}/map")
+
+    return map_response["href"]
+  end
+
   def accept stated_multiplier
     @ride = Ride.where(user_id: @user_id).order(:updated_at).last
+
+    if @ride.nil?
+      return "Sorry, we're not sure which ride you want to confirm. Please try requesting another."
+    end
+
     surge_confirmation_id = @ride.surge_confirmation_id
     product_id = @ride.product_id
     multiplier = @ride.surge_multiplier
