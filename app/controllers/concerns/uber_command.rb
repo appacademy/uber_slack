@@ -81,9 +81,38 @@ class UberCommand
 
     request_id = ride.request_id
 
-    map_response = RestClient.get("#{BASE_URL}/v1/requests/#{request_id}/map")
+    begin
+      map_response = RestClient.get("#{BASE_URL}/v1/requests/#{request_id}/map")
+    rescue
+      return "Sorry, we weren't able to get the link to share you last ride."
+    end
 
     return map_response["href"]
+  end
+
+  def status _ # No command argument.
+    ride = Ride.where(user_id: @user_id).order(:updated_at).last
+
+    if ride.nil?
+      return "Sorry, we couldn't find any rides that you requested."
+    end
+
+    begin
+      status_hash = get_ride_status(ride.request_id)
+    rescue
+      return "Sorry, we weren't able to get your ride status from Uber."
+    end
+
+    ride_status = status_hash["status"]
+    eta = status_hash["eta"]
+    eta_msg = eta == 1 ? "one minute" : "#{eta} minutes"
+
+    return "Your ride status is #{ride_status}. ETA: #{eta_msg}."
+  end
+
+  def get_ride_status(request_id)
+    resp = RestClient.get("#{BASE_URL}/v1/requests/#{request_id}")
+    JSON.parse(resp.body)
   end
 
   def accept stated_multiplier
