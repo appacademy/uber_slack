@@ -182,7 +182,7 @@ class UberCommand
     surge_is_high = multiplier >= 2.0
 
     if surge_is_high and (stated_multiplier.nil? or stated_multiplier.to_f != multiplier)
-      return "That didn't work. Please reply '/uber accept #{multiplier}' to confirm the ride."
+      return "That didn't work. Please reply '*/uber accept #{multiplier}'* to confirm the ride."
     end
 
     if surge_is_high and !stated_multiplier.include?('.')
@@ -296,9 +296,9 @@ class UberCommand
   def ask_for_surge_confirmation(multiplier)
     base = "#{surge_multiplier}x surge is in effect."
     if multiplier >= 2
-      [base, "Reply '/uber accept #{surge_multiplier}' to confirm the ride."].join(" ")
+      [base, "Reply '*/uber accept #{surge_multiplier}'* to confirm the ride."].join(" ")
     else
-      [base, "Reply '/uber accept to confirm the ride"].join(" ")
+      [base, "Reply *'/uber accept* to confirm the ride"].join(" ")
     end
   end
 
