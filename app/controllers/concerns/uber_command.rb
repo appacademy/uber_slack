@@ -339,21 +339,19 @@ class UberCommand
 
     ride = Ride.create!(ride_attrs)
 
-    if surge_multiplier > 1
-      return ask_for_surge_confirmation(surge_multiplier)
-    else
-      Resque.enqueue(
-        RideJob,
-        bearer_header,
-        ride,
-        origin_lat,
-        origin_lng,
-        destination_lat,
-        destination_lng,
-        product_id,
-        @response_url
-      )
-    end
+    return ask_for_surge_confirmation(surge_multiplier) if surge_multiplier > 1
+
+    Resque.enqueue(
+      RideJob,
+      bearer_header,
+      ride,
+      origin_lat,
+      origin_lng,
+      destination_lat,
+      destination_lng,
+      product_id,
+      @response_url
+    )
 
     "Pinging Uber to drive you from #{origin_name} to #{destination_name}."
   end

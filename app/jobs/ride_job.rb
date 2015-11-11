@@ -14,7 +14,7 @@ class RideJob
     fail_msg = "We were not able to request a ride from Uber. Please try again."
 
     begin
-      ride_response = request_ride!(
+      ride_response = self.request_ride!(
         bearer_header,
         origin_lat,
         origin_lng,
@@ -23,24 +23,23 @@ class RideJob
         product_id
       )
     rescue
-      reply_to_slack(fail_msg)
+      self.reply_to_slack(fail_msg)
       return
     end
 
     if !ride_response["errors"].nil?
-      reply_to_slack(fail_msg)
-
+      self.reply_to_slack(fail_msg)
       return
-    else
-      success_msg = format_200_ride_request_response(
-        origin_name,
-        destination_name,
-        ride_response
-      )
-      reply_to_slack(slack_url, success_msg)
-
-      ride.update!(request_id: ride_response['request_id'])
     end
+
+    success_msg = self.format_200_ride_request_response(
+      origin_name,
+      destination_name,
+      ride_response
+    )
+    self.reply_to_slack(slack_url, success_msg)
+
+    ride.update!(request_id: ride_response['request_id'])
   end
 
   def self.request_ride!(
@@ -64,7 +63,7 @@ class RideJob
         body.to_json,
         authorization: bearer_header,
         "Content-Type" => :json,
-        accept: :json
+        accept: 'json'
       )
 
     JSON.parse(response.body)
