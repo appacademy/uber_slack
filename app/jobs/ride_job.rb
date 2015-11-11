@@ -89,7 +89,17 @@ class RideJob
     ].join(" ")
   end
 
-  def self.on_failure(e, *args)
-    Resque.enqueue self, *args
+  def self.on_failure(
+    exception,
+    bearer_header,
+    ride,
+    origin_lat,
+    origin_lng,
+    destination_lat,
+    destination_lng,
+    product_id,
+    slack_url
+  )
+    Resque.enqueue(NotifyFailureJob, exception, slack_url)
   end
 end

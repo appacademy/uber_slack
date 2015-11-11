@@ -20,7 +20,6 @@ class TestJob
   def self.on_failure(e, url, response)
     Rails.logger.info("Retrying Resque test.")
     Resque.enqueue(self, url, "failure handled")
+    Raven.capture_exception(e)
   end
 end
-
-
