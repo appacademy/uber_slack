@@ -28,7 +28,12 @@ class RideJob
       return
     end
 
-    ride.update!(request_id: ride_response['request_id'])
+    begin
+      ride.update!(request_id: ride_response['request_id'])
+    rescue => e
+      Resque.enqueue(NotifyFailureJob, e, slack_url)
+      return
+    end
 
     Resque.enqueue(
       NotifySuccessJob,

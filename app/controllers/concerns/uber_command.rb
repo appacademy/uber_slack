@@ -355,7 +355,8 @@ class UberCommand
       @response_url
     )
 
-    "Pinging Uber to drive you from #{origin_name} to #{destination_name}."
+    ack = ["Got it!", "Roger that.", "OK.", "10-4."].sample
+    "#{ack} Pinging Uber to drive you from #{origin_name} to #{destination_name}."
   end
 
   def ask_for_surge_confirmation(multiplier)

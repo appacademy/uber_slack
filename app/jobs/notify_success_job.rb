@@ -20,9 +20,8 @@ class NotifySuccessJob
     estimate_msg = "less than a minute" if eta == 0
     estimate_msg = "about one minute" if eta == 1
     estimate_msg = "about #{eta} minutes" if eta > 1
-    ack = ["Got it!", "Roger that.", "OK.", "10-4."].sample
 
-    ["#{ack} We are looking for a driver",
+    ["Asked Uber for a driver",
      "to take you from #{origin} to #{destination}.",
      "Your pickup will be in #{estimate_msg}."
     ].join(" ")
