@@ -449,7 +449,7 @@ class UberCommand
 
     ["#{ack} We are looking for a driver",
      "to take you from #{origin} to #{destination}.",
-     "Your pickup will be in #{estimate_msg}."
+     "Your pickup should be in #{estimate_msg}."
     ].join(" ")
   end
 

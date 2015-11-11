@@ -1,3 +1,5 @@
+BASE_URL = ENV["uber_base_url"]
+
 class RideJob
   @queue = :ride
 
