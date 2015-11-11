@@ -237,14 +237,14 @@ class UberCommand
     start_longitude = @ride.start_longitude
     end_latitude = @ride.end_latitude
     end_longitude = @ride.end_longitude
+    origin_name = @ride.origin_name
+    destination_name = @ride.destination_name
 
     fail_msg = "Sorry but something went wrong. We were unable to request a ride."
 
     if (Time.now - @ride.updated_at) > 5.minutes
       # TODO: Break out address resolution in #ride so that we can pass lat/lngs directly.
-      start_location = "#{@ride.start_latitude}, #{@ride.start_longitude}"
-      end_location = "#{@ride.end_latitude}, #{@ride.end_longitude}"
-      return ride "#{start_location} to #{end_location}"
+      return ride "#{origin_name} to #{destination_name}"
     else
       body = {
         "start_latitude" => start_latitude,
@@ -273,8 +273,8 @@ class UberCommand
         response_hash = JSON.parse(response.body)
 
         success_msg = format_200_ride_request_response(
-          start_location,
-          end_location,
+          origin_name,
+          destination_name,
           response_hash
         )
 
@@ -334,6 +334,8 @@ class UberCommand
       :start_longitude => origin_lng,
       :end_latitude => destination_lat,
       :end_longitude => destination_lng,
+      :origin_name => origin_name,
+      :destination_name => destination_name,
       :product_id => product_id
     }
 
