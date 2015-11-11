@@ -477,7 +477,7 @@ class UberCommand
 
     cost = ride_estimate_hash["price"]["display"]
     surge = ride_estimate_hash["price"]["surge_multiplier"]
-    surge_msg = surge == 1 ? "No surge is currently in effect." : "Includes current surge at #{surge}."
+    surge_msg = surge == 1 ? "No surge is currently in effect." : "Includes current surge at #{surge}x."
 
     [
       "Driving from #{start_addr} to #{end_addr} would take",
