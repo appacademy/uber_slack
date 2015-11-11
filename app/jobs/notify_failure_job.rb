@@ -2,14 +2,15 @@ class NotifyFailureJob
   @queue = :notify_failure
 
   def self.perform(exception, slack_url)
+    Raven.capture_exception(exception)
+
     payload = {
       text: [
         "Sorry, something went wrong while asking Uber for a ride.",
-        "Use */uber status* to see if the request went through."
+        "Please check your phone to see your request's status."
       ].join(" ")
     }
 
     RestClient.post(slack_url, payload.to_json)
-    Raven.capture_exception(exception)
   end
 end

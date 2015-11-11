@@ -8,10 +8,11 @@ class RideJob
     origin_lng,
     destination_lat,
     destination_lng,
+    origin_name,
+    destination_name,
     product_id,
     slack_url
   )
-    fail_msg = "We were not able to request a ride from Uber. Please try again."
 
     begin
       ride_response = self.request_ride!(
@@ -22,24 +23,20 @@ class RideJob
         destination_lng,
         product_id
       )
-    rescue
-      self.reply_to_slack(fail_msg)
+    rescue => e
+      Resque.enqueue(NotifyFailureJob, e, slack_url)
       return
     end
-
-    if !ride_response["errors"].nil?
-      self.reply_to_slack(fail_msg)
-      return
-    end
-
-    success_msg = self.format_200_ride_request_response(
-      origin_name,
-      destination_name,
-      ride_response
-    )
 
     ride.update!(request_id: ride_response['request_id'])
-    self.reply_to_slack(slack_url, success_msg)
+
+    Resque.enqueue(
+      NotifySuccessJob,
+      origin_name,
+      destination_name,
+      ride_response['eta'],
+      slack_url
+    )
   end
 
   def self.request_ride!(
@@ -69,31 +66,6 @@ class RideJob
     JSON.parse(response.body)
   end
 
-  def self.reply_to_slack(slack_url, response)
-    payload = { text: response }
-
-    begin
-      RestClient.post(slack_url, payload.to_json)
-    rescue => e
-      Raven.capture_exception(error)
-    end
-    raise e
-  end
-
-  def self.format_200_ride_request_response origin, destination, response
-    eta = response['eta'].to_i / 60
-
-    estimate_msg = "less than a minute" if eta == 0
-    estimate_msg = "about one minute" if eta == 1
-    estimate_msg = "about #{eta} minutes" if eta > 1
-    ack = ["Got it!", "Roger that.", "OK.", "10-4."].sample
-
-    ["#{ack} We are looking for a driver",
-     "to take you from #{origin} to #{destination}.",
-     "Your pickup will be in #{estimate_msg}."
-    ].join(" ")
-  end
-
   def self.on_failure(
     exception,
     bearer_header,
@@ -102,6 +74,8 @@ class RideJob
     origin_lng,
     destination_lat,
     destination_lng,
+    origin_name,
+    destination_name,
     product_id,
     slack_url
   )

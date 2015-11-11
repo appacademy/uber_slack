@@ -349,6 +349,8 @@ class UberCommand
       origin_lng,
       destination_lat,
       destination_lng,
+      origin_name,
+      destination_name,
       product_id,
       @response_url
     )
