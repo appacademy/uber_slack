@@ -37,9 +37,9 @@ class RideJob
       destination_name,
       ride_response
     )
-    self.reply_to_slack(slack_url, success_msg)
 
     ride.update!(request_id: ride_response['request_id'])
+    self.reply_to_slack(slack_url, success_msg)
   end
 
   def self.request_ride!(
@@ -72,7 +72,12 @@ class RideJob
   def self.reply_to_slack(slack_url, response)
     payload = { text: response }
 
-    RestClient.post(slack_url, payload.to_json)
+    begin
+      RestClient.post(slack_url, payload.to_json)
+    rescue => e
+      Raven.capture_exception(error)
+    end
+    raise e
   end
 
   def self.format_200_ride_request_response origin, destination, response
