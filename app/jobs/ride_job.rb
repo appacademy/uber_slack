@@ -3,7 +3,7 @@ class RideJob
 
   def self.perform(
     bearer_header,
-    ride,
+    ride_hash,
     origin_lat,
     origin_lng,
     destination_lat,
@@ -29,14 +29,6 @@ class RideJob
       return
     end
 
-    begin
-      ride.update!(request_id: ride_response['request_id'])
-    rescue => e
-      Raven.capture_exception(e)
-      Resque.enqueue(NotifyFailureJob, e, slack_url)
-      return
-    end
-
     Resque.enqueue(
       NotifySuccessJob,
       origin_name,
@@ -44,6 +36,15 @@ class RideJob
       ride_response['eta'],
       slack_url
     )
+
+    begin
+      ride = Ride.find(ride_hash['id'])
+      ride.update!(request_id: ride_response['request_id'])
+    rescue => e
+      Raven.capture_exception(e)
+      Resque.enqueue(NotifyFailureJob, e, slack_url)
+      return
+    end
   end
 
   def self.request_ride!(
