@@ -111,13 +111,13 @@ class UberCommand
         end_lng,
         product_id
     )
-    rescue
+    rescue => e
+      Raven.capture_exception(e)
       return [
         "Sorry, we could not get time and price estimates for a trip",
         "from #{start_addr} to #{end_addr}.",
         "Can you try again with more precise addresses?"
       ].join(" ")
-
     end
     format_ride_estimate_response(start_addr, end_addr, ride_estimate_hash)
   end
@@ -142,7 +142,8 @@ class UberCommand
         "Content-Type" => :json,
         accept: 'json'
       )
-    rescue
+    rescue => e
+      Raven.capture_exception(e)
       return "Sorry, we weren't able to get the link to share your ride."
     end
 
@@ -159,7 +160,8 @@ class UberCommand
 
     begin
       status_hash = get_ride_status(ride.request_id)
-    rescue
+    rescue => e
+      Raven.capture_exception(e)
       return "Sorry, we weren't able to get your ride status from Uber."
     end
 
@@ -191,7 +193,8 @@ class UberCommand
         "Content-Type" => :json,
         accept: 'json'
       )
-    rescue
+    rescue => e
+      Raven.capture_exception(e)
       return fail_msg
     end
 
@@ -259,7 +262,9 @@ class UberCommand
           "Content-Type" => :json,
           accept: 'json'
         )
-      rescue
+      rescue => e
+        Raven.capture_exception(e)
+
         reply_to_slack(fail_msg)
         return
       end
