@@ -2,8 +2,6 @@ class NotifyFailureJob
   @queue = :notify_failure
 
   def self.perform(exception, slack_url)
-    Raven.capture_exception(exception)
-
     payload = {
       text: [
         "Sorry, something went wrong while asking Uber for a ride.",

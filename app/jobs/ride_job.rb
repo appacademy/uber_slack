@@ -24,6 +24,7 @@ class RideJob
         product_id
       )
     rescue => e
+      Raven.capture_exception(e)
       Resque.enqueue(NotifyFailureJob, e, slack_url)
       return
     end
@@ -31,6 +32,7 @@ class RideJob
     begin
       ride.update!(request_id: ride_response['request_id'])
     rescue => e
+      Raven.capture_exception(e)
       Resque.enqueue(NotifyFailureJob, e, slack_url)
       return
     end
