@@ -5,6 +5,8 @@ class Api::AuthorizationsController < ApplicationController
   before_action :require_authorization, only: :use_uber
   before_action :ensure_fresh_access_token, only: :use_uber
 
+  SUPPORT_TWITTER = "@appacademyio"
+
   def echo
     render json: params
   end
@@ -24,7 +26,7 @@ class Api::AuthorizationsController < ApplicationController
 
     error_msg = [
       "Sorry, we encountered an error.",
-      "Please let us know on Twitter at @Uber_API.",
+      "Please let us know on Twitter at #{SUPPORT_TWITTER}.",
       "If you requested a pickup, enter */uber status* to see if the request went through."
     ].join(" ")
     render json: { text: error_msg }
