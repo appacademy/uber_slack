@@ -440,16 +440,10 @@ class UberCommand
   end
 
   def format_200_ride_request_response origin, destination, response
-    eta = response['eta'].to_i / 60
-
-    estimate_msg = "less than a minute" if eta == 0
-    estimate_msg = "about one minute" if eta == 1
-    estimate_msg = "about #{eta} minutes" if eta > 1
     ack = ["Got it!", "Roger that.", "OK.", "10-4."].sample
 
     ["#{ack} We are looking for a driver",
      "to take you from #{origin} to #{destination}.",
-     "Your pickup should be in #{estimate_msg}."
     ].join(" ")
   end
 
