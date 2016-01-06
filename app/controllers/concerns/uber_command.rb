@@ -166,14 +166,29 @@ class UberCommand
     end
 
     ride_status = status_hash["status"]
-    eta = status_hash["eta"]
-    eta_msg = eta == 1 ? "one minute" : "#{eta} minutes"
 
-    if ["processing", "accepted", "arriving", "in_progress"].include?(ride_status)
-      return [RIDE_STATUSES[ride_status], "ETA: #{eta_msg}"].join(" ")
+    eta = status_hash["eta"]
+
+    case eta
+    when nil then eta_msg = nil
+    when 1 then eta_msg = "ETA: one minute"
+    else eta_msg = "ETA: #{eta} minutes"
     end
 
-    return RIDE_STATUSES[ride_status]
+    if [
+      "processing",
+      "accepted",
+      "arriving",
+      "in_progress"
+    ].include?(ride_status)
+      return [
+        "STATUS:",
+        RIDE_STATUSES[ride_status],
+        eta_msg
+      ].compact.join(" ")
+    end
+
+    return "STATUS: #{RIDE_STATUSES[ride_status]}"
   end
 
   def cancel _ # No command argument.
