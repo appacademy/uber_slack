@@ -10,6 +10,7 @@ Rails.application.routes.draw do
   root to: 'static_pages#root'
   get 'static_pages/user_success', to: 'static_pages#user_success'
   get 'static_pages/admin_success', to: 'static_pages#admin_success'
+  get 'static_pages/privacy_policy', to: 'static_pages#privacy_policy'
   namespace :api, defaults: { format: 'json' } do
     post '/authorize', to: 'authorizations#authorize'
     post '/echo', to: 'authorizations#echo'

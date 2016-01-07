@@ -5,6 +5,9 @@ class StaticPagesController < ApplicationController
   def user_success
   end
 
+  def privacy_policy
+  end
+
   def admin_success
   end
 
