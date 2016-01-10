@@ -22,6 +22,6 @@ class Authorization < ActiveRecord::Base
   end
 
   def uber_registered?
-  	!self.uber_auth_token.nil?
+  	!!uber_auth_token
   end
 end
