@@ -1,17 +1,11 @@
-describe Authorization do
-
+describe Ride do
+  let(:ride) { build(:ride) }
   it "has a valid factory" do
+    expect(ride).to be_valid
   end
 
-  it "has many rides" do
-
-  end
-
-  it "can generate a random session token" do
-
-  end
-
-  it "replies correctly whether it's been registered with Uber" do
-
+  it "belongs to a user" do
+    assoc = Ride.reflect_on_association(:user).macro
+    expect(assoc).to eq(:belongs_to)
   end
 end
