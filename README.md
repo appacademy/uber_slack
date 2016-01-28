@@ -62,7 +62,7 @@ A help manual is available with the 'help' command:
 
 ## License
 Uber On Slack is open-source and free to distribute or modify under the
-[MIT License][LICENSE.txt].
+[MIT License](LICENSE.txt).
 
 ## Acknowledgment
 Uber On Slack would not be possible were it not for its contributors from App
