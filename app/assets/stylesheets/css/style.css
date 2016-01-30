@@ -35,6 +35,7 @@ p {
 html, body {
   font-size: 100%;
   background: url("https://d1a3f4spazzrp4.cloudfront.net/web-fresh/cities-heros/worldmap-1440-900.gif");
+  background-attachment: fixed;
 }
 a {
   text-decoration: none;
