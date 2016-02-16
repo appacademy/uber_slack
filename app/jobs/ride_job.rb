@@ -1,5 +1,3 @@
-BASE_URL = ENV["uber_base_url"]
-
 class RideJob
   @queue = :ride
 
@@ -66,7 +64,7 @@ class RideJob
       }
 
       response = RestClient.post(
-        "#{BASE_URL}/v1/requests",
+        "#{ENV["uber_base_url"]}/v1/requests",
         body.to_json,
         authorization: bearer_header,
         "Content-Type" => :json,

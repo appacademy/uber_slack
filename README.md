@@ -66,8 +66,8 @@ Uber On Slack is open-source and free to distribute or modify under the
 
 ## Acknowledgment
 Uber On Slack would not be possible were it not for its contributors from App
-Academy including: Simon Chaffetz, Matthew Symonds, Edward Huang,
+Academy including: Simon Chaffetz, Edmund Lee, Matthew Symonds, Edward Huang,
 Nicole DeVillers, Sangam Kaushik, Sven Ten Haaf, Christopher Huang,
 Andrew Liu, Justin Menestrina, Alvin Ly, Sean Walker, Jacky Lei, Minh Nguyen,
-Noah Wiener, Nathan Specht, Edmund Li, Austin Kao, David Ammons, Ian Nguyen,
+Noah Wiener, Nathan Specht, Austin Kao, David Ammons, Ian Nguyen,
 Joe Cho, Marc Tambara, Vic Chen, and Haseeb Qureshi.
