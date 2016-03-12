@@ -20,7 +20,7 @@ gem 'redis'
 # Resque for async tasks
 gem 'resque', "~> 1.22.0"
 
-group :production do
+group :production, :staging do
   gem 'sentry-raven'
 end
 
