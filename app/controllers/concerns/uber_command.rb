@@ -56,13 +56,13 @@ RIDE_STATUSES = {
 
 class UberCommand
 
-  def initialize bearer_token, user_id, response_url
+  def initialize(bearer_token, user_id, response_url)
     @bearer_token = bearer_token
     @user_id = user_id
     @response_url = response_url
   end
 
-  def run user_input_string
+  def run(user_input_string)
     input = user_input_string.split(" ", 2) # Only split on first space.
 
     return UNKNOWN_COMMAND_ERROR if input.empty?
@@ -82,7 +82,7 @@ class UberCommand
 
   attr_reader :bearer_token
 
-  def estimate user_input_string
+  def estimate(user_input_string)
     return ESTIMATES_FORMAT_ERROR unless user_input_string.include?(" to ")
 
     start_addr, end_addr = parse_start_and_end_address(user_input_string)
@@ -122,11 +122,11 @@ class UberCommand
     format_ride_estimate_response(start_addr, end_addr, ride_estimate_hash)
   end
 
-  def help _ # No command argument.
+  def help(_) # No command argument.
     HELP_TEXT
   end
 
-  def share _ # No command argument.
+  def share(_) # No command argument.
     ride = Ride.where(user_id: @user_id).order(:updated_at).last
 
     if ride.nil?
@@ -151,7 +151,7 @@ class UberCommand
     "Use this link to share your ride's progress: #{link}."
   end
 
-  def status _ # No command argument.
+  def status(_)# No command argument.
     ride = Ride.where(user_id: @user_id).order(:updated_at).last
 
     if ride.nil?
@@ -191,7 +191,7 @@ class UberCommand
     return "STATUS: #{RIDE_STATUSES[ride_status]}"
   end
 
-  def cancel _ # No command argument.
+  def cancel(_) # No command argument.
     ride = Ride.where(user_id: @user_id).order(:updated_at).last
     if ride.nil?
       return "Sorry, we couldn't find a ride for you to cancel."
@@ -227,7 +227,7 @@ class UberCommand
     JSON.parse(resp.body)
   end
 
-  def accept stated_multiplier
+  def accept(stated_multiplier)
     @ride = Ride.where(user_id: @user_id).order(:updated_at).last
 
     if @ride.nil?
@@ -303,7 +303,7 @@ class UberCommand
     end
   end
 
-  def ride input_str
+  def ride(input_str)
     return RIDE_REQUEST_FORMAT_ERROR unless input_str.include?(" to ")
 
     origin_name, destination_name = parse_start_and_end_address(input_str)
@@ -430,7 +430,7 @@ class UberCommand
       RestClient.post(@response_url, payload.to_json)
   end
 
-  def get_default_product_id_for_lat_lng lat, lng
+  def get_default_product_id_for_lat_lng(lat, lng)
     product_id = Rails.cache.fetch("location: #{lat}/#{lng}", expires_in: 15.minutes) do
       available_products = get_products_for_lat_lng(lat, lng)["products"]
       available_products.empty? ? nil : available_products.first["product_id"]
@@ -439,7 +439,7 @@ class UberCommand
     product_id
   end
 
-  def get_products_for_lat_lng lat, lng
+  def get_products_for_lat_lng(lat, lng)
     uri = Addressable::URI.parse("#{BASE_URL}/v1/products")
     uri.query_values = { 'latitude' => lat, 'longitude' => lng }
     resource = uri.to_s
@@ -454,7 +454,7 @@ class UberCommand
     JSON.parse(result.body)
   end
 
-  def format_200_ride_request_response origin, destination, response
+  def format_200_ride_request_response(origin, destination, response)
     ack = ["Got it!", "Roger that.", "OK.", "10-4."].sample
 
     ["#{ack} We are looking for a driver",
@@ -462,14 +462,14 @@ class UberCommand
     ].join(" ")
   end
 
-  def format_response_errors response_errors
+  def format_response_errors(response_errors)
     response = "The following errors occurred: \n"
     response_errors.each do |error|
       response += "- *#{error['title']}* \n"
     end
   end
 
-  def format_products_response products_response
+  def format_products_response(products_response)
     unless products_response['products'] && !products_response['products'].empty?
       return "No Uber products available for that location."
     end
@@ -501,11 +501,11 @@ class UberCommand
     "Bearer #{bearer_token}"
   end
 
-  def invalid_command? name
+  def invalid_command?(name)
     !VALID_COMMANDS.include? name
   end
 
-  def resolve_address address
+  def resolve_address(address)
     location = Rails.cache.fetch("address: #{address}", expires_in: 1.day) do
       Geocoder.search(address).first
     end
@@ -518,11 +518,11 @@ class UberCommand
     end
   end
 
-  def trigger_error _ # No command argument.
+  def trigger_error(_) # No command argument.
     fail
   end
 
-  def test_resque input
+  def test_resque(input)
     Resque.enqueue(TestJob, @response_url, input)
     "Enqueued test."
   end
