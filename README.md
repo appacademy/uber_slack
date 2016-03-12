@@ -1,11 +1,11 @@
-# [UberSlack][uberslacklink] (Das Slackër)
+# [UberSlack][uberslacklink]
 
 * An Uber & Slack Integration API
 * Built by App Academy students in the August 2015 cohort
 
 ## Overview
 
-UberSlack enables Slack users to hail Über rides directly from their chat client with a command-line type interface. By utilizing slash commands ([https://api.slack.com/slash-commands][slashlink]) from the Slack API, Släcker allows the user to type in various commands (see Usage section below) to hail an UberX ride to a designated pickup location and designate certain options for the ride.
+UberSlack enables Slack users to hail Uber rides directly from their chat client with a command-line type interface. By utilizing slash commands ([https://api.slack.com/slash-commands][slashlink]) from the Slack API, Slacker allows the user to type in various commands (see Usage section below) to hail an UberX ride to a designated pickup location and designate certain options for the ride.
 
 [slashlink]: https://api.slack.com/slash-commands
 [uberslacklink]: https://uberonslack.com
