@@ -1,4 +1,4 @@
-# [UberSlack][uberslacklink] (Das Slackër)
+# [UberOnSlack][uberslacklink]
 
 * An Uber & Slack Integration API
 * Built by App Academy students in the August 2015 cohort
