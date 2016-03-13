@@ -27,7 +27,7 @@ end
 
 group :test do
   gem 'rspec-rails'
-  gem 'factory_girl_rails'
+  gem 'factory_girl_rails', require: false
   gem 'faker'
   gem 'capybara'
   gem 'guard-rspec'
