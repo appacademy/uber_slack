@@ -17,4 +17,22 @@ describe UberCommand do
       expect(command.run("demand free rides")).to eq(UNKNOWN_COMMAND_ERROR)
     end
   end
+
+  describe "#ride" do
+    it "requires origin and destination" do
+      expect(command.run("ride somewhere")).to eq(RIDE_REQUEST_FORMAT_ERROR)
+    end
+  end
+
+  describe "#estimate"
+
+  describe "#help"
+
+  describe "#accept"
+
+  describe "#share"
+
+  describe "#status"
+
+  describe "#cancel"
 end
