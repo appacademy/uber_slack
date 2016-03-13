@@ -22,6 +22,7 @@ gem 'resque', "~> 1.22.0"
 
 group :production, :staging do
   gem 'sentry-raven'
+  gem 'newrelic_rpm'
 end
 
 group :test do
