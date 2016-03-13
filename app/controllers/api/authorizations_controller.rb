@@ -39,7 +39,7 @@ class Api::AuthorizationsController < ApplicationController
       'client_id'     => ENV['uber_client_id'],
       'grant_type'    => 'authorization_code',
       'redirect_uri'  => ENV['uber_callback_url'],
-      'code' 	      	=> params[:code]
+      'code'            => params[:code]
     }
     # post request to uber to trade code for user access token
     resp = RestClient.post(ENV['uber_oauth_url'], post_params)
@@ -54,16 +54,16 @@ class Api::AuthorizationsController < ApplicationController
       if access_token.nil?
         render json: {status: "Error: no access token", body: resp.body}
       else
-  	    Authorization.find_by(session_token: session[:session_token])
-          					 .update(uber_auth_token: access_token,
-          					 				 uber_refresh_token: refresh_token,
-          					         uber_access_token_expiration_time: Time.now + expires_in)
+        Authorization.find_by(session_token: session[:session_token])
+          .update(uber_auth_token: access_token,
+                  uber_refresh_token: refresh_token,
+                  uber_access_token_expiration_time: Time.now + expires_in)
 
-       # sign up success, prompt user that they can order uber now
-  			response_url = Authorization.find_by_session_token(session[:session_token]).slack_response_url
-  			slack_response_payload = { text: 'You can now request a ride from Slack!' }
+        # sign up success, prompt user that they can order uber now
+        response_url = Authorization.find_by_session_token(session[:session_token]).slack_response_url
+        slack_response_payload = { text: 'You can now request a ride from Slack!' }
 
-  			resp = RestClient.post(
+        resp = RestClient.post(
           response_url,
           slack_response_payload.to_json,
           "Content-Type" => :json
@@ -74,7 +74,7 @@ class Api::AuthorizationsController < ApplicationController
         else
           redirect_to static_pages_user_success_url
         end
-  	  end
+      end
     end
   end
 
@@ -93,7 +93,7 @@ class Api::AuthorizationsController < ApplicationController
     # First channel admin agrees to use app
     slack_auth_params = {
       client_secret: ENV['slack_client_secret'],
-      client_id: 		 ENV['slack_client_id'],
+      client_id:                 ENV['slack_client_id'],
       redirect_uri:  ENV['slack_redirect'],
       code: slack_params[:code]
     }
@@ -164,8 +164,8 @@ class Api::AuthorizationsController < ApplicationController
   end
 
   def register_new_user
-		# save the slack response url so we can send an alert upon uber auth success
-  	Authorization.create!(slack_user_id: params[:user_id], slack_response_url: params[:response_url])
+    # save the slack response url so we can send an alert upon uber auth success
+    Authorization.create!(slack_user_id: params[:user_id], slack_response_url: params[:response_url])
   end
 
   def uber_oauth_str_url(slack_user_id)
