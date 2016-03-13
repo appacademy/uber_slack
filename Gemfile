@@ -1,4 +1,5 @@
 source 'https://rubygems.org'
+ruby '2.3.0'
 
 gem 'rails', '4.2.1'
 gem "rack-handlers"
@@ -19,16 +20,13 @@ gem 'redis'
 # Resque for async tasks
 gem 'resque', "~> 1.22.0"
 
-group :production do
+group :production, :staging do
   gem 'sentry-raven'
 end
 
-group :development do
+group :test do
   gem 'rspec-rails'
   gem 'factory_girl_rails'
-end
-
-group :test do
   gem 'faker'
   gem 'capybara'
   gem 'guard-rspec'
@@ -37,10 +35,10 @@ end
 
 group :development, :test do
   gem 'pry-rails'
+  gem 'pry-byebug'
   gem 'better_errors'
   gem 'binding_of_caller'
   gem 'annotate'
-  gem 'byebug'
   gem 'web-console', '~> 2.0'
   gem 'spring'
 end
