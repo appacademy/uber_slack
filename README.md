@@ -1,4 +1,6 @@
-# [UberOnSlack][uberslacklink]
+# [UberOnSlack][uberslacklink] 
+[![Circle CI](https://circleci.com/gh/appacademy/uber_slack/tree/master.svg?style=svg)](https://circleci.com/gh/appacademy/uber_slack/tree/master)
+
 
 * An Uber & Slack Integration API
 * Built by App Academy students in the August 2015 cohort

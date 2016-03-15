@@ -73,9 +73,7 @@ class UberCommand
 
     return UNKNOWN_COMMAND_ERROR if invalid_command?(command_name) || command_name.nil?
 
-    response = self.send(command_name, command_argument)
-
-    return response
+    self.send(command_name, command_argument)
   end
 
   private

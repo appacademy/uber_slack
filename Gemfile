@@ -22,11 +22,12 @@ gem 'resque', "~> 1.22.0"
 
 group :production, :staging do
   gem 'sentry-raven'
+  gem 'newrelic_rpm'
 end
 
 group :test do
   gem 'rspec-rails'
-  gem 'factory_girl_rails'
+  gem 'factory_girl_rails', require: false
   gem 'faker'
   gem 'capybara'
   gem 'guard-rspec'
