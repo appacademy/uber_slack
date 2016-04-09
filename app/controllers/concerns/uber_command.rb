@@ -401,8 +401,8 @@ class UberCommand
       origin_name = origin_name["from".length..-1]
     end
 
-    origin_name = origin_name.lstrip.rstrip
-    destination_name = destination_name.lstrip.rstrip
+    origin_name = origin_name.strip
+    destination_name = destination_name.strip
 
     [origin_name, destination_name]
   end
