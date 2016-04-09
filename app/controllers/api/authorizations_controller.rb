@@ -115,15 +115,14 @@ class Api::AuthorizationsController < ApplicationController
       code: slack_params[:code]
     }
 
-    resp = RestClient.post(ENV['slack_oauth_url'], slack_auth_params)
-
-    if resp.code == 500
+    begin
+      RestClient.post(ENV['slack_oauth_url'], slack_auth_params)
+    rescue RestClient::Exception => e
       Rollbar.error(resp, 'connect_slack')
       render text: "Sorry, something went wrong on our end."
-    else
-      access_token = resp['access_token']
+    end
 
-      redirect_to static_pages_admin_success_url
+    redirect_to static_pages_admin_success_url
     end
   end
 
