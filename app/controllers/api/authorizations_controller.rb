@@ -22,6 +22,7 @@ class Api::AuthorizationsController < ApplicationController
 
     render json: resp
   rescue RestClient::Exception => e
+    Rollbar.error(e, "UberCommand#?")
     render json: [
       "Sorry, there was a problem with your request.",
       "The error message is as follows: #{e.message}",
