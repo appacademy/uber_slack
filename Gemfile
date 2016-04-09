@@ -19,6 +19,11 @@ gem 'unicorn'
 gem 'redis'
 # Resque for async tasks
 gem 'resque', "~> 1.22.0"
+# rollbar for logging
+gem 'rollbar', '~> 2.8.3'
+gem 'oj', '~> 2.12.14'
+
+gem 'tzinfo-data'
 
 group :production, :staging do
   gem 'sentry-raven'
