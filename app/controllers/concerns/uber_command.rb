@@ -348,13 +348,13 @@ class UberCommand
 
     ride_attrs = {
       user_id: @user_id,
-      :start_latitude => origin_lat,
-      :start_longitude => origin_lng,
-      :end_latitude => destination_lat,
-      :end_longitude => destination_lng,
-      :origin_name => origin_name,
-      :destination_name => destination_name,
-      :product_id => product_id
+      start_latitude: origin_lat,
+      start_longitude: origin_lng,
+      end_latitude: destination_lat,
+      end_longitude: destination_lng,
+      origin_name: origin_name,
+      destination_name: destination_name,
+      product_id: product_id
     }
 
     if surge_confirmation_id
