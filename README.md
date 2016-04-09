@@ -1,4 +1,4 @@
-# [UberOnSlack][uberslacklink] 
+# [UberOnSlack][uberslacklink]
 [![Circle CI](https://circleci.com/gh/appacademy/uber_slack/tree/master.svg?style=svg)](https://circleci.com/gh/appacademy/uber_slack/tree/master)
 
 
@@ -61,6 +61,9 @@ A help manual is available with the 'help' command:
 ```
 /uber help
 ```
+
+#### Support
+Get more info about support [here](support.md).
 
 ## License
 Uber on Slack is open-source and free to distribute or modify under the
