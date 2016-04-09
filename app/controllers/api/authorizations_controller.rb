@@ -21,6 +21,12 @@ class Api::AuthorizationsController < ApplicationController
 
 
     render json: resp
+  rescue RestClient::Exception => e
+    render json: [
+      "Sorry, there was a problem with your request.",
+      "The error message is as follows: #{e.message}",
+      "Please let us know about what caused this at #{SUPPORT_PAGE}."
+    ].join(" ")
   end
 
   def render_error(error)
