@@ -96,6 +96,8 @@ class Api::AuthorizationsController < ApplicationController
   def establish_session
     # when authorizing with Uber:  first save session_token, then redirect to Uber OAuth page.
     auth = Authorization.find_by(slack_user_id: params[:user_id])
+    raise RunTimeError if auth.nil?
+
     session[:session_token] = Authorization.create_session_token
     session[:slack_response_url] = slack_params[:response_url]
 
