@@ -103,7 +103,7 @@ class Api::AuthorizationsController < ApplicationController
 
     auth.update(session_token: session[:session_token])
 
-    redirect_to "#{ENV['uber_authorize_url']}#{ENV['uber_client_id']}&scope=request+surge_accept"
+    redirect_to uber_first_auth_url
   end
 
   def connect_slack
@@ -191,6 +191,12 @@ class Api::AuthorizationsController < ApplicationController
     username = params[:user_name]
     url = "#{api_activate_url}?user_id=#{slack_user_id}"
     "Hey @#{username}! Looks like this is your first ride from Slack. Go <#{url}|here> to activate."
+  end
+
+  def uber_first_auth_url
+    url = "#{ENV['uber_authorize_url']}#{ENV['uber_client_id']}"
+    url += "&scope=request+surge_accept" if Rails.env.production?
+    url
   end
 
   def notifications
