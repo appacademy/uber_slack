@@ -22,7 +22,7 @@ class Api::AuthorizationsController < ApplicationController
 
     render json: resp
   rescue RestClient::Exception => e
-    Rollbar.error(e, "UberCommand#?")
+    Rollbar.error(e, auth: auth, response_url: response_url, uber_command: uber_command, resp: resp)
     render json: [
       "Sorry, there was a problem with your request.",
       "The error message is as follows: #{e.message}",
@@ -32,7 +32,7 @@ class Api::AuthorizationsController < ApplicationController
 
   def render_error(error)
     Raven.capture_exception(error)
-    Rollbar.error(e, 'render_error')
+    Rollbar.error(error)
 
     error_msg = [
       "Sorry, we encountered an error!",
@@ -49,14 +49,14 @@ class Api::AuthorizationsController < ApplicationController
       'client_id'     => ENV['uber_client_id'],
       'grant_type'    => 'authorization_code',
       'redirect_uri'  => ENV['uber_callback_url'],
-      'code'            => params[:code]
+      'code'          => params[:code]
     }
     begin
       # post request to uber to trade code for user access token
       resp = RestClient.post(ENV['uber_oauth_url'], post_params)
 
     rescue RestClient::Exception => e
-      Rollbar.error(e, 'connect_uber')
+      Rollbar.error(e, post_params: post_params, resp: resp)
       if e.resp.code == 500
         render text: "Sorry, something went wrong."
       else
@@ -87,7 +87,7 @@ class Api::AuthorizationsController < ApplicationController
           "Content-Type" => :json
         )
       rescue RestClient::Exception => e
-        Rollbar.error(e, 'connect_uber')
+        Rollbar.error(e, slack_response_payload: slack_response_payload, resp: resp)
 
         if e.resp.code == 500
           render text: "Sorry, something went wrong."
@@ -117,7 +117,7 @@ class Api::AuthorizationsController < ApplicationController
     # First channel admin agrees to use app
     slack_auth_params = {
       client_secret: ENV['slack_client_secret'],
-      client_id:                 ENV['slack_client_id'],
+      client_id:     ENV['slack_client_id'],
       redirect_uri:  ENV['slack_redirect'],
       code: slack_params[:code]
     }
@@ -125,7 +125,7 @@ class Api::AuthorizationsController < ApplicationController
     begin
       RestClient.post(ENV['slack_oauth_url'], slack_auth_params)
     rescue RestClient::Exception => e
-      Rollbar.error(resp, 'connect_slack')
+      Rollbar.error("connect_uber", resp: resp, slack_auth_params: slack_auth_params)
       render text: "Sorry, something went wrong on our end."
     end
 
@@ -169,10 +169,10 @@ class Api::AuthorizationsController < ApplicationController
       'grant_type'    => 'refresh_token',
       'refresh_token' => auth.uber_refresh_token
     }
-    resp = RestClient.post(ENV['uber_oauth_url'], post_params)
+    resp = RestClient.post(ENV['uber_oauth_url'], post_params: post_params)
 
     if resp.code == 500
-      Rollbar.error(resp, 'refresh_access_token')
+      Rollbar.error("refresh_access_token getting 500 error", resp: resp, post_params: post_params)
       render text: "Sorry, something went wrong on our end."
     else
       access_token = JSON.parse(resp.body)['access_token']
