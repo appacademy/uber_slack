@@ -46,7 +46,7 @@ class Api::AuthorizationsController < ApplicationController
       resp = RestClient.post(ENV['uber_oauth_url'], post_params)
 
     rescue RestClient::Exception => e
-
+      Rollbar.error(e, 'connect_uber')
       if e.resp.code == 500
         render text: "Sorry, something went wrong."
       else
@@ -77,6 +77,7 @@ class Api::AuthorizationsController < ApplicationController
           "Content-Type" => :json
         )
       rescue RestClient::Exception => e
+        Rollbar.error(e, 'connect_uber')
 
         if e.resp.code == 500
           render text: "Sorry, something went wrong."
@@ -112,6 +113,7 @@ class Api::AuthorizationsController < ApplicationController
     resp = RestClient.post(ENV['slack_oauth_url'], slack_auth_params)
 
     if resp.code == 500
+      Rollbar.error(resp, 'connect_slack')
       render text: "Sorry, something went wrong on our end."
     else
       access_token = resp['access_token']
@@ -160,6 +162,7 @@ class Api::AuthorizationsController < ApplicationController
     resp = RestClient.post(ENV['uber_oauth_url'], post_params)
 
     if resp.code == 500
+      Rollbar.error(resp, 'refresh_access_token')
       render text: "Sorry, something went wrong on our end."
     else
       access_token = JSON.parse(resp.body)['access_token']
