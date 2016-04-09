@@ -18,11 +18,14 @@ class Api::AuthorizationsController < ApplicationController
     uber_command = UberCommand.new(auth.uber_auth_token, auth.id, response_url)
     resp = uber_command.run(slack_params[:text])
 
+    Rollbar.info("Request from #{Rails.env}", command: uber_command)
+
     render json: resp
   end
 
   def render_error(error)
     Raven.capture_exception(error)
+    Rollbar.error(e, 'render_error')
 
     error_msg = [
       "Sorry, we encountered an error!",
