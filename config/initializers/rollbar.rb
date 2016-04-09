@@ -1,4 +1,8 @@
+GIT_SHA = `git log -n 1 --pretty=format:"%H"`
+
 Rollbar.configure do |config|
+  config.code_version = GIT_SHA
+
   # Without configuration, Rollbar is enabled in all environments.
   # To disable in specific environments, set config.enabled=false.
 
