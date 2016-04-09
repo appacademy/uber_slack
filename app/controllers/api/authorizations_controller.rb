@@ -130,7 +130,6 @@ class Api::AuthorizationsController < ApplicationController
     end
 
     redirect_to static_pages_admin_success_url
-    end
   end
 
   private
