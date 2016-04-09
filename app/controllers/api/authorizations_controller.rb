@@ -195,7 +195,7 @@ class Api::AuthorizationsController < ApplicationController
 
   def uber_first_auth_url
     url = "#{ENV['uber_authorize_url']}#{ENV['uber_client_id']}"
-    url += "&scope=request+surge_accept" if Rails.env.production?
+    url += "&scope=request+surge_accept" unless ENV['hostname'].match("staging")
     url
   end
 
