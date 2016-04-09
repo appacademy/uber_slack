@@ -5,7 +5,7 @@ class Api::AuthorizationsController < ApplicationController
   before_action :require_authorization, only: :use_uber
   before_action :ensure_fresh_access_token, only: :use_uber
 
-  SUPPORT_TWITTER = "@appacademyio"
+  SUPPORT_PAGE = "https://github.com/appacademy/uber_slack/issues"
 
   def echo
     render json: params
@@ -25,8 +25,8 @@ class Api::AuthorizationsController < ApplicationController
     Raven.capture_exception(error)
 
     error_msg = [
-      "Sorry, we encountered an error.",
-      "Please let us know on Twitter at #{SUPPORT_TWITTER}.",
+      "Sorry, we encountered an error!",
+      "Please let us know about what caused this at #{SUPPORT_PAGE}.",
       "If you requested a pickup, enter */uber status* to see if the request went through."
     ].join(" ")
     render json: { text: error_msg }
