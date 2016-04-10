@@ -31,7 +31,6 @@ group :production, :staging do
 end
 
 group :test do
-  gem 'rspec-rails'
   gem 'factory_girl_rails', require: false
   gem 'faker'
   gem 'capybara'
@@ -40,6 +39,7 @@ group :test do
 end
 
 group :development, :test do
+  gem 'rspec-rails'
   gem 'pry-rails'
   gem 'pry-byebug'
   gem 'better_errors'
