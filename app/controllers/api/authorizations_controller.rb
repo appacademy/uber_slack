@@ -22,10 +22,10 @@ class Api::AuthorizationsController < ApplicationController
   rescue RestClient::Exception => e
     Rollbar.error(e, auth: auth, response_url: response_url, uber_command: uber_command, resp: resp)
     render json: [
-      "Sorry, there was a problem with your request.",
-      "The error message is as follows: #{e.message}",
-      "Please let us know about what caused this at #{SUPPORT_PAGE}."
-    ].join(" ")
+             "Sorry, there was a problem with your request.",
+             "The error message is as follows: #{e.message}",
+             "Please let us know about what caused this at #{SUPPORT_PAGE}."
+           ].join(" ")
   end
 
   def render_error(error)
@@ -94,7 +94,15 @@ class Api::AuthorizationsController < ApplicationController
         end
       end
 
-      redirect_to static_pages_user_success_url
+      response = JSON.parse(resp.body)
+      if response["access_token"]
+        auth = update_authorization(response)
+
+        # sign up success, prompt user that they can order uber now
+        signup_success(auth.slack_response_url)
+      else
+        render json: {status: "Error: no access token", body: resp.body}
+      end
     end
   end
 
@@ -204,5 +212,33 @@ class Api::AuthorizationsController < ApplicationController
 
   def notifications
     # Take the params and redirect data to slack
+  end
+
+  def update_authorization(response)
+    access_token = response['access_token']
+    refresh_token = response['refresh_token']
+    expires_in = response['expires_in']
+
+    Authorization
+      .find_by(session_token: session[:session_token])
+      .update(uber_auth_token: access_token,
+              uber_refresh_token: refresh_token,
+              uber_access_token_expiration_time: Time.now + expires_in)
+  end
+
+  def signup_success(response_url)
+    slack_response_payload = { text: 'You can now request a ride from Slack!' }
+
+    resp = RestClient.post(
+      response_url,
+      slack_response_payload.to_json,
+      "Content-Type" => :json
+    )
+
+    if resp.code == 500
+      render text: "Sorry, something went wrong on our end."
+    else
+      redirect_to static_pages_user_success_url
+    end
   end
 end
