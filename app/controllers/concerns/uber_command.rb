@@ -41,6 +41,9 @@ HELP_TEXT = <<-STRING
   - status
   - cancel
   - help
+
+  For best results when requesting a ride or estimate, specify a city or zip code.
+  Ex: */uber ride 1061 Market Street, San Francisco to 55 Music Concourse Dr, San Francisco*
 STRING
 
 RIDE_STATUSES = {
