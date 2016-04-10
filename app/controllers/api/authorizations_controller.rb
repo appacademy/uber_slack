@@ -13,12 +13,10 @@ class Api::AuthorizationsController < ApplicationController
 
   # Action for user commands.
   def use_uber
-    Rollbar.info("Request from #{ENV['hostname']}")
     auth = Authorization.find_by(slack_user_id: params[:user_id])
     response_url = slack_params[:response_url]
     uber_command = UberCommand.new(auth.uber_auth_token, auth.id, response_url)
     resp = uber_command.run(slack_params[:text])
-
 
     render json: resp
   rescue RestClient::Exception => e
