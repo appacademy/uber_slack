@@ -19,4 +19,6 @@ Rails.application.routes.draw do
     get '/activate', to: 'authorizations#establish_session'
     get '/connect_slack', to: 'authorizations#connect_slack'
   end
+  get "/404" => "errors#not_found"
+  get "/500" => "errors#exception"
 end
