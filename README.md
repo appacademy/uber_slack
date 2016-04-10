@@ -65,6 +65,29 @@ A help manual is available with the 'help' command:
 #### Support
 Get more info about support [here](support.md).
 
+## Contributing
+
+#### Slack Channels
+
+Join our [Slack Channel][https://uber-on-slack.slack.com] to
+
+- discuss about this project
+- throw in ideas of new features
+- or simply report/fix bugs if you see any
+
+#### New features / bug fixes
+
+1. Folk this repo
+2. Create feature branch
+3. Push to your branch
+4. Create Pull Request from your branch
+5. That's it!
+
+#### Encounter issues?
+
+If you encounter any kind of issue, you can simply report it on github or discuss on our 
+[Slack Channel][https://uber-on-slack.slack.com]
+
 ## License
 Uber on Slack is open-source and free to distribute or modify under the
 [MIT License](LICENSE.txt).
