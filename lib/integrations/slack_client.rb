@@ -12,6 +12,12 @@ module SlackClient
     raise Exception.new
   end
 
+  # class Request
+  #   def 
+      
+  #   end
+  # end
+
   class Exception
   end
 end
