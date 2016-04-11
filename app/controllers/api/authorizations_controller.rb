@@ -94,14 +94,19 @@ class Api::AuthorizationsController < ApplicationController
         end
       end
 
-      response = JSON.parse(resp.body)
-      if response["access_token"]
-        auth = update_authorization(response)
+      begin
+        @response = resp.body
+        response = JSON.parse(resp.body)
+        if response["access_token"]
+          auth = update_authorization(response)
 
-        # sign up success, prompt user that they can order uber now
-        signup_success(auth.slack_response_url)
-      else
-        render json: {status: "Error: no access token", body: resp.body}
+          # sign up success, prompt user that they can order uber now
+          signup_success(auth.slack_response_url)
+        else
+          render json: {status: "Error: no access token", body: resp.body}
+        end
+      rescue => e
+        render json: [@response, e.message]
       end
     end
   end
