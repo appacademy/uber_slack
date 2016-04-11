@@ -178,11 +178,13 @@ class Api::AuthorizationsController < ApplicationController
     refresh_token = response['refresh_token']
     expires_in = response['expires_in']
 
-    Authorization
-      .find_by(session_token: session[:session_token])
-      .update(uber_auth_token: access_token,
-              uber_refresh_token: refresh_token,
-              uber_access_token_expiration_time: Time.now + expires_in)
+    Authorization.find_by(session_token: session[:session_token]).tap do |auth|
+      auth.update!(
+        uber_auth_token: access_token,
+        uber_refresh_token: refresh_token,
+        uber_access_token_expiration_time: Time.now + expires_in
+      )
+    end
   end
 
   def signup_success(response_url)
