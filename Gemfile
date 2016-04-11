@@ -20,17 +20,13 @@ gem 'redis'
 # Resque for async tasks
 gem 'resque', "~> 1.22.0"
 gem 'oj', '~> 2.12.14'
+gem 'rollbar', '~> 2.8.3'
+gem 'sentry-raven'
 
 gem 'tzinfo-data'
 
 group :production do
   gem 'newrelic_rpm'
-end
-
-group :production, :staging do
-  # rollbar for logging
-  gem 'rollbar', '~> 2.8.3'
-  gem 'sentry-raven'
 end
 
 group :test do
