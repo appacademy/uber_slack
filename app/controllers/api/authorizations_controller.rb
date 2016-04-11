@@ -94,6 +94,7 @@ class Api::AuthorizationsController < ApplicationController
         end
       end
 
+      @response = resp.body
       response = JSON.parse(resp.body)
       if response["access_token"]
         auth = update_authorization(response)
@@ -103,6 +104,8 @@ class Api::AuthorizationsController < ApplicationController
       else
         render json: {status: "Error: no access token", body: resp.body}
       end
+    rescue JSON::ParserError => e
+      render json: { [@response, e.message] }
     end
   end
 
