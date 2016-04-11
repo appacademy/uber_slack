@@ -120,22 +120,11 @@ class Api::AuthorizationsController < ApplicationController
   end
 
   def connect_slack
-    # First channel admin agrees to use app
-    slack_auth_params = {
-      client_secret: ENV['slack_client_secret'],
-      client_id:     ENV['slack_client_id'],
-      redirect_uri:  ENV['slack_redirect'],
-      code: slack_params[:code]
-    }
-
-    begin
-      RestClient.post(ENV['slack_oauth_url'], slack_auth_params)
-    rescue RestClient::Exception => e
-      Rollbar.error("connect_uber", resp: resp, slack_auth_params: slack_auth_params)
-      render text: "Sorry, something went wrong on our end."
-    end
-
+    SlackClient.add_to_channel(slack_params[:code])
     redirect_to static_pages_admin_success_url
+  rescue SlackClient::Exception => e
+    Rollbar.error("connect_uber", resp: resp, slack_auth_params: slack_auth_params)
+    render text: "Sorry, something went wrong on our end."
   end
 
   private
