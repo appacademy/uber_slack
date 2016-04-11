@@ -119,6 +119,10 @@ class Api::AuthorizationsController < ApplicationController
     redirect_to uber_first_auth_url
   end
 
+  def current_user
+    @user ||= Authorization.find_by(slack_user_id: params[:user_id])
+  end
+
   def connect_slack
     SlackClient.add_to_channel(slack_params[:code])
     redirect_to static_pages_admin_success_url
