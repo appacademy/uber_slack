@@ -52,62 +52,23 @@ class Api::AuthorizationsController < ApplicationController
     begin
       # post request to uber to trade code for user access token
       resp = RestClient.post(ENV['uber_oauth_url'], post_params)
-
     rescue RestClient::Exception => e
       Rollbar.error(e, post_params: post_params, resp: resp)
       if e.resp.code == 500
-        render text: "Sorry, something went wrong."
+        render text: "Sorry, there was a problem authenticating your account."
       else
         render text: "Sorry, something went wrong on our end."
       end
     end
 
-    access_token = JSON.parse(resp.body)['access_token']
-    refresh_token = JSON.parse(resp.body)['refresh_token']
-    expires_in = JSON.parse(resp.body)['expires_in']
-
-    if access_token.nil?
-      render json: {status: "Error: no access token", body: resp.body}
-    else
-      Authorization.find_by(session_token: session[:session_token])
-        .update(uber_auth_token: access_token,
-                uber_refresh_token: refresh_token,
-                uber_access_token_expiration_time: Time.now + expires_in)
+    response = JSON.parse(resp.body)
+    if response["access_token"]
+      auth = update_authorization(response)
 
       # sign up success, prompt user that they can order uber now
-      response_url = Authorization.find_by_session_token(session[:session_token]).slack_response_url
-      slack_response_payload = { text: 'You can now request a ride from Slack!' }
-
-      begin
-        resp = RestClient.post(
-          response_url,
-          slack_response_payload.to_json,
-          "Content-Type" => :json
-        )
-      rescue RestClient::Exception => e
-        Rollbar.error(e, slack_response_payload: slack_response_payload, resp: resp)
-
-        if e.resp.code == 500
-          render text: "Sorry, something went wrong."
-        else
-          render text: "Sorry, something went wrong on our end."
-        end
-      end
-
-      begin
-        @response = resp.body
-        response = JSON.parse(resp.body)
-        if response["access_token"]
-          auth = update_authorization(response)
-
-          # sign up success, prompt user that they can order uber now
-          signup_success(auth.slack_response_url)
-        else
-          render json: {status: "Error: no access token", body: resp.body}
-        end
-      rescue => e
-        render json: [@response, e.message]
-      end
+      signup_success(auth.slack_response_url)
+    else
+      render json: {status: "Error: no access token", body: resp.body}
     end
   end
 
