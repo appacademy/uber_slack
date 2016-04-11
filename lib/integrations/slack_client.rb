@@ -1,4 +1,3 @@
-binding.pry
 module SlackClient
   def self.add_to_channel(code)
     slack_auth_params = {
