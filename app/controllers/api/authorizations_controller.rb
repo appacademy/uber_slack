@@ -104,9 +104,9 @@ class Api::AuthorizationsController < ApplicationController
       else
         render json: {status: "Error: no access token", body: resp.body}
       end
-    rescue JSON::ParserError => e
-      render json: { [@response, e.message] }
     end
+  rescue JSON::ParserError => e
+    render json: { [@response, e.message] }
   end
 
   def establish_session
