@@ -1210,6 +1210,10 @@ h3.typo1 {
   padding: 4em 0em 1em 0em;
 }
 
+#slack-integrate {
+  width: 139px;
+  margin: 0 auto;
+}
 /*--//contact--*/
 
 @media(max-width:1440px) {}
