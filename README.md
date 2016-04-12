@@ -67,13 +67,13 @@ Get more info about support [here](support.md).
 
 ## Contributing
 
-#### Slack Channels
+<!-- #### Slack Channels
 
 Join our [Slack Channel](https://uber-on-slack.slack.com) to
 
 - discuss about this project
 - throw in ideas of new features
-- or simply report/fix bugs if you see any
+- or simply report/fix bugs if you see any -->
 
 #### New features / bug fixes
 
