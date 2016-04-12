@@ -85,7 +85,7 @@ Join our [Slack Channel](https://uber-on-slack.slack.com) to
 
 #### Encounter issues?
 
-If you encounter any kind of issue, you can simply report it on github or discuss on our 
+If you encounter any kind of issue, you can simply report it on github<!--  or discuss on our  -->
 [Slack Channel](https://uber-on-slack.slack.com)
 
 ## License
