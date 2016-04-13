@@ -7,9 +7,9 @@ class UsersController < ApplicationController
       redirect_to static_pages_slack_success_url
     else
       if @user.errors.messages == { :email=>["has already been taken"] }
-        redirect_to static_pages_slack_resent
+        redirect_to static_pages_slack_resent_url
       else
-        redirect_to static_pages_slack_fail
+        redirect_to static_pages_fail_url
       end
     end
   end
