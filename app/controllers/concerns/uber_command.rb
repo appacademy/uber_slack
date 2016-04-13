@@ -144,7 +144,7 @@ class UberCommand
         "Content-Type" => :json,
         accept: 'json'
       )
-    rescue => e
+    rescue RestClient::Exception => e
       Raven.capture_exception(e)
       Rollbar.error(e, "UberCommand#share")
       return "Sorry, we weren't able to get the link to share your ride."
@@ -212,7 +212,7 @@ class UberCommand
         "Content-Type" => :json,
         accept: 'json'
       )
-    rescue => e
+    rescue RestClient::Exception => e
       Raven.capture_exception(e)
       Rollbar.error(e, "UberCommand#cancel")
       return fail_msg
@@ -264,6 +264,7 @@ class UberCommand
 
     if (Time.now - @ride.updated_at) > 5.minutes
       # TODO: Break out address resolution in #ride so that we can pass lat/lngs directly.
+
       return ride "#{origin_name} to #{destination_name}"
     else
       body = {
@@ -282,7 +283,7 @@ class UberCommand
           "Content-Type" => :json,
           accept: 'json'
         )
-      rescue => e
+      rescue RestClient::Exception => e
         Raven.capture_exception(e)
         Rollbar.error(e, "UberCommand#accept")
         reply_to_slack(fail_msg)

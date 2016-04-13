@@ -9,12 +9,13 @@ module SlackClient
 
     RestClient.post(ENV['slack_oauth_url'], slack_auth_params)
   rescue RestClient::Exception => e
-    raise Exception.new
+    # noop for now, handle it here later
+    raise e
   end
 
   # class Request
-  #   def 
-      
+  #   def
+
   #   end
   # end
 

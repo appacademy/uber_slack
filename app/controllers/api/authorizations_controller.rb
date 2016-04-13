@@ -20,7 +20,12 @@ class Api::AuthorizationsController < ApplicationController
 
     render json: resp
   rescue RestClient::Exception => e
-    Rollbar.error(e, auth: auth, response_url: response_url, uber_command: uber_command, resp: resp)
+    # UberCommand should handle this, but it might have missed something
+    Rollbar.error(e,
+                  auth: auth,
+                  response_url: response_url,
+                  uber_command: uber_command,
+                  resp: e.response)
     render json: [
              "Sorry, there was a problem with your request.",
              "The error message is as follows: #{e.message}",
@@ -53,8 +58,8 @@ class Api::AuthorizationsController < ApplicationController
       # post request to uber to trade code for user access token
       resp = RestClient.post(ENV['uber_oauth_url'], post_params)
     rescue RestClient::Exception => e
-      Rollbar.error(e, post_params: post_params, resp: resp)
-      if e.resp.code == 500
+      Rollbar.error(e, post_params: post_params, resp: e.response)
+      if e.response.code == 500
         render text: "Sorry, there was a problem authenticating your account."
       else
         render text: "Sorry, something went wrong on our end."
@@ -93,7 +98,7 @@ class Api::AuthorizationsController < ApplicationController
     SlackClient.add_to_channel(slack_params[:code])
     redirect_to static_pages_admin_success_url
   rescue SlackClient::Exception => e
-    Rollbar.error("connect_uber", resp: resp, slack_auth_params: slack_auth_params)
+    Rollbar.error("connect_uber", resp: e.response, slack_auth_params: slack_auth_params)
     render text: "Sorry, something went wrong on our end."
   end
 
@@ -136,20 +141,21 @@ class Api::AuthorizationsController < ApplicationController
     }
     resp = RestClient.post(ENV['uber_oauth_url'], post_params: post_params)
 
-    if resp.code == 500
-      Rollbar.error("refresh_access_token getting 500 error", resp: resp, post_params: post_params)
-      render text: "Sorry, something went wrong on our end."
-    else
-      access_token = JSON.parse(resp.body)['access_token']
-      refresh_token = JSON.parse(resp.body)['refresh_token']
-      expires_in = JSON.parse(resp.body)['expires_in']
+    access_token = JSON.parse(resp.body)['access_token']
+    refresh_token = JSON.parse(resp.body)['refresh_token']
+    expires_in = JSON.parse(resp.body)['expires_in']
 
-      if access_token
-        auth.update(uber_auth_token: access_token,
-                    uber_refresh_token: refresh_token,
-                    uber_access_token_expiration_time: Time.now + expires_in)
-      end
+    if access_token
+      auth.update(uber_auth_token: access_token,
+                  uber_refresh_token: refresh_token,
+                  uber_access_token_expiration_time: Time.now + expires_in)
     end
+
+  rescue RestClient::Exception => e
+    Rollbar.error("refresh_access_token",
+                  resp: e.response,
+                  post_params: post_params)
+    render text: "Sorry, something went wrong on our end."
   end
 
   def register_new_user
@@ -190,16 +196,15 @@ class Api::AuthorizationsController < ApplicationController
   def signup_success(response_url)
     slack_response_payload = { text: 'You can now request a ride from Slack!' }
 
-    resp = RestClient.post(
+    RestClient.post(
       response_url,
       slack_response_payload.to_json,
       "Content-Type" => :json
     )
 
-    if resp.code == 500
-      render text: "Sorry, something went wrong on our end."
-    else
-      redirect_to static_pages_user_success_url
-    end
+    redirect_to static_pages_user_success_url
+
+  rescue RestClient::Exception => e
+    Rollbar.error(e, resp: e.response)
   end
 end
