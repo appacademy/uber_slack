@@ -9,8 +9,8 @@ module SlackClient
 
     RestClient.post(ENV['slack_oauth_url'], slack_auth_params)
   rescue RestClient::Exception => e
-<<<<<<< HEAD
-    Rollbar.error(e)
+    # noop for now, handle it here later
+    raise e
   end
 
   def self.invite(email, first_name)
@@ -26,10 +26,6 @@ module SlackClient
     RestClient.post(post_url, params)
   rescue RestClient::Exception => e
     Rollbar.error(e)
-=======
-    # noop for now, handle it here later
-    raise e
->>>>>>> master
   end
 
   # class Request
