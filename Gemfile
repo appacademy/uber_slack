@@ -15,7 +15,7 @@ gem 'geocoder'
 gem 'figaro'
 gem 'rest-client'
 gem 'addressable'
-gem 'unicorn'
+gem 'puma'
 gem 'redis'
 # Resque for async tasks
 gem 'resque', "~> 1.22.0"
