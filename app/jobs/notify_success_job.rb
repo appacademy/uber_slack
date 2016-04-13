@@ -9,7 +9,6 @@ class NotifySuccessJob
     begin
       RestClient.post(slack_url, payload.to_json)
     rescue => e
-      Raven.capture_exception(e)
       Resque.enqueue(NotifyFailureJob, exception, slack_url)
     end
   end

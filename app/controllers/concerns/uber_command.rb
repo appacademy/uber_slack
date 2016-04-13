@@ -113,7 +113,6 @@ class UberCommand
         product_id
     )
     rescue => e
-      Raven.capture_exception(e)
       Rollbar.error(e, "UberCommand#estimate")
       return [
         "Sorry, we could not get time and price estimates for a trip",
@@ -145,7 +144,6 @@ class UberCommand
         accept: 'json'
       )
     rescue RestClient::Exception => e
-      Raven.capture_exception(e)
       Rollbar.error(e, "UberCommand#share")
       return "Sorry, we weren't able to get the link to share your ride."
     end
@@ -164,7 +162,6 @@ class UberCommand
     begin
       status_hash = get_ride_status(ride.request_id)
     rescue => e
-      Raven.capture_exception(e)
       Rollbar.error(e, "UberCommand#status")
       return "Sorry, we weren't able to get your ride status from Uber."
     end
@@ -213,7 +210,6 @@ class UberCommand
         accept: 'json'
       )
     rescue RestClient::Exception => e
-      Raven.capture_exception(e)
       Rollbar.error(e, "UberCommand#cancel")
       return fail_msg
     end
@@ -284,7 +280,6 @@ class UberCommand
           accept: 'json'
         )
       rescue RestClient::Exception => e
-        Raven.capture_exception(e)
         Rollbar.error(e, "UberCommand#accept")
         reply_to_slack(fail_msg)
         return

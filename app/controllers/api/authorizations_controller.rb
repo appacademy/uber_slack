@@ -34,7 +34,6 @@ class Api::AuthorizationsController < ApplicationController
   end
 
   def render_error(error)
-    Raven.capture_exception(error)
     Rollbar.error(error)
 
     error_msg = [
