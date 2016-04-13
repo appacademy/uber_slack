@@ -16,4 +16,8 @@ class User < ActiveRecord::Base
                       format: { with: /\A([^@\s]+)@((?:[-a-z0-9]+\.)+[a-z]{2,})\z/i }
 
   before_save -> { email.downcase! }
+
+  def invite_to_slack
+    SlackClient.invite(email, first_name)
+  end
 end
