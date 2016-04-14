@@ -15,12 +15,13 @@ gem 'geocoder'
 gem 'figaro'
 gem 'rest-client'
 gem 'addressable'
-gem 'unicorn'
+gem 'puma'
 gem 'redis'
 # Resque for async tasks
 gem 'resque', "~> 1.22.0"
 gem 'oj', '~> 2.12.14'
 gem 'rollbar', '~> 2.8.3'
+gem 'rack-timeout'
 
 gem 'tzinfo-data'
 
