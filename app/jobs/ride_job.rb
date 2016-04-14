@@ -1,7 +1,7 @@
-class RideJob
-  @queue = :ride
+class RideJob < ActiveJob::Base
+  queue_as :ride
 
-  def self.perform(
+  def perform(
     bearer_header,
     ride_hash,
     origin_lat,
@@ -24,11 +24,11 @@ class RideJob
         product_id
       )
     rescue => e
-      Resque.enqueue(NotifyFailureJob, e, slack_url)
+      Sidekiq::Client.enqueue(NotifyFailureJob, e, slack_url)
       return
     end
 
-    Resque.enqueue(
+    Sidekiq::Client.enqueue(
       NotifySuccessJob,
       origin_name,
       destination_name,
@@ -40,12 +40,12 @@ class RideJob
       ride = Ride.find(ride_hash['id'])
       ride.update!(request_id: ride_response['request_id'])
     rescue => e
-      Resque.enqueue(NotifyFailureJob, e, slack_url)
+      Sidekiq::Client.enqueue(NotifyFailureJob, e, slack_url)
       return
     end
   end
 
-  def self.request_ride!(
+  def request_ride!(
     bearer_header,
     origin_lat,
     origin_lng,
@@ -72,7 +72,7 @@ class RideJob
     JSON.parse(response.body)
   end
 
-  def self.on_failure(
+  def on_failure(
     exception,
     bearer_header,
     ride,
@@ -85,6 +85,6 @@ class RideJob
     product_id,
     slack_url
   )
-    Resque.enqueue(NotifyFailureJob, exception, slack_url)
+    Sidekiq::Client.enqueue(NotifyFailureJob, exception, slack_url)
   end
 end

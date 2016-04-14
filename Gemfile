@@ -17,8 +17,7 @@ gem 'rest-client'
 gem 'addressable'
 gem 'unicorn'
 gem 'redis'
-# Resque for async tasks
-gem 'resque', "~> 1.22.0"
+gem 'sidekiq'
 gem 'oj', '~> 2.12.14'
 gem 'rollbar', '~> 2.8.3'
 

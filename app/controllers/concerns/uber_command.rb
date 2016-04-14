@@ -12,7 +12,7 @@ VALID_COMMANDS = [
   'status',
   'cancel',
   'trigger_error',
-  'test_resque'
+  'test_sidekiq'
 ]
 
 # returned when ride isn't requested in the format '{origin} to {destination}'
@@ -92,17 +92,17 @@ class UberCommand
 
     return ["Sorry, we don't know where #{start_addr} is.",
             "Can you try again with a more precise origin address?"
-    ].join(" ") if start_lat.nil?
+           ].join(" ") if start_lat.nil?
 
     return ["Sorry, we don't know where #{end_addr} is.",
             "Can you try again with a more precise destination address?"
-    ].join(" ") if end_lat.nil?
+           ].join(" ") if end_lat.nil?
 
     product_id = get_default_product_id_for_lat_lng(start_lat, start_lng)
-      return [
-        "Sorry, we did not find any Uber products available near #{start_addr}.",
-        "Can you try again with a more precise address?"
-      ].join(" ") if product_id.nil?
+    return [
+      "Sorry, we did not find any Uber products available near #{start_addr}.",
+      "Can you try again with a more precise address?"
+    ].join(" ") if product_id.nil?
 
     begin
       ride_estimate_hash = get_ride_estimate(
@@ -111,7 +111,7 @@ class UberCommand
         end_lat,
         end_lng,
         product_id
-    )
+      )
     rescue => e
       Rollbar.error(e, "UberCommand#estimate")
       return [
@@ -313,11 +313,11 @@ class UberCommand
 
     return ["Sorry, we don't know where #{origin_name} is.",
             "Can you try again with a more precise origin address?"
-    ].join(" ") if origin_lat.nil?
+           ].join(" ") if origin_lat.nil?
 
     return ["Sorry, we don't know where #{destination_name} is.",
             "Can you try again with a more precise destination address?"
-    ].join(" ") if destination_lat.nil?
+           ].join(" ") if destination_lat.nil?
 
 
     product_id = get_default_product_id_for_lat_lng(origin_lat, origin_lng)
@@ -365,7 +365,7 @@ class UberCommand
 
     return ask_for_surge_confirmation(surge_multiplier) if surge_multiplier > 1
 
-    Resque.enqueue(
+    Sidekiq::Client.enqueue(
       RideJob,
       bearer_header,
       ride,
@@ -427,9 +427,9 @@ class UberCommand
   end
 
   def reply_to_slack(response)
-      payload = { text: response }
+    payload = { text: response }
 
-      RestClient.post(@response_url, payload.to_json)
+    RestClient.post(@response_url, payload.to_json)
   end
 
   def get_default_product_id_for_lat_lng(lat, lng)
@@ -524,8 +524,8 @@ class UberCommand
     fail
   end
 
-  def test_resque(input)
-    Resque.enqueue(TestJob, @response_url, input)
+  def test_sidekiq(input)
+    Sidekiq::Client.enqueue(TestJob, @response_url, input)
     "Enqueued test."
   end
 end
