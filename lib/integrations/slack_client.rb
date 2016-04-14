@@ -14,8 +14,9 @@ module SlackClient
   end
 
   def self.invite(email, first_name)
-    post_url = "https://uber-on-slack.slack.com/api/users.admin.invite?t=1460509443&token="
-    post_url += ENV['slack_team_token']
+    post_url  = "https://uber-on-slack.slack.com/api/users.admin.invite?"
+    post_url += "t=#{ENV['slack_invite_bot']}"
+    post_url += "&token=#{ENV['slack_team_token']}"
     params = {
       email: email,
       first_name: first_name,
