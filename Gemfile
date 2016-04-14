@@ -22,6 +22,7 @@ gem 'resque', "~> 1.22.0"
 gem 'oj', '~> 2.12.14'
 gem 'rollbar', '~> 2.8.3'
 gem 'sentry-raven'
+gem 'rack-timeout'
 
 gem 'tzinfo-data'
 
