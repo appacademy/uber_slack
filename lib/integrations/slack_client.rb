@@ -13,6 +13,21 @@ module SlackClient
     raise e
   end
 
+  def self.invite(email, first_name)
+    post_url = "https://uber-on-slack.slack.com/api/users.admin.invite?t=1460509443&token="
+    post_url += ENV['slack_team_token']
+    params = {
+      email: email,
+      first_name: first_name,
+      set_active: true,
+      _attempts: 1
+    }
+
+    RestClient.post(post_url, params)
+  rescue RestClient::Exception => e
+    Rollbar.error(e)
+  end
+
   # class Request
   #   def
 

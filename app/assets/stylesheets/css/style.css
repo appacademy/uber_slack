@@ -2288,3 +2288,9 @@ h3.typo1 {
 .agro-strip-main a {
   width: 100%;
 }
+
+.slack-form {
+  width: 50%;
+  margin: 0 auto;
+  min-width: 400px;
+}
