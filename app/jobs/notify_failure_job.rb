@@ -1,7 +1,7 @@
-class NotifyFailureJob < ActiveJob::Base
-  queue_as :notify_failure
+class NotifyFailureJob
+  @queue = :notify_failure
 
-  def perform(exception, slack_url)
+  def self.perform(exception, slack_url)
     payload = {
       text: [
         "Sorry, something went wrong while asking Uber for a ride.",
