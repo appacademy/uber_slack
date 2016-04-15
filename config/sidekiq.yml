@@ -1,0 +1,10 @@
+:concurrency: 5
+staging:
+  :concurrency: 2
+production:
+  :concurrency: 10
+:queues:
+  - [notify_failure, 1]
+  - [notify_success, 1]
+  - [ride, 1]
+  - [auth, 1]

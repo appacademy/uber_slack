@@ -17,8 +17,7 @@ gem 'rest-client'
 gem 'addressable'
 gem 'puma'
 gem 'redis'
-# Resque for async tasks
-gem 'resque', "~> 1.22.0"
+gem 'sidekiq'
 gem 'oj', '~> 2.12.14'
 gem 'rollbar', '~> 2.8.3'
 gem 'rack-timeout'
@@ -44,6 +43,5 @@ group :development, :test do
   gem 'better_errors'
   gem 'binding_of_caller'
   gem 'annotate'
-  gem 'web-console', '~> 2.0'
   gem 'spring'
 end
