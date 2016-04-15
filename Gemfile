@@ -15,11 +15,12 @@ gem 'geocoder'
 gem 'figaro'
 gem 'rest-client'
 gem 'addressable'
-gem 'unicorn'
+gem 'puma'
 gem 'redis'
 gem 'sidekiq'
 gem 'oj', '~> 2.12.14'
 gem 'rollbar', '~> 2.8.3'
+gem 'rack-timeout'
 
 gem 'tzinfo-data'
 

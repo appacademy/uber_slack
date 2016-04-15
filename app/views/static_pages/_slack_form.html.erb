@@ -1,0 +1,19 @@
+<div class="banner-main">
+  <div class="slack-form">
+    <%= form_for @user do |f| %>
+      <div class="form-group">
+        <%= f.text_field :email, class: 'form-control', placeholder: 'Your email' %><br />
+      </div>
+
+      <div class="form-group">
+        <%= f.text_field :first_name, class: 'form-control', placeholder: 'First name (optional)' %><br />
+      </div>
+
+      <div class="form-group">
+        <%= f.text_field :last_name, class: 'form-control', placeholder: 'Last name (optional)' %><br />
+      </div>
+
+      <button type="submit" class="btn btn-default">Invite me!</button>
+    <% end %>
+  </div>
+</div>

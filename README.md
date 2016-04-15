@@ -67,13 +67,13 @@ Get more info about support [here](support.md).
 
 ## Contributing
 
-<!-- #### Slack Channels
+#### Slack Channels
 
-Join our [Slack Channel](https://uber-on-slack.slack.com) to
+Join our [Slack Channel](https://uberonslack.com/static_pages/join_slack_team) to
 
 - discuss about this project
 - throw in ideas of new features
-- or simply report/fix bugs if you see any -->
+- or simply report/fix bugs if you see any
 
 #### New features / bug fixes
 
@@ -85,8 +85,8 @@ Join our [Slack Channel](https://uber-on-slack.slack.com) to
 
 #### Encounter issues?
 
-If you encounter any kind of issue, you can simply report it on github<!--  or discuss on our  -->
-[Slack Channel](https://uber-on-slack.slack.com)
+If you encounter any kind of issue, you can simply report it on github or discuss on our 
+[Slack Channel](https://uberonslack.com/static_pages/join_slack_team)
 
 ## License
 Uber on Slack is open-source and free to distribute or modify under the
