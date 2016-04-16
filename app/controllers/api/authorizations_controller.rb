@@ -52,7 +52,7 @@ class Api::AuthorizationsController < ApplicationController
     reply = { text: 'You can now request a ride from Slack!' }
     RestClient.post(auth.slack_response_url, reply)
     
-    signup_success(auth.slack_response_url)
+    redirect_to static_pages_user_success_url
   end
 
   def establish_session
