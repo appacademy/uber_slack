@@ -46,15 +46,11 @@ class Api::AuthorizationsController < ApplicationController
 
   def connect_uber
     # After user has clicked "yes" on Uber OAuth page
-    token = UberAPI.request_user_access_token(params[:code])
+    tokens = UberAPI.request_user_access_token(params[:code])
 
-    if token
-      auth = update_authorization(response)
-      reply = { text: 'You can now request a ride from Slack!' }
-      RestClient.post(auth.slack_response_url, reply )
-    else
-      render json: { status: "Error: no access token", body: resp.body }
-    end
+    auth = update_authorization(response)
+    reply = { text: 'You can now request a ride from Slack!' }
+    RestClient.post(auth.slack_response_url, reply)
   end
 
   def establish_session
