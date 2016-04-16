@@ -46,34 +46,8 @@ class Api::AuthorizationsController < ApplicationController
 
   def connect_uber
     # After user has clicked "yes" on Uber OAuth page
-    post_params = {
-      'client_secret' => ENV['uber_client_secret'],
-      'client_id'     => ENV['uber_client_id'],
-      'grant_type'    => 'authorization_code',
-      'redirect_uri'  => ENV['uber_callback_url'],
-      'code'          => params[:code]
-    }
-    begin
-      # post request to uber to trade code for user access token
-      resp = RestClient.post(ENV['uber_oauth_url'], post_params)
-    rescue RestClient::Exception => e
-      Rollbar.error(e, post_params: post_params, resp: e.response)
-      if e.response.code == 500
-        render text: "Sorry, there was a problem authenticating your account."
-      else
-        render text: "Sorry, something went wrong on our end."
-      end
-    end
-
-    response = JSON.parse(resp.body)
-    if response["access_token"]
-      auth = update_authorization(response)
-
-      # sign up success, prompt user that they can order uber now
-      signup_success(auth.slack_response_url)
-    else
-      render json: {status: "Error: no access token", body: resp.body}
-    end
+    ConnectUberJob.perform_later(params[:code])
+    render json: { text: "Waiting for Uber oauth." }
   end
 
   def establish_session
