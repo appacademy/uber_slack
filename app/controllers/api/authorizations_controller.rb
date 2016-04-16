@@ -47,6 +47,7 @@ class Api::AuthorizationsController < ApplicationController
   def connect_uber
     # After user has clicked "yes" on Uber OAuth page
     ConnectUberJob.perform_later(params[:code])
+    render json: { text: "Waiting for Uber oauth." }
   end
 
   def establish_session
