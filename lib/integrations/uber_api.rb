@@ -12,8 +12,7 @@ class UberAPI
 
     # post request to uber to trade code for user access token
     resp = RestClient.post(ENV['uber_oauth_url'], post_params)
-    response = JSON.parse(resp.body)
-    response["access_token"]
+    JSON.parse(resp.body)
   end
 
   def self.connect_uber(code)
