@@ -6,6 +6,16 @@ class UberAPI
     'redirect_uri'  => ENV['uber_callback_url']
   }.freeze
 
+  def self.request_user_access_token
+    # After user has clicked "yes" on Uber OAuth page
+    post_params = BASE_PARAMS.merge({ 'code' => code })
+
+    # post request to uber to trade code for user access token
+    resp = RestClient.post(ENV['uber_oauth_url'], post_params)
+    response = JSON.parse(resp.body)
+    response["access_token"]
+  end
+
   def self.connect_uber(code)
     # After user has clicked "yes" on Uber OAuth page
     post_params = BASE_PARAMS.merge({ 'code' => code })
