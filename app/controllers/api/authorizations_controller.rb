@@ -51,6 +51,8 @@ class Api::AuthorizationsController < ApplicationController
     auth = update_authorization(tokens)
     reply = { text: 'You can now request a ride from Slack!' }
     RestClient.post(auth.slack_response_url, reply)
+    
+    signup_success(auth.slack_response_url)
   end
 
   def establish_session
