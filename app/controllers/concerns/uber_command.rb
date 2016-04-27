@@ -365,8 +365,7 @@ class UberCommand
 
     return ask_for_surge_confirmation(surge_multiplier) if surge_multiplier > 1
 
-    Sidekiq::Client.enqueue(
-      RideJob,
+    RideJob.perform_later(
       bearer_header,
       ride,
       origin_lat,
@@ -525,7 +524,7 @@ class UberCommand
   end
 
   def test_sidekiq(input)
-    Sidekiq::Client.enqueue(TestJob, @response_url, input)
+    TestJob.perform_later(@response_url, input)
     "Enqueued test."
   end
 end

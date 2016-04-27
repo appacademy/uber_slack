@@ -24,12 +24,11 @@ class RideJob < ActiveJob::Base
         product_id
       )
     rescue => e
-      Sidekiq::Client.enqueue(NotifyFailureJob, e, slack_url)
+      NotifyFailureJob.perform_later(e, slack_url)
       return
     end
 
-    Sidekiq::Client.enqueue(
-      NotifySuccessJob,
+    NotifySuccessJob.perform_later(
       origin_name,
       destination_name,
       ride_response['eta'],
@@ -40,7 +39,7 @@ class RideJob < ActiveJob::Base
       ride = Ride.find(ride_hash['id'])
       ride.update!(request_id: ride_response['request_id'])
     rescue => e
-      Sidekiq::Client.enqueue(NotifyFailureJob, e, slack_url)
+      NotifyFailureJob.perform_later(e, slack_url)
       return
     end
   end
@@ -85,6 +84,6 @@ class RideJob < ActiveJob::Base
     product_id,
     slack_url
   )
-    Sidekiq::Client.enqueue(NotifyFailureJob, exception, slack_url)
+    NotifyFailureJob.perform_later(exception, slack_url)
   end
 end

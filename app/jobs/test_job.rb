@@ -19,6 +19,6 @@ class TestJob < ActiveJob::Base
 
   def on_failure(e, url, response)
     Rails.logger.info("Retrying Sidekiq test.")
-    Sidekiq::Client.enqueue(self, url, "failure handled")
+    perform_later(url, "failure handled")
   end
 end
