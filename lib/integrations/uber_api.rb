@@ -6,6 +6,9 @@ class UberAPI
     'redirect_uri'  => ENV['uber_callback_url']
   }.freeze
 
+  BASE_URL = ENV["uber_base_url"]
+
+
   def self.request_user_access_token(code)
     # After user has clicked "yes" on Uber OAuth page
     post_params = BASE_PARAMS.merge({ 'code' => code })
@@ -43,4 +46,39 @@ class UberAPI
 
     RestClient.post(auth.slack_response_url, response.to_json)
   end
+
+  def self.get_ride_estimate(body, bearer_header)
+    response = RestClient.post(
+      "#{BASE_URL}/v1/requests/estimate",
+      body.to_json,
+      authorization: bearer_header,
+      "Content-Type" => :json,
+      accept: :json
+    )
+
+    JSON.parse(response.body)
+  end
+
+  def get_products_for_lat_lng(lat, lng)
+    uri = Addressable::URI.parse("#{BASE_URL}/v1/products")
+    uri.query_values = { 'latitude' => lat, 'longitude' => lng }
+    resource = uri.to_s
+
+    result = RestClient.get(
+      resource,
+      authorization: bearer_header,
+      "Content-Type" => :json,
+      accept: 'json'
+    )
+
+    JSON.parse(result.body)
+  end
+
+  def self.cancel_ride(request_id, bearer_header)
+    resp = RestClient.delete(
+      "#{BASE_URL}/v1/requests/#{request_id}",
+      authorization: bearer_header,
+      "Content-Type" => :json,
+      accept: 'json'
+    )
 end
