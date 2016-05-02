@@ -75,15 +75,19 @@ class UberAPI
   end
 
   def self.cancel_ride(request_id, bearer_header)
-    resp = RestClient.delete(
-      "#{BASE_URL}/v1/requests/#{request_id}",
-      authorization: bearer_header,
-      "Content-Type" => :json,
-      accept: 'json'
-    )
+    begin
+      resp = RestClient.delete(
+        "#{BASE_URL}/v1/requests/#{request_id}",
+        authorization: bearer_header,
+        "Content-Type" => :json,
+        accept: 'json'
+      )
+    rescue RestClient::Exception => e
+      Rollbar.error(e, "UberCommand#cancel")
+    end
   end
 
-  def accept_surge(ride)
+  def self.accept_surge(ride)
     body = {
       "start_latitude" => ride.start_latitude,
       "start_longitude" => ride.start_longitude,
@@ -103,5 +107,30 @@ class UberAPI
     rescue RestClient::Exception => e
       Rollbar.error(e, "UberCommand#accept")
     end
+  end
+
+  def self.request_map_link(request_id)
+    begin
+      map_response = RestClient.get(
+        "#{BASE_URL}/v1/requests/#{request_id}/map",
+        authorization: bearer_header,
+        "Content-Type" => :json,
+        accept: 'json'
+      )
+    rescue RestClient::Exception => e
+      Rollbar.error(e, "UberCommand#share")
+      return "Sorry, we weren't able to get the link to share your ride."
+    end
+  end
+
+
+  def self.get_ride_status(request_id)
+    resp = RestClient.get(
+      "#{BASE_URL}/v1/requests/#{request_id}",
+      authorization: bearer_header,
+      "Content-Type" => :json,
+      accept: 'json'
+    )
+    JSON.parse(resp.body)
   end
 end

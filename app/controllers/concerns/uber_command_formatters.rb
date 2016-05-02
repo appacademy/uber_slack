@@ -104,7 +104,7 @@ module UberCommandFormatters
   end
 
   def invalid_command?(name)
-    !VALID_COMMANDS.include? name
+    !self.class::VALID_COMMANDS.include? name
   end
 
   def resolve_address(address)

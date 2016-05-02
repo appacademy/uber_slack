@@ -86,18 +86,7 @@ class UberCommand
 
     request_id = ride.request_id
 
-    begin
-      map_response = RestClient.get(
-        "#{BASE_URL}/v1/requests/#{request_id}/map",
-        authorization: bearer_header,
-        "Content-Type" => :json,
-        accept: 'json'
-      )
-    rescue RestClient::Exception => e
-      Rollbar.error(e, "UberCommand#share")
-      return "Sorry, we weren't able to get the link to share your ride."
-    end
-
+    map_response = UberAPI.request_map_link(request_id)
     link = JSON.parse(map_response.body)["href"]
     "Use this link to share your ride's progress: #{link}."
   end
@@ -107,7 +96,7 @@ class UberCommand
     return "Sorry, we couldn't find any rides that you requested." if ride.nil?
 
     begin
-      status_hash = get_ride_status(ride.request_id)
+      status_hash = UberAPI.get_ride_status(ride.request_id)
     rescue => e
       Rollbar.error(e, "UberCommand#status")
       return "Sorry, we weren't able to get your ride status from Uber."
@@ -144,31 +133,10 @@ class UberCommand
 
     fail_msg = "Sorry, we were unable to cancel your ride."
 
-    begin
-      UberAPI.cancel_ride(request_id, bearer_header)
-      resp = RestClient.delete(
-        "#{BASE_URL}/v1/requests/#{request_id}",
-        authorization: bearer_header,
-        "Content-Type" => :json,
-        accept: 'json'
-      )
-    rescue RestClient::Exception => e
-      Rollbar.error(e, "UberCommand#cancel")
-      return fail_msg
-    end
+    resp = UberAPI.cancel_ride(request_id, bearer_header)
 
-    return "Successfully canceled your ride." if resp.code == 204
+    return "Successfully canceled your ride." if resp.try(:code) == 204
     fail_msg
-  end
-
-  def get_ride_status(request_id)
-    resp = RestClient.get(
-      "#{BASE_URL}/v1/requests/#{request_id}",
-      authorization: bearer_header,
-      "Content-Type" => :json,
-      accept: 'json'
-    )
-    JSON.parse(resp.body)
   end
 
   def accept(stated_multiplier)
@@ -176,7 +144,7 @@ class UberCommand
     raise FormatError, SlackResponse::Errors::INVALID_RIDE if @ride.nil?
 
     surge = @ride.surge_multiplier
-    if surge >= 2.0 && (stated_multiplier.to_f != surge || !stated_multiplier.include?(".")
+    if surge >= 2.0 && (stated_multiplier.to_f != surge || !stated_multiplier.include?("."))
       return "That didn't work. Please reply */uber accept #{multiplier}* to confirm the ride."
     end
 
@@ -186,7 +154,7 @@ class UberCommand
       return ride("#{origin_name} to #{destination_name}")
     else
       response = UberAPI.accept_surge(ride)
-      if response.code == 200 || response.code == 202
+      if response.try(:code) == 200 || response.try(:code) == 202
         body = JSON.parse(response.body)
         @ride.update!(request_id: response_hash['request_id'])
         format_200_ride_request_response(@ride.origin_name, @ride.destination_name, body)
@@ -198,7 +166,7 @@ class UberCommand
 
   def ride(user_input_string)
     origin_lat, origin_lng, destination_lat, destination_lng =
-      parse_start_and_end_coords(user_input_string, RIDE_REQUEST_FORMAT_ERROR)
+      parse_start_and_end_coords(user_input_string, SlackResponse::Errors::RIDE_REQUEST_FORMAT_ERROR)
 
     product_id = get_default_product_id_for_lat_lng(origin_lat, origin_lng)
     return [
