@@ -1,8 +1,19 @@
 require 'addressable/uri'
-require 'uber_command_error_strings'
+require 'slack_response_messages'
 class FormatError < StandardError; end
 
 class UberCommand
+  VALID_COMMANDS = %w(
+  ride
+  estimate
+  help
+  accept
+  share
+  status
+  cancel
+  trigger_error
+  test_resque
+  )
   include UberCommandFormatters
 
   attr_reader :bearer_token
@@ -15,14 +26,14 @@ class UberCommand
   def run(user_input_string)
     input = user_input_string.split(" ", 2) # Only split on first space.
 
-    return UNKNOWN_COMMAND_ERROR if input.empty?
+    return SlackResponse::Errors::UNKNOWN_COMMAND_ERROR if input.empty?
 
     command_name = input.first.downcase
 
     command_argument = input.second.nil? ? "" : input.second.downcase
 
     if invalid_command?(command_name) || command_name.nil?
-      return UNKNOWN_COMMAND_ERROR
+      return SlackResponse::Errors::UNKNOWN_COMMAND_ERROR
     end
 
     begin
@@ -36,7 +47,7 @@ class UberCommand
 
   def estimate(user_input_string)
     origin_lat, origin_lng, destination_lat, destination_lng =
-      parse_start_and_end_coords(user_input_string, ESTIMATES_FORMAT_ERROR)
+      parse_start_and_end_coords(user_input_string, SlackResponse::Errors::ESTIMATES_FORMAT_ERROR)
 
     product_id = get_default_product_id_for_lat_lng(start_lat, start_lng)
       return [
@@ -66,7 +77,7 @@ class UberCommand
   end
 
   def help(_) # No command argument.
-    HELP_TEXT
+    SlackResponse::Messages::HELP_TEXT
   end
 
   def share(_) # No command argument.
@@ -116,17 +127,18 @@ class UberCommand
     ).include?(ride_status)
       return [
         "STATUS:",
-        RIDE_STATUSES[ride_status],
+        SlackResponse::Messages::RIDE_STATUSES[ride_status],
         eta_msg
       ].compact.join(" ")
     end
 
-    "STATUS: #{RIDE_STATUSES[ride_status]}"
+    "STATUS: #{SlackResponse::Messages::RIDE_STATUSES[ride_status]}"
   end
 
   def cancel(_) # No command argument.
     ride = Ride.where(user_id: @user_id).order(:updated_at).last
     return "Sorry, we couldn't find a ride for you to cancel." if ride.nil?
+    raise FormatError, SlackResponse::INVALID_RIDE if @ride.nil?
 
     request_id = ride.request_id
 
@@ -160,78 +172,27 @@ class UberCommand
   end
 
   def accept(stated_multiplier)
-    @ride = Ride.where(user_id: @user_id).order(:updated_at).last
+    @ride = Ride.where(user_id: @user_id).order(updated_at: :desc).limit(1).first
+    raise FormatError, SlackResponse::Errors::INVALID_RIDE if @ride.nil?
 
-    if @ride.nil?
-      return "Sorry, we're not sure which ride you want to confirm. Please try requesting another."
-    end
-
-    multiplier = @ride.surge_multiplier
-    surge_is_high = multiplier >= 2.0
-
-    if surge_is_high and (stated_multiplier.nil? or stated_multiplier.to_f != multiplier)
+    surge = @ride.surge_multiplier
+    if surge >= 2.0 && (stated_multiplier.to_f != surge || !stated_multiplier.include?(".")
       return "That didn't work. Please reply */uber accept #{multiplier}* to confirm the ride."
     end
-
-    if surge_is_high and !stated_multiplier.include?('.')
-      return "That didn't work. Please include decimals to confirm #{multiplier}x surge."
-    end
-
-    surge_confirmation_id = @ride.surge_confirmation_id
-    product_id = @ride.product_id
-
-    start_latitude = @ride.start_latitude
-    start_longitude = @ride.start_longitude
-    end_latitude = @ride.end_latitude
-    end_longitude = @ride.end_longitude
-    origin_name = @ride.origin_name
-    destination_name = @ride.destination_name
-
-    fail_msg = "Sorry but something went wrong. We were unable to request a ride."
 
     if (Time.now - @ride.updated_at) > 5.minutes
       # TODO: Break out address resolution in #ride so that we can pass lat/lngs directly.
 
-      return ride "#{origin_name} to #{destination_name}"
+      return ride("#{origin_name} to #{destination_name}")
     else
-      body = {
-        "start_latitude" => start_latitude,
-        "start_longitude" => start_longitude,
-        "end_latitude" => end_latitude,
-        "end_longitude" => end_longitude,
-        "surge_confirmation_id" => surge_confirmation_id,
-        "product_id" => product_id
-      }
-      begin
-        response = RestClient.post(
-          "#{BASE_URL}/v1/requests",
-          body.to_json,
-          authorization: bearer_header,
-          "Content-Type" => :json,
-          accept: 'json'
-        )
-      rescue RestClient::Exception => e
-        Rollbar.error(e, "UberCommand#accept")
-        reply_to_slack(fail_msg)
-        return
-      end
-
-      if response.code == 200 or response.code == 202
-        response_hash = JSON.parse(response.body)
-
-        success_msg = format_200_ride_request_response(
-          origin_name,
-          destination_name,
-          response_hash
-        )
-
+      response = UberAPI.accept_surge(ride)
+      if response.code == 200 || response.code == 202
+        body = JSON.parse(response.body)
         @ride.update!(request_id: response_hash['request_id'])
-        reply_to_slack(success_msg)
+        format_200_ride_request_response(@ride.origin_name, @ride.destination_name, body)
       else
-        reply_to_slack(fail_msg)
+        "Sorry but something went wrong. We were unable to request a ride."
       end
-
-      ""
     end
   end
 

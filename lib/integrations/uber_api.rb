@@ -81,4 +81,27 @@ class UberAPI
       "Content-Type" => :json,
       accept: 'json'
     )
+  end
+
+  def accept_surge(ride)
+    body = {
+      "start_latitude" => ride.start_latitude,
+      "start_longitude" => ride.start_longitude,
+      "end_latitude" => ride.end_latitude,
+      "end_longitude" => ride.end_longitude,
+      "surge_confirmation_id" => ride.surge_confirmation_id,
+      "product_id" => ride.product_id
+    }
+    begin
+      response = RestClient.post(
+        "#{BASE_URL}/v1/requests",
+        body.to_json,
+        authorization: bearer_header,
+        "Content-Type" => :json,
+        accept: 'json'
+      )
+    rescue RestClient::Exception => e
+      Rollbar.error(e, "UberCommand#accept")
+    end
+  end
 end
