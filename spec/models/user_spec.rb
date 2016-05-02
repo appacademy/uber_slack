@@ -15,12 +15,12 @@ require 'rails_helper'
 RSpec.describe User, type: :model do
   describe '#create' do
     it 'enforces presence of email' do
-      expect { User.create! }.to raise_error
+      expect { User.create! }.to raise_error(ActiveRecord::RecordInvalid)
     end
 
     it 'enforces unique email' do
       User.create!(email: 'foobar@example.com')
-      expect { User.create!(email: 'foobar@example.com') }.to raise_error
+      expect { User.create!(email: 'foobar@example.com') }.to raise_error(ActiveRecord::RecordInvalid)
     end
 
     it 'validates email format' do

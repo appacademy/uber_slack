@@ -10,17 +10,17 @@ describe UberCommand do
     end
 
     it "reports unparseable commands" do
-      expect(command.run("")).to eq(UNKNOWN_COMMAND_ERROR)
+      expect(command.run("")).to eq(SlackResponse::Errors::UNKNOWN_COMMAND_ERROR)
     end
 
     it "reports invalid commands" do
-      expect(command.run("demand free rides")).to eq(UNKNOWN_COMMAND_ERROR)
+      expect(command.run("demand free rides")).to eq(SlackResponse::Errors::UNKNOWN_COMMAND_ERROR)
     end
   end
 
   describe "#ride" do
     it "requires origin and destination" do
-      expect(command.run("ride somewhere")).to eq(RIDE_REQUEST_FORMAT_ERROR)
+      expect(command.run("ride somewhere")).to eq(SlackResponse::Errors::RIDE_REQUEST_FORMAT_ERROR)
     end
   end
 
