@@ -8,8 +8,9 @@ class NotifySuccessJob < ActiveJob::Base
 
     begin
       RestClient.post(slack_url, payload.to_json)
-    rescue => e
-      NotifyFailureJob.perform_later(e, slack_url)
+    rescue RestClient::Exception => e
+      Rollbar.error(e)
+      NotifyFailureJob.perform_later(slack_url)
     end
   end
 
@@ -20,6 +21,7 @@ class NotifySuccessJob < ActiveJob::Base
   end
 
   def on_failure(exception, origin, destination, eta, slack_url)
-    NotifyFailureJob.perform_later(exception, slack_url)
+    Rollbar.error(exception)
+    NotifyFailureJob.perform_later(slack_url)
   end
 end
