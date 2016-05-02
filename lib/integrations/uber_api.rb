@@ -38,7 +38,7 @@ class UberAPI
     Rollbar.error(e, post_params: post_params, resp: e.response)
     if e.response.code == 500
       response = { text: "Sorry, there was a problem authenticating your account." }
-      # render text: "Sorry, there was a problem authenticating your account."
+    # render text: "Sorry, there was a problem authenticating your account."
     else
       response = { text: "Sorry, something went wrong on our end." }
       # render text: "Sorry, something went wrong on our end."
@@ -59,7 +59,7 @@ class UberAPI
     JSON.parse(response.body)
   end
 
-  def get_products_for_lat_lng(lat, lng)
+  def self.get_products_for_lat_lng(lat, lng)
     uri = Addressable::URI.parse("#{BASE_URL}/v1/products")
     uri.query_values = { 'latitude' => lat, 'longitude' => lng }
     resource = uri.to_s

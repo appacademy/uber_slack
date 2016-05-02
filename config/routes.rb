@@ -17,7 +17,7 @@ Rails.application.routes.draw do
   get 'static_pages/slack_success', to: 'static_pages#slack_success'
   get 'static_pages/slack_resent', to: 'static_pages#slack_resent'
   get 'static_pages/fail', to: 'static_pages#fail'
-  
+
   resources :users, only: :create
 
   namespace :api, defaults: { format: 'json' } do

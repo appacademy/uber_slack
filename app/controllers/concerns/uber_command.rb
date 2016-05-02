@@ -50,10 +50,10 @@ class UberCommand
       parse_start_and_end_coords(user_input_string, SlackResponse::Errors::ESTIMATES_FORMAT_ERROR)
 
     product_id = get_default_product_id_for_lat_lng(start_lat, start_lng)
-      return [
-        "Sorry, we did not find any Uber products available near #{start_addr}.",
-        "Can you try again with a more precise address?"
-      ].join(" ") if product_id.nil?
+    return [
+      "Sorry, we did not find any Uber products available near #{start_addr}.",
+      "Can you try again with a more precise address?"
+    ].join(" ") if product_id.nil?
 
     begin
       body = {
@@ -215,8 +215,7 @@ class UberCommand
 
     return ask_for_surge_confirmation(surge_multiplier) if surge_multiplier > 1
 
-    Resque.enqueue(
-      RideJob,
+    RideJob.perform_later(
       bearer_header,
       ride,
       origin_lat,
@@ -239,8 +238,8 @@ class UberCommand
     RestClient.post(@response_url, payload.to_json)
   end
 
-  def test_resque(input)
-    Resque.enqueue(TestJob, @response_url, input)
+  def test_sidekiq(input)
+    TestJob.perform_later(@response_url, input)
     "Enqueued test."
   end
 end

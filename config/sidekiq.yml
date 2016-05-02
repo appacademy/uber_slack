@@ -1,0 +1,8 @@
+# For Heroku
+:timeout: 8
+
+:queues:
+  - ride
+  - notify_success
+  - notify_failure
+  - test
