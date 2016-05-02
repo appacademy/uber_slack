@@ -1,5 +1,5 @@
 class UberAPI
-  BASE_PARAMS   = {
+  BASE_PARAMS = {
     'client_secret' => ENV['uber_client_secret'],
     'client_id'     => ENV['uber_client_id'],
     'grant_type'    => 'authorization_code',
@@ -11,7 +11,7 @@ class UberAPI
 
   def self.request_user_access_token(code)
     # After user has clicked "yes" on Uber OAuth page
-    post_params = BASE_PARAMS.merge({ 'code' => code })
+    post_params = BASE_PARAMS.merge("code" => code)
 
     # post request to uber to trade code for user access token
     resp = RestClient.post(ENV['uber_oauth_url'], post_params)
@@ -30,7 +30,7 @@ class UberAPI
 
       # sign up success, prompt user that they can order uber now
       reply = { text: 'You can now request a ride from Slack!' }
-      RestClient.post(auth.slack_response_url, reply )
+      RestClient.post(auth.slack_response_url, reply)
     else
       render json: { status: "Error: no access token", body: resp.body }
     end
@@ -76,7 +76,7 @@ class UberAPI
 
   def self.cancel_ride(request_id, bearer_header)
     begin
-      resp = RestClient.delete(
+      RestClient.delete(
         "#{BASE_URL}/v1/requests/#{request_id}",
         authorization: bearer_header,
         "Content-Type" => :json,
@@ -97,7 +97,7 @@ class UberAPI
       "product_id" => ride.product_id
     }
     begin
-      response = RestClient.post(
+      RestClient.post(
         "#{BASE_URL}/v1/requests",
         body.to_json,
         authorization: bearer_header,
@@ -111,7 +111,7 @@ class UberAPI
 
   def self.request_map_link(request_id)
     begin
-      map_response = RestClient.get(
+      RestClient.get(
         "#{BASE_URL}/v1/requests/#{request_id}/map",
         authorization: bearer_header,
         "Content-Type" => :json,
@@ -122,7 +122,6 @@ class UberAPI
       return "Sorry, we weren't able to get the link to share your ride."
     end
   end
-
 
   def self.get_ride_status(request_id)
     resp = RestClient.get(

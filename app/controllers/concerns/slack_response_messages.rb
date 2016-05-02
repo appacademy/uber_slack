@@ -1,6 +1,5 @@
 BASE_URL = ENV["uber_base_url"]
 module SlackResponse
-
   class Messages
     # Leave out 'products' until user can pick.
     HELP_TEXT = <<-STRING
@@ -26,7 +25,6 @@ module SlackResponse
       "rider_canceled" => "You canceled the last ride you requested through Slack.",
       "completed" => "You completed the last ride you requested through Slack."
     }
-    
   end
 
   class Errors
@@ -48,6 +46,5 @@ module SlackResponse
     UNKNOWN_COMMAND_ERROR = <<-STRING
       Sorry, we didn't quite catch that command.  Try */uber help* for a list.
     STRING
-
   end
 end

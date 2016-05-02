@@ -4,15 +4,15 @@ class FormatError < StandardError; end
 
 class UberCommand
   VALID_COMMANDS = %w(
-  ride
-  estimate
-  help
-  accept
-  share
-  status
-  cancel
-  trigger_error
-  test_resque
+    ride
+    estimate
+    help
+    accept
+    share
+    status
+    cancel
+    trigger_error
+    test_resque
   )
   include UberCommandFormatters
 
