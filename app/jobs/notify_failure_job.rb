@@ -11,4 +11,9 @@ class NotifyFailureJob < ActiveJob::Base
 
     RestClient.post(slack_url, payload.to_json)
   end
+
+  def self.handle_exception(exception, slack_url)
+    Rollbar.error(exception)
+    perform_later(slack_url)
+  end
 end

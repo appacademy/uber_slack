@@ -24,8 +24,7 @@ class RideJob < ActiveJob::Base
         product_id
       )
     rescue RestClient::Exception => e
-      Rollbar.error(e)
-      NotifyFailureJob.perform_later(slack_url)
+      NotifyFailureJob.handle_exception(e, slack_url)
       return
     end
 
@@ -40,8 +39,7 @@ class RideJob < ActiveJob::Base
       ride = Ride.find(ride_hash['id'])
       ride.update!(request_id: ride_response['request_id'])
     rescue RestClient::Exception => e
-      Rollbar.error(e)
-      NotifyFailureJob.perform_later(slack_url)
+      NotifyFailureJob.handle_exception(e, slack_url)
       return
     end
   end
@@ -86,7 +84,6 @@ class RideJob < ActiveJob::Base
         product_id,
         slack_url
       )
-    Rollbar.error(exception)
-    NotifyFailureJob.perform_later(slack_url)
+    NotifyFailureJob.handle_exception(e, slack_url)
   end
 end
