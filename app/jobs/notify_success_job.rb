@@ -8,18 +8,18 @@ class NotifySuccessJob < ActiveJob::Base
 
     begin
       RestClient.post(slack_url, payload.to_json)
-    rescue => e
-      NotifyFailureJob.perform_later(e, slack_url)
+    rescue RestClient::Exception => e
+      NotifyFailureJob.handle_exception(e, slack_url)
     end
   end
 
-  def format_200_ride_request_response(origin, destination, eta)
+  def format_200_ride_request_response(origin, destination, _eta)
     ["Asked Uber for a driver",
      "to take you from #{origin} to #{destination}.",
     ].join(" ")
   end
 
-  def on_failure(exception, origin, destination, eta, slack_url)
-    NotifyFailureJob.perform_later(exception, slack_url)
+  def on_failure(exception, _origin, _destination, _eta, slack_url)
+    NotifyFailureJob.handle_exception(exception, slack_url)
   end
 end
