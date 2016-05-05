@@ -77,7 +77,7 @@ Join our [Slack Channel](https://uberonslack.com/static_pages/join_slack_team) t
 
 #### New features / bug fixes
 
-1. Folk this repo
+1. Fork this repo
 2. Create feature branch
 3. Push to your branch
 4. Create Pull Request from your branch
@@ -91,7 +91,7 @@ Join our [Slack Channel](https://uberonslack.com/static_pages/join_slack_team) t
 7. Go to [Slack App API] to create an app
 ..* Set all redirect URIs as `https://_uber-on-slack-sandbox-your-identifier_.com/api/connect_slack`
 ..* Create a slash command, and name is as `/uber-pr`
-8. Click this button in your folked repo to deploy
+8. Click this button in your forked repo to deploy
 ..* [![Deploy](https://www.herokucdn.com/deploy/button.svg)](https://heroku.com/deploy?template=https://github.com/username/repo)
 9. Paste your heroku app URL in the description, and specify what the PR is about.
 10. That's it.
