@@ -31,7 +31,7 @@
       "required": true
     },
     "slack_app_token": {
-      "description": "Slack APP token. Find it in your registered Slack App",
+      "description": "Slack APP verification token. Find it in your registered Slack App when you create the slash command",
       "required": true
     },
     "slack_team_token": {
