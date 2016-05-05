@@ -1,0 +1,79 @@
+{
+  "name": "Uber on Slack PR Review",
+  "description": "This app is for PR review.",
+  "keywords": [
+    "uber",
+    "slack"
+  ],
+  "repository": "https://github.com/appacademy/uber_slack",
+  "scripts": {
+    "postdeploy": "bundle exec rake db:migrate"
+  },
+  "env": {
+    "uber_client_id": {
+      "description": "Your Uber clien id. Find it in your registered Uber app",
+      "required": true
+    },
+    "uber_client_secret": {
+      "description": "Your Uber clien secret. Find it in your registered Uber app",
+      "required": true
+    },
+    "uber_callback_url": {
+      "description": "Uber callback URL",
+      "value": "https://uberonslack.com/api/connect_uber"
+    },
+    "uber_oauth_url": {
+      "description": "Uber oauth URL",
+      "value": "https://login.uber.com/oauth/v2/token"
+    },
+    "uber_authorize_url": {
+      "description": "Uber authorize URL",
+      "value": "https://login.uber.com/oauth/v2/authorize?response_type=code&client_id="
+    },
+    "uber_base_url": {
+      "description": "Uber base URL",
+      "value": "https://api.uber.com"
+    },
+    "slack_client_id": {
+      "description": "Slack client ID. Find it in your registered Slack App",
+      "required": true
+    },
+    "slack_client_secret": {
+      "description": "Slack client secret. Find it in your registered Slack App",
+      "required": true
+    },
+    "slack_redirect": {
+      "description": "Slack redirect URL. e.g.: https://your-app-name.herokuapp.com/api/connect_slack",
+      "required": true
+    },
+    "slack_app_token": {
+      "description": "Slack APP token. Find it in your registered Slack App",
+      "required": true
+    },
+    "slack_oauth_url": {
+      "description": "Slack oauth URL",
+      "value": "https://slack.com/api/oauth.access"
+    },
+    "slack_team_token": {
+      "description": "Your Slack team token. Generate it here: https://api.slack.com/docs/oauth-test-tokens",
+      "required": true
+    },
+    "REDISTOGO_URL": {
+      "description": "Your REDIS URL. Create REDISTOGO addon in your Heroku APP, then you will have this.",
+      "required": true
+    },
+    "hostname": {
+      "description": "https://your-app-name.herokuapp.com",
+      "required": true
+    }
+  },
+  "image": "heroku/ruby",
+  "buildpacks": [
+    {
+      "url": "https://github.com/heroku/heroku-buildpack-pgbouncer"
+    },
+    {
+      "url": "heroku/ruby"
+    }
+  ]
+}
