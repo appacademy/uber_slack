@@ -81,7 +81,23 @@ Join our [Slack Channel](https://uberonslack.com/static_pages/join_slack_team) t
 2. Create feature branch
 3. Push to your branch
 4. Create Pull Request from your branch
-5. That's it!
+
+**If your PR would require sandbox testing, follow the below steps**
+
+5. Name your app as _uber-on-slack-sandbox-your-identifier_ (e.g. uber-on-slack-sandbox-app-academy). This name would be used for your Heroku app, and Registration on Uber and Slack.
+6. Go to [Uber Developer] to register an app on Uber
+..* Set all redirect URIs as `https://_uber-on-slack-sandbox-your-identifier_.herokuapp.com/api/connect_uber`
+..* Point privacy policy to your github repo
+7. Go to [Slack App API] to create an app
+..* Set all redirect URIs as `https://_uber-on-slack-sandbox-your-identifier_.com/api/connect_slack`
+..* Create a slash command, and name is as `/uber-pr`
+8. Click this button in your folked repo to deploy
+..* [![Deploy](https://www.herokucdn.com/deploy/button.svg)](https://heroku.com/deploy?template=https://github.com/username/repo)
+9. Paste your heroku app URL in the description, and specify what the PR is about.
+10. That's it.
+
+[Uber Developer]: https://developer.uber.com/dashboard/create
+[Slack App API]: https://api.slack.com/apps/new
 
 #### Encounter issues?
 
