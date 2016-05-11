@@ -5,6 +5,7 @@
 # api_authorize POST /api/authorize(.:format) api/users#authorize {:format=>"json"}
 #    api_create POST /api/create(.:format)    api/users#create {:format=>"json"}
 #
+require 'sidekiq/web'
 
 Rails.application.routes.draw do
   get 'users/create'
@@ -28,6 +29,9 @@ Rails.application.routes.draw do
     get '/activate', to: 'authorizations#establish_session'
     get '/connect_slack', to: 'authorizations#connect_slack'
   end
+  
   get "/404" => "errors#not_found"
   get "/500" => "errors#exception"
+
+  mount Sidekiq::Web => '/sidekiq'
 end
