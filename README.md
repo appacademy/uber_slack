@@ -82,9 +82,10 @@ Join our [Slack Channel](https://uberonslack.com/static_pages/join_slack_team) t
 3. Push to your branch
 4. Create Pull Request from your branch
 
-**If your PR would require sandbox testing, follow the below steps**
+**If your PR would require sandbox testing, continue to follow the below steps**
 
-5. Name your app as _uber-on-slack-sandbox-your-identifier_ (e.g. uber-on-slack-sandbox-app-academy). This name would be used for your Heroku app, and Registration on Uber and Slack.
+5. Name your app as _uber-on-slack-sandbox-your-identifier_ (e.g. uber-on-slack-sandbox-app-academy).
+  * This name would be used for your Heroku app, and Registration on Uber and Slack.
 6. Go to [Uber Developer] to register an app on Uber
   1. Set all redirect URIs as `https://_uber-on-slack-sandbox-your-identifier_.herokuapp.com/api/connect_uber`
   2. Point privacy policy to your github repo
