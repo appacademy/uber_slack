@@ -65,45 +65,17 @@ A help manual is available with the 'help' command:
 #### Support
 Get more info about support [here](support.md).
 
-## Contributing
+### Contributing
+We'd love to have you contribute! Read more [here](develop.md)
 
-#### Slack Channels
+### Slack Channels
 
 Join our [Slack Channel](https://uberonslack.com/static_pages/join_slack_team) to
 
-- discuss about this project
+- get help with any issues you may have
+- discuss this project
 - throw in ideas of new features
 - or simply report/fix bugs if you see any
-
-#### New features / bug fixes
-
-1. Fork this repo
-2. Create feature branch
-3. Push to your branch
-4. Create Pull Request from your branch
-
-**If your PR would require sandbox testing, continue to follow the below steps**
-
-5. Name your app as _uber-on-slack-sandbox-your-identifier_ (e.g. uber-on-slack-sandbox-app-academy).
-  * This name would be used for your Heroku app, and Registration on Uber and Slack.
-6. Go to [Uber Developer] to register an app on Uber
-  1. Set all redirect URIs as `https://_uber-on-slack-sandbox-your-identifier_.herokuapp.com/api/connect_uber`
-  2. Point privacy policy to your github repo
-7. Go to [Slack App API] to create an app
-  1. Set all redirect URIs as `https://_uber-on-slack-sandbox-your-identifier_.com/api/connect_slack`
-  2. Create a slash command, and name is as `/uber-pr`
-8. Click this button in your forked repo to deploy
-  * [![Deploy](https://www.herokucdn.com/deploy/button.svg)](https://heroku.com/deploy?template=https://github.com/username/repo)
-9. Paste your heroku app URL in the description, and specify what the PR is about.
-10. That's it.
-
-[Uber Developer]: https://developer.uber.com/dashboard/create
-[Slack App API]: https://api.slack.com/apps/new
-
-#### Encounter issues?
-
-If you encounter any kind of issue, you can simply report it on github or discuss on our 
-[Slack Channel](https://uberonslack.com/static_pages/join_slack_team)
 
 ## License
 Uber on Slack is open-source and free to distribute or modify under the
