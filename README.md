@@ -86,13 +86,13 @@ Join our [Slack Channel](https://uberonslack.com/static_pages/join_slack_team) t
 
 5. Name your app as _uber-on-slack-sandbox-your-identifier_ (e.g. uber-on-slack-sandbox-app-academy). This name would be used for your Heroku app, and Registration on Uber and Slack.
 6. Go to [Uber Developer] to register an app on Uber
-⋅⋅1. Set all redirect URIs as `https://_uber-on-slack-sandbox-your-identifier_.herokuapp.com/api/connect_uber`
-⋅⋅2. Point privacy policy to your github repo
+  1. Set all redirect URIs as `https://_uber-on-slack-sandbox-your-identifier_.herokuapp.com/api/connect_uber`
+  2. Point privacy policy to your github repo
 7. Go to [Slack App API] to create an app
-⋅⋅1. Set all redirect URIs as `https://_uber-on-slack-sandbox-your-identifier_.com/api/connect_slack`
-⋅⋅2. Create a slash command, and name is as `/uber-pr`
+  1. Set all redirect URIs as `https://_uber-on-slack-sandbox-your-identifier_.com/api/connect_slack`
+  2. Create a slash command, and name is as `/uber-pr`
 8. Click this button in your forked repo to deploy
-⋅⋅1. [![Deploy](https://www.herokucdn.com/deploy/button.svg)](https://heroku.com/deploy?template=https://github.com/username/repo)
+  * [![Deploy](https://www.herokucdn.com/deploy/button.svg)](https://heroku.com/deploy?template=https://github.com/username/repo)
 9. Paste your heroku app URL in the description, and specify what the PR is about.
 10. That's it.
 
