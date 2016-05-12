@@ -17,34 +17,24 @@ If your changes would require more extensive testing (e.g. accessing a new Uber 
 you may want to setup a sandbox version of the app.
 
 1. Fork this Repo.
-2. Host the app (we use Heroku) as _uber-on-slack-sandbox-your-identifier_ (e.g. uber-on-slack-sandbox-app-academy).
-  * This name would be used for your Heroku app, and Registration on Uber and Slack.
-3. Go to [Uber Developer] to register an app on Uber
+2. Go to [Uber Developer] to register an app on Uber
   1. Set all redirect URIs as `https://uber-on-slack-sandbox-your-identifier.herokuapp.com/api/connect_uber`
   2. Point privacy policy to your github repo
-4. Go to [Slack App API] to create an app
+3. Go to [Slack App API] to create an app
   1. Set all redirect URIs as `https://uber-on-slack-sandbox-your-identifier.com/api/connect_slack`
   2. Create a slash command, and name it as `/uber-your-identifier`
-5. You will need the Uber client_id and client_secret, and the slack slash command verification token.
-  1. We use the [Figaro](https://github.com/laserlemon/figaro) gem to manage client secrets.
-  2. Run `bundle exec figaro install`, which will generate an `application.yaml` file to store your secrets in. It should look like this:
-  ```yaml
-    # TODO: @Edmundleex, can you put your file here (with secrets censored), since this is just my best guess? 
-    # I think you also have a redis URI that's been breaking for me locally, I'm not sure what to do with that.
-    uber_client_id: "your id"
-    uber_client_secret: "your secret"
-    uber_base_url:   "https://sandbox-api.uber.com/"
-    slack_app_token: "your token"
-  ```
-  3. Run `figaro heroku:set -e production` to push your keys to your production app. (You may need to have installed the Heroku CLI toolkit first)
-6. Deploy the app to Heroku
+4. You will need the Uber client_id and client_secret, and the slack slash command verification token.
+5. Host the app (we use [Heroku](https://dashboard.heroku.com/new)) as _uber-on-slack-sandbox-your-identifier_ (e.g. uber-on-slack-sandbox-app-academy).
+  1. After creating the app, on the resources tab under Add-ons, add `Redis to Go`. (This will automatically add its key to Heroku's config.
+  2. Under `Settings > Config Vars` add the following key-value pairs:
+     * 	slack_app_token
+     * 	uber_client_secret
+     * 	uber_client_id
+     * 	uber_base_url : https://sanbox-api.uber.com/
+  3. Deploy the app, either by linking your github account or using the command-line tools Heroku provides.
+
 
 <!--- 
- 8. Click this button in your forked repo to deploy
-  * [![Deploy](https://www.herokucdn.com/deploy/button.svg)](https://heroku.com/deploy?template=https://github.com/username/repo)
-  (@cchuang) This button wasn't working for me; but I had other problems like missing secrets too so I don't know.
-9. Paste your heroku app URL in the description, and specify what the PR is about.
-10. That's it.
 10. Activate your app in a Slack Channel? 
 -->
 
