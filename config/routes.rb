@@ -6,6 +6,7 @@
 #    api_create POST /api/create(.:format)    api/users#create {:format=>"json"}
 #
 require 'sidekiq/web'
+require 'admin_constraint'
 
 Rails.application.routes.draw do
   get 'users/create'
@@ -33,5 +34,5 @@ Rails.application.routes.draw do
   get "/404" => "errors#not_found"
   get "/500" => "errors#exception"
 
-  mount Sidekiq::Web => '/sidekiq'
+  mount Sidekiq::Web => '/sidekiq', constraints: AdminConstraint.new
 end
