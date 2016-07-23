@@ -1,0 +1,2 @@
+module SessionsControllerHelper
+end

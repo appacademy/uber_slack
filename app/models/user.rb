@@ -17,8 +17,20 @@ class User < ActiveRecord::Base
             format: { with: /\A([^@\s]+)@((?:[-a-z0-9]+\.)+[a-z]{2,})\z/i }
 
   validates_presence_of :password_digest, message: 'You must set the password'
+  validates_presence_of :session_token
 
+  after_initialize :ensure_session_token
   before_save -> { email.downcase! }
+
+  def self.generate_session_token
+    SecureRandom::urlsafe_base64(16)
+  end
+
+  def reset_session_token!
+    self.session_token = self.class.generate_session_token
+    self.save!
+    self.session_token
+  end
 
   def password=(password)
     self.password_digest = BCrypt::Password.create(password)
@@ -30,5 +42,11 @@ class User < ActiveRecord::Base
 
   def invite_to_slack
     SlackClient.invite(email, first_name)
+  end
+
+  private
+
+  def ensure_session_token
+    self.session_token ||= self.class.generate_session_token
   end
 end
