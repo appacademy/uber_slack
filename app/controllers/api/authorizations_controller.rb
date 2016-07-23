@@ -48,8 +48,14 @@ class Api::AuthorizationsController < ApplicationController
     # After user has clicked "yes" on Uber OAuth page
     tokens = UberAPI.request_user_access_token(params[:code])
 
+    p "_____TOKENS____"
+    p tokens
+
     auth = update_authorization(tokens)
     reply = { text: 'You can now request a ride from Slack!' }
+
+    p "_____AUTH____"
+    p auth
     RestClient.post(auth.slack_response_url, reply)
 
     redirect_to static_pages_user_success_url
