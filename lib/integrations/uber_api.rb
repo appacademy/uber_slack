@@ -73,7 +73,7 @@ class UberAPI
     JSON.parse(result.body)
   end
 
-  def get_default_product_id_for_lat_lng(lat, lng)
+  def self.get_default_product_id_for_lat_lng(lat, lng)
     product_id = Rails.cache.fetch("location: #{lat}/#{lng}", expires_in: 15.minutes) do
       available_products = get_products_for_lat_lng(lat, lng)["products"]
       available_products.empty? ? nil : available_products.first["product_id"]
