@@ -18,6 +18,10 @@ RSpec.describe User, type: :model do
       expect { User.create! }.to raise_error(ActiveRecord::RecordInvalid)
     end
 
+    it 'enforces presence of password' do
+      expect { User.create!(email: 'foobar@example.com') }.to raise_error(ActiveRecord::RecordInvalid)
+    end
+
     it 'enforces unique email' do
       User.create!(email: 'foobar@example.com')
       expect { User.create!(email: 'foobar@example.com') }.to raise_error(ActiveRecord::RecordInvalid)
