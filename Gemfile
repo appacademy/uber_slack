@@ -22,7 +22,9 @@ gem 'oj', '~> 2.12.14'
 gem 'rollbar', '~> 2.8.3'
 gem 'rack-timeout'
 gem 'pry-rails'
+gem 'sinatra', :require => nil
 gem 'tzinfo-data'
+gem 'bcrypt'
 
 group :production do
   gem 'newrelic_rpm'

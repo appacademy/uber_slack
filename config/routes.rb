@@ -5,6 +5,8 @@
 # api_authorize POST /api/authorize(.:format) api/users#authorize {:format=>"json"}
 #    api_create POST /api/create(.:format)    api/users#create {:format=>"json"}
 #
+require 'sidekiq/web'
+require 'admin_constraint'
 
 Rails.application.routes.draw do
   get 'users/create'
@@ -17,6 +19,8 @@ Rails.application.routes.draw do
   get 'static_pages/slack_success', to: 'static_pages#slack_success'
   get 'static_pages/slack_resent', to: 'static_pages#slack_resent'
   get 'static_pages/fail', to: 'static_pages#fail'
+  get '/login', to: 'sessions#new'
+  post'/login', to: 'sessions#create'
 
   resources :users, only: :create
 
@@ -28,6 +32,9 @@ Rails.application.routes.draw do
     get '/activate', to: 'authorizations#establish_session'
     get '/connect_slack', to: 'authorizations#connect_slack'
   end
+
   get "/404" => "errors#not_found"
   get "/500" => "errors#exception"
+
+  mount Sidekiq::Web => '/sidekiq', constraints: AdminConstraint.new
 end

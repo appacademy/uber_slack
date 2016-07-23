@@ -4,6 +4,7 @@ class UsersController < ApplicationController
     @user.invite_to_slack
 
     if @user.save
+      login!(@user)
       redirect_to static_pages_slack_success_url
     else
       if @user.errors.messages == { :email=>["has already been taken"] }
