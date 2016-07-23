@@ -83,16 +83,12 @@ class UberAPI
   end
 
   def self.cancel_ride(request_id, bearer_header)
-    begin
-      RestClient.delete(
-        "#{BASE_URL}/v1/requests/#{request_id}",
-        authorization: bearer_header,
-        "Content-Type" => :json,
-        accept: 'json'
-      )
-    rescue RestClient::Exception => e
-      Rollbar.error(e, "UberCommand#cancel")
-    end
+    RestClient.delete(
+      "#{BASE_URL}/v1/requests/#{request_id}",
+      authorization: bearer_header,
+      "Content-Type" => :json,
+      accept: 'json'
+    )
   end
 
   def self.accept_surge(ride, bearer_header)

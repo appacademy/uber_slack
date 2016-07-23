@@ -8,7 +8,7 @@ class GetRideStatusJob < ActiveJob::Base
     failure_response = "Sorry, we weren't able to get your ride status from Uber."
 
     RestClient.post(slack_url, failure_response)
-    Rollbar.warning(e, "UberCommand#status")
+    Rollbar.error(e, "UberCommand#status")
   else
     ride_status = status_hash["status"]
 

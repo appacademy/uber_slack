@@ -97,14 +97,9 @@ class UberCommand
     return "Sorry, we couldn't find a ride for you to cancel." if ride.nil?
     raise FormatError, SlackResponse::INVALID_RIDE if @ride.nil?
 
-    request_id = ride.request_id
+    CancelRideJob.perform_later(ride.request_id, bearer_header)
 
-    fail_msg = "Sorry, we were unable to cancel your ride."
-
-    resp = UberAPI.cancel_ride(request_id, bearer_header)
-
-    return "Successfully canceled your ride." if resp.try(:code) == 204
-    fail_msg
+    "OK. Telling Uber to cancel your ride request."
   end
 
   def accept(stated_multiplier)
