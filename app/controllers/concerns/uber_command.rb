@@ -23,8 +23,8 @@ class UberCommand
     @response_url = response_url
   end
 
-  def run(user_input_string)
-    input = user_input_string.split(" ", 2) # Only split on first space.
+  def run(user_request)
+    input = user_request.split(" ", 2) # Only split on first space.
 
     return SlackResponse::Errors::UNKNOWN_COMMAND_ERROR if input.empty?
 
@@ -45,9 +45,11 @@ class UberCommand
 
   private
 
-  def estimate(user_input_string)
+  def estimate(user_request)
     origin_lat, origin_lng, destination_lat, destination_lng =
-      parse_start_and_end_coords(user_input_string, SlackResponse::Errors::ESTIMATES_FORMAT_ERROR)
+      parse_start_and_end_coords(user_request, SlackResponse::Errors::ESTIMATES_FORMAT_ERROR)
+
+    start_addr, end_addr = parse_start_and_end_address(user_request)
 
     product_id = get_default_product_id_for_lat_lng(origin_lat, origin_lng)
     return [
@@ -73,6 +75,7 @@ class UberCommand
         "Can you try again with more precise addresses?"
       ].join(" ")
     end
+
     format_ride_estimate_response(start_addr, end_addr, ride_estimate_hash)
   end
 
@@ -164,9 +167,9 @@ class UberCommand
     end
   end
 
-  def ride(user_input_string)
+  def ride(user_request)
     origin_lat, origin_lng, destination_lat, destination_lng =
-      parse_start_and_end_coords(user_input_string, SlackResponse::Errors::RIDE_REQUEST_FORMAT_ERROR)
+      parse_start_and_end_coords(user_request, SlackResponse::Errors::RIDE_REQUEST_FORMAT_ERROR)
 
     product_id = get_default_product_id_for_lat_lng(origin_lat, origin_lng)
     return [
@@ -241,5 +244,18 @@ class UberCommand
   def test_sidekiq(input)
     TestJob.perform_later(@response_url, input)
     "Enqueued test."
+  end
+
+  def parse_start_and_end_address(input_str)
+    origin_name, destination_name = input_str.split(" to ")
+
+    if origin_name.start_with? "from "
+      origin_name = origin_name["from".length..-1]
+    end
+
+    origin_name = origin_name.strip
+    destination_name = destination_name.strip
+
+    [origin_name, destination_name]
   end
 end
