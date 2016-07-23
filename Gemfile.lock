@@ -41,6 +41,7 @@ GEM
       activerecord (>= 3.2, <= 4.3)
       rake (~> 10.4)
     arel (6.0.3)
+    bcrypt (3.1.10)
     better_errors (2.1.1)
       coderay (>= 1.0.0)
       erubis (>= 2.6.6)
@@ -267,6 +268,7 @@ PLATFORMS
 DEPENDENCIES
   addressable
   annotate
+  bcrypt
   better_errors
   binding_of_caller
   capybara

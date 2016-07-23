@@ -16,7 +16,17 @@ class User < ActiveRecord::Base
             uniqueness: true,
             format: { with: /\A([^@\s]+)@((?:[-a-z0-9]+\.)+[a-z]{2,})\z/i }
 
+  validates_presence_of :password_digest, message: 'You must set the password'
+
   before_save -> { email.downcase! }
+
+  def password=(password)
+    self.password_digest = BCrypt::Password.create(password)
+  end
+
+  def is_password?(password)
+    BCrypt::Password.new(self.password_digest).is_password?(password)
+  end
 
   def invite_to_slack
     SlackClient.invite(email, first_name)

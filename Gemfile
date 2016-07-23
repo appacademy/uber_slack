@@ -23,6 +23,7 @@ gem 'rollbar', '~> 2.8.3'
 gem 'rack-timeout'
 gem 'sinatra', :require => nil
 gem 'tzinfo-data'
+gem 'bcrypt'
 
 group :production do
   gem 'newrelic_rpm'

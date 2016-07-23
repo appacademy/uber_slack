@@ -23,12 +23,12 @@ RSpec.describe User, type: :model do
     end
 
     it 'enforces unique email' do
-      User.create!(email: 'foobar@example.com')
+      User.create!(email: 'foobar@example.com', password: 'foobar')
       expect { User.create!(email: 'foobar@example.com') }.to raise_error(ActiveRecord::RecordInvalid)
     end
 
     it 'validates email format' do
-      user = User.new(email: 'foobar')
+      user = User.new(email: 'foobar', password: 'foobar')
       expect(user.save).to be_falsy
 
       user.email = 'foobar@example.com'
@@ -36,7 +36,7 @@ RSpec.describe User, type: :model do
     end
 
     it 'downcases email before save' do
-      user = User.create!(email: 'Foobar@example.com')
+      user = User.create!(email: 'Foobar@example.com', password: 'foobar')
       user.reload
       expect(user.email).to eq 'foobar@example.com'
     end
