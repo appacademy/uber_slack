@@ -49,7 +49,7 @@ class UberCommand
     origin_lat, origin_lng, destination_lat, destination_lng =
       parse_start_and_end_coords(user_input_string, SlackResponse::Errors::ESTIMATES_FORMAT_ERROR)
 
-    product_id = get_default_product_id_for_lat_lng(start_lat, start_lng)
+    product_id = get_default_product_id_for_lat_lng(origin_lat, origin_lng)
     return [
       "Sorry, we did not find any Uber products available near #{start_addr}.",
       "Can you try again with a more precise address?"

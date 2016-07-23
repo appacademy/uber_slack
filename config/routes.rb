@@ -19,6 +19,8 @@ Rails.application.routes.draw do
   get 'static_pages/slack_success', to: 'static_pages#slack_success'
   get 'static_pages/slack_resent', to: 'static_pages#slack_resent'
   get 'static_pages/fail', to: 'static_pages#fail'
+  get '/login', to: 'sessions#new'
+  post'/login', to: 'sessions#create'
 
   resources :users, only: :create
 
@@ -30,7 +32,7 @@ Rails.application.routes.draw do
     get '/activate', to: 'authorizations#establish_session'
     get '/connect_slack', to: 'authorizations#connect_slack'
   end
-  
+
   get "/404" => "errors#not_found"
   get "/500" => "errors#exception"
 

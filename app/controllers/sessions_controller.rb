@@ -1,7 +1,7 @@
 class SessionsController < ApplicationController
   def create
     user = User.find_by_credentials(
-      params[:user][:username],
+      params[:user][:email],
       params[:user][:password]
     )
 
@@ -9,8 +9,12 @@ class SessionsController < ApplicationController
       render json: "Credentials were wrong"
     else
       login!(user)
-      redirect_to user_url(user)
+      redirect_to "/sidekiq"
     end
+  end
+
+  def new
+    render :new
   end
 
   def destroy
