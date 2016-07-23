@@ -21,7 +21,7 @@ gem 'sidekiq', '~> 4.1', '>= 4.1.1'
 gem 'oj', '~> 2.12.14'
 gem 'rollbar', '~> 2.8.3'
 gem 'rack-timeout'
-
+gem 'pry-rails'
 gem 'tzinfo-data'
 
 group :production do
@@ -38,7 +38,6 @@ end
 
 group :development, :test do
   gem 'rspec-rails'
-  gem 'pry-rails'
   gem 'pry-byebug'
   gem 'better_errors'
   gem 'binding_of_caller'
