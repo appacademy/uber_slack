@@ -47,16 +47,8 @@ class Api::AuthorizationsController < ApplicationController
   def connect_uber
     # After user has clicked "yes" on Uber OAuth page
     tokens = UberAPI.request_user_access_token(params[:code])
-
-    p "_____TOKENS____"
-    p tokens
-
     auth = update_authorization(tokens)
-    reply = { text: 'You can now request a ride from Slack!' }
-
-    p "_____AUTH____"
-    p auth
-    RestClient.post(auth.slack_response_url, reply)
+    signup_success(auth.slack_response_url)
 
     redirect_to static_pages_user_success_url
   end
@@ -185,8 +177,6 @@ class Api::AuthorizationsController < ApplicationController
       slack_response_payload.to_json,
       "Content-Type" => :json
     )
-
-    redirect_to static_pages_user_success_url
 
   rescue RestClient::Exception => e
     Rollbar.error(e, resp: e.response)

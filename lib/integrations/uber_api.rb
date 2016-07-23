@@ -13,10 +13,6 @@ class UberAPI
     # After user has clicked "yes" on Uber OAuth page
     post_params = BASE_PARAMS.merge("code" => code)
 
-    p "_" * 30
-    p "___POST_PARAMS___"
-    p post_params
-
     # post request to uber to trade code for user access token
     resp = RestClient.post(ENV['uber_oauth_url'], post_params)
     JSON.parse(resp.body)
