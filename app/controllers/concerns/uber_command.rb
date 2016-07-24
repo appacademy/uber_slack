@@ -57,26 +57,16 @@ class UberCommand
       "Can you try again with a more precise address?"
     ].join(" ") if product_id.nil?
 
-    begin
-      body = {
-        "start_latitude" => origin_lat,
-        "start_longitude" => origin_lng,
-        "end_latitude" => destination_lat,
-        "end_longitude" => destination_lng,
-        "product_id" => product_id
-      }
+    body = {
+      "start_latitude" => origin_lat,
+      "start_longitude" => origin_lng,
+      "end_latitude" => destination_lat,
+      "end_longitude" => destination_lng,
+      "product_id" => product_id
+    }
 
-      ride_estimate_hash = UberAPI.get_ride_estimate(body, bearer_header)
-    rescue => e
-      Rollbar.error(e, "UberCommand#estimate")
-      return [
-        "Sorry, we could not get time and price estimates for a trip",
-        "from #{start_addr} to #{end_addr}.",
-        "Can you try again with more precise addresses?"
-      ].join(" ")
-    end
-
-    format_ride_estimate_response(start_addr, end_addr, ride_estimate_hash)
+    GetRideEstimateJob.perform_later(start_addr, end_addr, body, bearer_header, @slack_url)
+    "All right. Asking Uber for your estimate now."
   end
 
   def help(_) # No command argument.

@@ -31,30 +31,6 @@ module UberCommandFormatters
     [origin_name, destination_name]
   end
 
-  def get_default_product_id_for_lat_lng(lat, lng)
-    product_id = Rails.cache.fetch("location: #{lat}/#{lng}", expires_in: 15.minutes) do
-      available_products = get_products_for_lat_lng(lat, lng)["products"]
-      available_products.empty? ? nil : available_products.first["product_id"]
-    end
-
-    product_id
-  end
-
-  def get_products_for_lat_lng(lat, lng)
-    uri = Addressable::URI.parse("#{BASE_URL}/v1/products")
-    uri.query_values = { 'latitude' => lat, 'longitude' => lng }
-    resource = uri.to_s
-
-    result = RestClient.get(
-      resource,
-      authorization: bearer_header,
-      "Content-Type" => :json,
-      accept: 'json'
-    )
-
-    JSON.parse(result.body)
-  end
-
   def format_200_ride_request_response(origin, destination, _response)
     ack = ["Got it!", "Roger that.", "OK.", "10-4."].sample
 
