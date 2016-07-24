@@ -60,6 +60,10 @@ class RideJob < ActiveJob::Base
       product_id: product_id
     }
 
+    p body
+    p "#{ENV["uber_base_url"]}/v1/requests"
+    p bearer_header
+
     response = RestClient.post(
       "#{ENV["uber_base_url"]}/v1/requests",
       body.to_json,
