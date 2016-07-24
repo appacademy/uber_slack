@@ -15,10 +15,10 @@ class UberCommand
     test_resque
   )
   include UberCommandFormatters
+  attr_reader :bearer_header
 
-  attr_reader :bearer_token
-  def initialize(bearer_token, user_id, response_url)
-    @bearer_token = bearer_token
+  def initialize(bearer_header, user_id, response_url)
+    @bearer_header = bearer_header
     @user_id = user_id
     @response_url = response_url
   end
@@ -89,7 +89,7 @@ class UberCommand
 
     request_id = ride.request_id
 
-    map_response = UberAPI.request_map_link(request_id)
+    map_response = UberAPI.request_map_link(request_id, bearer_header)
     link = JSON.parse(map_response.body)["href"]
     "Use this link to share your ride's progress: #{link}."
   end
@@ -99,7 +99,7 @@ class UberCommand
     return "Sorry, we couldn't find any rides that you requested." if ride.nil?
 
     begin
-      status_hash = UberAPI.get_ride_status(ride.request_id)
+      status_hash = UberAPI.get_ride_status(ride.request_id, bearer_header)
     rescue => e
       Rollbar.error(e, "UberCommand#status")
       return "Sorry, we weren't able to get your ride status from Uber."
@@ -148,18 +148,18 @@ class UberCommand
 
     surge = @ride.surge_multiplier
     if surge >= 2.0 && (stated_multiplier.to_f != surge || !stated_multiplier.include?("."))
-      return "That didn't work. Please reply */uber accept #{multiplier}* to confirm the ride."
+      return "That didn't work. Please reply */uber accept #{stated_multiplier}* to confirm the ride."
     end
 
     if (Time.now - @ride.updated_at) > 5.minutes
       # TODO: Break out address resolution in #ride so that we can pass lat/lngs directly.
 
-      return ride("#{origin_name} to #{destination_name}")
+      return ride("#{@ride.origin_name} to #{@ride.destination_name}")
     else
-      response = UberAPI.accept_surge(ride)
+      response = UberAPI.accept_surge(ride, bearer_header)
       if response.try(:code) == 200 || response.try(:code) == 202
         body = JSON.parse(response.body)
-        @ride.update!(request_id: response_hash['request_id'])
+        @ride.update!(request_id: body['request_id'])
         format_200_ride_request_response(@ride.origin_name, @ride.destination_name, body)
       else
         "Sorry but something went wrong. We were unable to request a ride."
@@ -171,9 +171,11 @@ class UberCommand
     origin_lat, origin_lng, destination_lat, destination_lng =
       parse_start_and_end_coords(user_request, SlackResponse::Errors::RIDE_REQUEST_FORMAT_ERROR)
 
+    start_addr, end_addr = parse_start_and_end_address(user_request)
+
     product_id = get_default_product_id_for_lat_lng(origin_lat, origin_lng)
     return [
-      "Sorry, we did not find any Uber products available near '#{origin_name}'.",
+      "Sorry, we did not find any Uber products available near '#{start_addr}'.",
       "Can you try again with a more precise address?"
     ].join(" ") if product_id.nil?
 
@@ -204,8 +206,8 @@ class UberCommand
       start_longitude: origin_lng,
       end_latitude: destination_lat,
       end_longitude: destination_lng,
-      origin_name: origin_name,
-      destination_name: destination_name,
+      origin_name: start_addr,
+      destination_name: end_addr,
       product_id: product_id
     }
 

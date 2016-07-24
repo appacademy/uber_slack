@@ -8,7 +8,6 @@ class UberAPI
 
   BASE_URL = ENV["uber_base_url"]
 
-
   def self.request_user_access_token(code)
     # After user has clicked "yes" on Uber OAuth page
     post_params = BASE_PARAMS.merge("code" => code)
@@ -59,7 +58,7 @@ class UberAPI
     JSON.parse(response.body)
   end
 
-  def self.get_products_for_lat_lng(lat, lng)
+  def self.get_products_for_lat_lng(lat, lng, bearer_header)
     uri = Addressable::URI.parse("#{BASE_URL}/v1/products")
     uri.query_values = { 'latitude' => lat, 'longitude' => lng }
     resource = uri.to_s
@@ -87,7 +86,7 @@ class UberAPI
     end
   end
 
-  def self.accept_surge(ride)
+  def self.accept_surge(ride, bearer_header)
     body = {
       "start_latitude" => ride.start_latitude,
       "start_longitude" => ride.start_longitude,
@@ -109,7 +108,7 @@ class UberAPI
     end
   end
 
-  def self.request_map_link(request_id)
+  def self.request_map_link(request_id, bearer_header)
     begin
       RestClient.get(
         "#{BASE_URL}/v1/requests/#{request_id}/map",
@@ -123,7 +122,7 @@ class UberAPI
     end
   end
 
-  def self.get_ride_status(request_id)
+  def self.get_ride_status(request_id, bearer_header)
     resp = RestClient.get(
       "#{BASE_URL}/v1/requests/#{request_id}",
       authorization: bearer_header,
