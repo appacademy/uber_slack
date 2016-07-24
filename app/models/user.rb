@@ -22,6 +22,15 @@ class User < ActiveRecord::Base
   after_initialize :ensure_session_token
   before_save -> { email.downcase! }
 
+  def self.find_by_credentials(email, password)
+    user = User.find_by(email: email)
+    if user && user.is_password?(password)
+      return user
+    else
+      return nil
+    end
+  end
+
   def self.generate_session_token
     SecureRandom::urlsafe_base64(16)
   end
@@ -42,15 +51,6 @@ class User < ActiveRecord::Base
 
   def invite_to_slack
     SlackClient.invite(email, first_name)
-  end
-
-  def self.find_by_credentials(email, password)
-    user = User.find_by(email: email)
-    if user && user.is_password?(password)
-      return user
-    else
-      return nil
-    end
   end
 
   private
