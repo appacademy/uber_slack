@@ -234,7 +234,7 @@ class UberCommand
     )
 
     ack = ["Got it!", "Roger that.", "OK.", "10-4."].sample
-    "#{ack} Pinging Uber to drive you from #{origin_name} to #{destination_name}..."
+    "#{ack} Pinging Uber to drive you from #{start_addr} to #{end_addr}..."
   end
 
   def reply_to_slack(response)
