@@ -60,12 +60,10 @@ class RideJob < ActiveJob::Base
       product_id: product_id
     }
 
-    p body
-    p "#{ENV["uber_base_url"]}/v1/requests"
-    p bearer_header
+    url = "#{ENV["uber_base_url"]}/v1/requests"
 
     response = RestClient.post(
-      "#{ENV["uber_base_url"]}/v1/requests",
+      url,
       body.to_json,
       authorization: bearer_header,
       "Content-Type" => :json,
@@ -73,6 +71,14 @@ class RideJob < ActiveJob::Base
     )
 
     JSON.parse(response.body)
+  rescue RestClientException => e
+    Rollbar.error(
+      "request_ride!",
+      resp: e.response,
+      body: body.to_json,
+      bearer_header: bearer_header,
+      url: url
+    )
   end
 
   def on_failure(
