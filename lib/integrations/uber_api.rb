@@ -82,7 +82,6 @@ class UberAPI
     product_id
   end
 
-
   def self.cancel_ride(request_id, bearer_header)
     begin
       RestClient.delete(

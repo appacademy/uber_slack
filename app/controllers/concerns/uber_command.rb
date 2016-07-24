@@ -51,7 +51,7 @@ class UberCommand
 
     start_addr, end_addr = parse_start_and_end_address(user_request)
 
-    product_id = get_default_product_id_for_lat_lng(origin_lat, origin_lng)
+    product_id = UberAPI.get_default_product_id_for_lat_lng(origin_lat, origin_lng)
     return [
       "Sorry, we did not find any Uber products available near #{start_addr}.",
       "Can you try again with a more precise address?"
@@ -163,7 +163,7 @@ class UberCommand
 
     start_addr, end_addr = parse_start_and_end_address(user_request)
 
-    product_id = get_default_product_id_for_lat_lng(origin_lat, origin_lng)
+    product_id = UberAPI.get_default_product_id_for_lat_lng(origin_lat, origin_lng)
     return [
       "Sorry, we did not find any Uber products available near '#{start_addr}'.",
       "Can you try again with a more precise address?"
