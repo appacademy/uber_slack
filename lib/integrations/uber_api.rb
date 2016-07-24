@@ -8,6 +8,41 @@ class UberAPI
 
   BASE_URL = ENV["uber_base_url"]
 
+  def self.refresh_access_token(auth)
+    # Exchange refresh_token for a new access_token and refresh_token
+    post_params = {
+      'client_secret' => BASE_PARAMS['client_secret'],
+      'client_id'     => BASE_PARAMS['client_id'],
+      'grant_type'    => "refresh_token",
+      'refresh_token' => auth.uber_refresh_token,
+      'redirect_uri'  => BASE_PARAMS['redirect_uri']
+    }
+
+    resp = RestClient.post(
+            "https://login.uber.com/oauth/v2/token",
+            post_params,
+            content_type: 'application/x-www-form-urlencoded'
+           )
+
+    access_token = JSON.parse(resp.body)['access_token']
+    refresh_token = JSON.parse(resp.body)['refresh_token']
+    expires_in = JSON.parse(resp.body)['expires_in']
+
+    if access_token
+      auth.update(uber_auth_token: access_token,
+                  uber_refresh_token: refresh_token,
+                  uber_access_token_expiration_time: Time.now + expires_in)
+    end
+
+  rescue RestClient::Exception => e
+    Rollbar.error(
+      "refresh_access_token",
+      resp: e.response,
+      post_params: post_params.to_json,
+    )
+    render text: "Sorry, something went wrong on our end."
+  end
+
   def self.request_user_access_token(code)
     # After user has clicked "yes" on Uber OAuth page
     post_params = BASE_PARAMS.merge("code" => code)
