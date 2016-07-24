@@ -227,8 +227,8 @@ class UberCommand
       origin_lng,
       destination_lat,
       destination_lng,
-      origin_name,
-      destination_name,
+      start_addr,
+      end_addr,
       product_id,
       @response_url
     )
@@ -240,7 +240,7 @@ class UberCommand
   def reply_to_slack(response)
     payload = { text: response }
 
-    RestClient.post(@response_url, payload.to_json)
+    RestClient.post(@response_url, payload.to_json, "Content-Type" => :json)
   end
 
   def test_sidekiq(input)
