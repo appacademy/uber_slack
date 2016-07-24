@@ -31,6 +31,7 @@ module UberCommandFormatters
     [origin_name, destination_name]
   end
 
+
   def format_200_ride_request_response(origin, destination, _response)
     ack = ["Got it!", "Roger that.", "OK.", "10-4."].sample
 
