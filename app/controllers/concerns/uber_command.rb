@@ -18,7 +18,7 @@ class UberCommand
   attr_reader :bearer_header
 
   def initialize(bearer_header, user_id, response_url)
-    @bearer_header = bearer_header
+    @bearer_header = "Bearer #{bearer_header}"
     @user_id = user_id
     @response_url = response_url
   end
