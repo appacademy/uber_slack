@@ -1,8 +1,8 @@
 class AdminConstraint
   def matches?(request)
-    return true
-    return false unless request.session[:user_id]
-    user = User.find request.session[:user_id]
+    session_token = request.path_parameters[:token]
+    return false unless session_token
+    user = User.find_by(session_token: session_token)
     user && user.admin?
   end
 end

@@ -36,5 +36,5 @@ Rails.application.routes.draw do
   get "/404" => "errors#not_found"
   get "/500" => "errors#exception"
 
-  mount Sidekiq::Web => '/sidekiq', constraints: AdminConstraint.new
+  mount Sidekiq::Web => '/sidekiq/:token', constraints: AdminConstraint.new
 end

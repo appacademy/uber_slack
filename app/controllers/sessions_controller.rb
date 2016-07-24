@@ -9,7 +9,7 @@ class SessionsController < ApplicationController
       render json: "Credentials were wrong"
     else
       login!(user)
-      redirect_to "/sidekiq"
+      redirect_to "/sidekiq/#{user.session_token}"
     end
   end
 
