@@ -88,33 +88,8 @@ class UberCommand
     ride = Ride.where(user_id: @user_id).order(:updated_at).last
     return "Sorry, we couldn't find any rides that you requested." if ride.nil?
 
-    begin
-      status_hash = UberAPI.get_ride_status(ride.request_id, bearer_header)
-    rescue => e
-      Rollbar.error(e, "UberCommand#status")
-      return "Sorry, we weren't able to get your ride status from Uber."
-    end
-
-    ride_status = status_hash["status"]
-
-    eta = status_hash["eta"]
-    eta_msg = eta ? "ETA: #{eta} minutes" : nil
-    eta_msg = "ETA: one minute" if eta == 1
-
-    if %w(
-      processing
-      accepted
-      arriving
-      in_progress
-    ).include?(ride_status)
-      return [
-        "STATUS:",
-        SlackResponse::Messages::RIDE_STATUSES[ride_status],
-        eta_msg
-      ].compact.join(" ")
-    end
-
-    "STATUS: #{SlackResponse::Messages::RIDE_STATUSES[ride_status]}"
+    GetRideStatusJob.perform_later(ride.request_id, @slack_url)
+    "Got it. Asking Uber for your ride's status now."
   end
 
   def cancel(_) # No command argument.
