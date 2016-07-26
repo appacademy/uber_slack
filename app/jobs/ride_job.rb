@@ -71,7 +71,7 @@ class RideJob < ActiveJob::Base
     )
 
     JSON.parse(response.body)
-  rescue RestClientException => e
+  rescue RestClient::Exception => e
     Rollbar.error(
       "request_ride!",
       resp: e.response,
