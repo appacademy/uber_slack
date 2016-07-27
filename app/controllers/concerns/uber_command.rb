@@ -130,7 +130,6 @@ class UberCommand
   def cancel(_) # No command argument.
     ride = Ride.where(user_id: @user_id).order(:updated_at).last
     return "Sorry, we couldn't find a ride for you to cancel." if ride.nil?
-    raise FormatError, SlackResponse::INVALID_RIDE if @ride.nil?
 
     request_id = ride.request_id
 
