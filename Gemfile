@@ -25,6 +25,7 @@ gem 'pry-rails'
 gem 'sinatra', :require => nil
 gem 'tzinfo-data'
 gem 'bcrypt'
+gem 'foreman'
 
 group :production do
   gem 'newrelic_rpm'
