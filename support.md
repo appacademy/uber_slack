@@ -14,8 +14,6 @@ Please include:
 With that, please create a new issue (unless you see one that matches your error)
 and we'll try to fix it as soon as we can. :)
 
-(If you don't have a Github account, you can also contact us at contact@appacademy.io.)
-
 Best,<br>
 Uber on Slack Team
 
